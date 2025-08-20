@@ -7,11 +7,15 @@
 
 import Foundation
 
-class Card {
+class Card: Equatable {
     
     let theme: Theme
     
     init(theme: Theme) {
         self.theme = theme
     }
+    
+    static func == (lhs: Card, rhs: Card) -> Bool {
+            return lhs.theme.title == rhs.theme.title
+        }
 }

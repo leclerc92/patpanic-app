@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PlayerRowView: View {
     let name: String
+    let icon: String?
     let index: Int
     let theme: String?
     let onConfig: () -> Void
@@ -15,10 +16,17 @@ struct PlayerRowView: View {
                 
                 VStack(alignment: .leading, spacing: 4) {
                     // Nom du joueur
-                    Text(name)
-                        .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        .foregroundColor(.primary)
                     
+                    HStack {
+                        Text(name)
+                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            .foregroundColor(.primary)
+                        
+                        if let icon = icon {
+                            Text(icon)
+                        }
+                    }
+
                     // Statut
                     HStack(spacing: 6) {
                         Circle()
@@ -143,14 +151,16 @@ struct DeletePlayerButton: View {
         
         PlayerRowView(
             name: "Michel",
+            icon: "🕺",
             index: 1,
             theme: nil,
             onConfig: { print("Config Jean-Baptiste") },
             onDelete: { print("Delete Jean-Baptiste") }
-        )
+)
         
         PlayerRowView(
             name: "Michel",
+            icon: "🕺",
             index: 2,
             theme: "Geographie ",
             onConfig: { print("Config Jean-Baptiste") },
@@ -159,6 +169,7 @@ struct DeletePlayerButton: View {
         
         PlayerRowView(
             name: "Jean-Baptiste-Emmanuel",
+            icon: "🕺",
             index: 3,
             theme: "Cuisine",
             onConfig: { print("Config Jean-Baptiste") },

@@ -199,11 +199,11 @@ extension LeaderboardRow {
   
             VStack(spacing: 12) {
                 LeaderboardRow.winner(
-                    player: Player(name: "Champion", score: 45)
+                    player: Player(name: "Champion")
                 )
                 
                 LeaderboardRow.standard(
-                    player: Player(name: "Joueur avec nom très long", score: 567),
+                    player: Player(name: "Joueur avec nom très long"),
                     position: 4
                 )
             }

@@ -1,28 +1,42 @@
-//
-//  Theme.swift
-//  patpanic
-//
-//  Created by clement leclerc on 20/08/2025.
-//
-
 import Foundation
 import SwiftUICore
 
-class Theme {
-    
+class Theme: Equatable, Codable {
     let category: String
     let title: String
-    let color: Color
+    let colorName: String  // "blue", "red", etc.
     let excludedRounds: [Int]
     
-    init(category: String, title: String, color: Color, excludedRounds: [Int]) {
+    var color: Color {
+        // Convertir le string en Color
+        switch colorName.lowercased() {
+        case "blue": return .blue
+        case "red": return .red
+        case "green": return .green
+        case "orange": return .orange
+        default: return .gray
+        }
+    }
+    
+    init(category: String, title: String, colorName: String, excludedRounds: [Int] = []) {
         self.category = category
         self.title = title
-        self.color = color
+        self.colorName = colorName
         self.excludedRounds = excludedRounds
     }
     
+    // Codable keys
+    enum CodingKeys: String, CodingKey {
+        case category, title
+        case colorName = "color"
+        case excludedRounds
+    }
+    
     func isAvailableForRound(_ round: Int) -> Bool {
-            return !excludedRounds.contains(round)
+        return !excludedRounds.contains(round)
+    }
+    
+    static func == (lhs: Theme, rhs: Theme) -> Bool {
+        return lhs.title == rhs.title && lhs.category == rhs.category
     }
 }

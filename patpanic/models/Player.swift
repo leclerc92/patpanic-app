@@ -7,11 +7,21 @@
 
 import Foundation
 
-class Player {
+class Player: Hashable, Identifiable {
+    let id = UUID()
+    
+    static func == (lhs: Player, rhs: Player) -> Bool {
+            return lhs.name == rhs.name
+    }
+    
+    func hash(into hasher: inout Hasher) {
+            hasher.combine(name)  
+    }
+    
     
     let name:String
     var icon:String = "🕺"
-    var categorie:String? = nil
+    var category: String? = nil
     private(set) var score:Int = 0
     private(set) var currentRoundScore = 0
     private(set) var currentTurnScore = 0
@@ -19,11 +29,11 @@ class Player {
     var isMainPlayer:Bool = false
     var isEliminated:Bool = false
     
-    init(name: String, score: Int, currentRoundScore: Int = 0, currentTurnScore: Int = 0) {
+    init(name: String) {
         self.name = name
-        self.score = score
-        self.currentRoundScore = currentRoundScore
-        self.currentTurnScore = currentTurnScore
+        self.score = 0
+        self.currentRoundScore = 0
+        self.currentTurnScore = 0
     }
     
     func addTurnScore (_ points: Int) {

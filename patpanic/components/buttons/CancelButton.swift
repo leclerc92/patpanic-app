@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct CancelButton: View {
-    let onCancel: () -> Void
+    let action: () -> Void
     
     var body: some View {
-        Button(action: onCancel) {
+        Button(action: action) {
             ZStack {
                 Circle()
                     .fill(Color.black.opacity(0.1))
@@ -31,7 +31,7 @@ struct CancelButton: View {
     ZStack {
 
         VStack(spacing: 20) {
-            CancelButton(onCancel: {})
+            CancelButton(action: {})
             
         }
         .padding()
