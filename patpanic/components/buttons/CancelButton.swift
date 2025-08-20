@@ -13,6 +13,8 @@ struct CancelButton: View {
                 Image(systemName: "xmark")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(.primary)
+                
+                
             }
         }
         .background(
