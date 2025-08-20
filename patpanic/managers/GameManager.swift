@@ -21,9 +21,9 @@ class GameManager: ObservableObject {
     
     let cardManager: CardManager = CardManager()
     @Published private(set) var players: [Player] = []
-    private(set) var currentRound:Int = 1
-    private(set) var state:GameState = .playersSetup
-    private(set) var currentPlayerIndex:Int = 0
+    @Published private(set) var currentRound:Round = .round1
+    @Published private(set) var state:GameState = .playersSetup
+    @Published private(set) var currentPlayerIndex:Int = 0
     
     
     // MARK: - PLAYER FUNCTIONS
@@ -65,6 +65,29 @@ class GameManager: ObservableObject {
         }
         for p in players { names.append(p.name)}
         return names
+    }
+    
+    // MARK: - STATE FUNCTIONS
+    
+    func setState(state:GameState) {
+        self.state = state
+    }
+    
+    
+    // MARK: - ROUNDS FUNCTIONS
+    
+    func getCurrentRoundConfig() -> RoundConfig {
+        currentRound.config
+    }
+        
+    func nextRound() {
+        if let next = currentRound.next {
+            currentRound = next
+        }
+    }
+    
+    func isLastRound() -> Bool {
+        return currentRound.isLastRound
     }
     
     
