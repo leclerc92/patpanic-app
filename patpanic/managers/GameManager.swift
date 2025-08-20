@@ -19,7 +19,9 @@ enum GameState {
 
 class GameManager: ObservableObject {
     
-    let cardManager: CardManager = CardManager()
+    @Published var cardManager: CardManager = CardManager()
+    @Published var timeManager: TimeManager = TimeManager()
+    
     @Published private(set) var players: [Player] = []
     @Published private(set) var currentRound:Round = .round1
     @Published private(set) var state:GameState = .playersSetup

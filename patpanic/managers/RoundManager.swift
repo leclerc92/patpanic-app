@@ -2,13 +2,24 @@ import Foundation
 
 struct RoundConfig {
     let title: String
+    let icon: String
     let nbTurns: Int
-    let rules: String
+    let rules: [String]
     let timer: Int
     let seuil1: ClosedRange<Int>
     let seuil2: ClosedRange<Int>
     let seuil3: ClosedRange<Int>
 }
+
+var rules1: [String] = [
+    "Temps impartis de 45 secondes ",
+    "Tu dois donner deux réponses par carte",
+    "Chaque carte te rapport 1 point",
+    "Valide en autant que possible !! ",
+    "Tu peux passer la carte sans pénalité",
+    "Tu peux mettre pause en appuyant sur la carte pour debattre de la réponse !"
+]
+
 
 enum Round: Int, CaseIterable {
     case round1 = 1
@@ -19,9 +30,10 @@ enum Round: Int, CaseIterable {
         switch self {
         case .round1:
             return RoundConfig(
-                title: "🐍 Vif comme une anguille",
+                title: "Vif comme une anguille",
+                icon: "🐍",
                 nbTurns: 1,
-                rules: "Deux réponse pas carte, enchaine le plus vite possible ! ",
+                rules: rules1,
                 timer: 45,
                 seuil1: 0...3,
                 seuil2: 3...6,
@@ -29,9 +41,10 @@ enum Round: Int, CaseIterable {
             )
         case .round2:
             return RoundConfig(
-                title: "🦉 Erudit comme un hiboux",
+                title: "Erudit comme un hiboux",
+                icon: "🦉",
                 nbTurns: 3,
-                rules: "Trouve le nombre de mot demandé, le plus vite possible !",
+                rules: rules1,
                 timer: 20,
                 seuil1: 0...2,
                 seuil2: 3...5,
@@ -39,9 +52,10 @@ enum Round: Int, CaseIterable {
             )
         case .round3:
             return RoundConfig(
-                title: "🐝 Endurant comme un abeille",
+                title: "Endurant comme un abeille",
+                icon: "🐝",
                 nbTurns: 1,
-                rules: "Catégorie personnalisée, elimine les autres joueurs !",
+                rules: rules1,
                 timer: 15,
                 seuil1: 0...3,
                 seuil2: 4...7,
@@ -49,6 +63,7 @@ enum Round: Int, CaseIterable {
             )
         }
     }
+    
     
     var isLastRound: Bool {
         self == Round.allCases.last

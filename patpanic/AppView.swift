@@ -9,11 +9,17 @@ import SwiftUI
 
 struct AppView: View {
     
-    let gameManager:GameManager = GameManager()
-    
-    
+    @StateObject private var gameManager = GameManager()
+
     var body: some View {
-        PlayerSetupView(gameManager: gameManager)
+        switch ( gameManager.state) {
+        case .playersSetup :
+            PlayerSetupView(gameManager: gameManager)
+        case .roundInstruction:
+            InstructionView(onCancel: {}, onContinue: {}, gameManager: gameManager)
+        default :
+            PlayerSetupView(gameManager: gameManager)
+        }
     }
 }
 

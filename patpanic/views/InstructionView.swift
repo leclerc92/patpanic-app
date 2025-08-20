@@ -8,6 +8,23 @@
 import SwiftUI
 
 struct InstructionView: View {
+    
+    let onCancel: () -> Void
+    let onContinue: () -> Void
+    let gameManager: GameManager
+    let roundConst: RoundConfig
+    
+    init(
+        onCancel: @escaping () -> Void,
+        onContinue: @escaping () -> Void,
+        gameManager: GameManager
+    ) {
+        self.onCancel = onCancel
+        self.onContinue = onContinue
+        self.gameManager = gameManager
+        self.roundConst = gameManager.getCurrentRoundConfig()
+    }
+    
     var body: some View {
         ZStack {
             // Arrière-plan gradient
@@ -21,10 +38,53 @@ struct InstructionView: View {
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
+            
+            VStack {
+                
+                HStack {
+                    CancelButton(action: onCancel)
+                    Spacer()
+                }
+                
+                Spacer()
+                
+                GameTitle(
+                    icon: nil,
+                    title: "ROUND \(gameManager.currentRound.rawValue)",
+                    subtitle: nil
+                )
+                
+                GameTitle(
+                    icon: roundConst.icon,
+                    title: roundConst.title,
+                    subtitle: nil
+                )
+                
+                Spacer()
+                
+                InstructionsSection(rules: roundConst.rules)
+                    .padding()
+                
+                ButtonMenu.primaryButton(
+                           title: "J'ai compris ! ",
+                           subtitle: "Arrete don' le blabla !",
+                           icon: "play.rectangle"
+                       ) {
+                           print("Nouvelle partie")
+                }
+                
+                
+            }.padding()
         }
+        
+        
     }
 }
 
 #Preview {
-    InstructionView()
+    InstructionView(
+        onCancel: {
+        },
+        onContinue: {},
+        gameManager: GameManager())
 }

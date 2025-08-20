@@ -11,7 +11,8 @@ struct PlayerSetupView: View {
     @State private var alertMessage = ""
     private let gameConst = GameConst()
     
-    
+    let configuration: BlurReplaceTransition.Configuration = .downUp
+
     var body: some View {
         ZStack {
             // Arrière-plan gradient moderne
@@ -37,7 +38,7 @@ struct PlayerSetupView: View {
                     )
                     .padding(.top)
                     .fixedSize(horizontal: false, vertical: true)
-                    
+
                     // Section ajout de joueur fixe
                     GameInput.addPlayer(
                         content: $newPlayerName,
@@ -224,7 +225,7 @@ struct PlayerSetupView: View {
         let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
         impactFeedback.impactOccurred()
         
-        gameManager.displayGameState()
+        gameManager.setState(state: .roundInstruction)
     }
 }
 
