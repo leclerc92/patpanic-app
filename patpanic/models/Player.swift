@@ -21,7 +21,7 @@ class Player: Hashable, Identifiable {
     
     let name:String
     var icon:String = "🕺"
-    var category: String? = nil
+    var personalCard: Card? = nil
     private(set) var score:Int = 0
     private(set) var currentRoundScore = 0
     private(set) var currentTurnScore = 0

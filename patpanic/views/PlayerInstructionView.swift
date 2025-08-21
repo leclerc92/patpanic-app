@@ -54,8 +54,8 @@ struct PlayerInstructionView: View {
                     //StatCard.roundScore(score: player.currentRoundScore, roundNumber: gameManager.currentRound.rawValue, size: .normal)
                     //StatCard.totalScore(score: player.score, size: .compact)
                    
-                    StatCard.roundScore(score: 7, roundNumber: 2)
-                    StatCard.totalScore(score: 30, size: .compact)
+                    StatCard.roundScore(score: player.currentRoundScore, roundNumber: gameManager.currentRound.rawValue)
+                    StatCard.totalScore(score: player.score, size: .compact)
                 }
                 .padding()
                 

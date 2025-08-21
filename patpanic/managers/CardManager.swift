@@ -18,8 +18,13 @@ class CardManager: ObservableObject {
     @Published private(set) var cards: [Card] = []
     @Published private(set) var usedCards: [Card] = []
     @Published var currentCard: Card?
-    private var cachedThemes: [Theme]?
+    private var cachedThemes: [Theme] = []
     private var cachedCategories: [CategoryData] = []
+    private var isInitialized = false
+    
+    init() {
+        initializeCategories()
+    }
     
     func generateGameCards(count: Int, category: String? = nil, round: Int) {
             cards.removeAll()
@@ -47,39 +52,31 @@ class CardManager: ObservableObject {
             cards = Array(shuffled.prefix(count))
         }
     
-    private func loadAllThemes() -> [Theme] {
-        if let cached = cachedThemes {
-            return cached
-        }
+    private func initializeCategories() {
+        guard !isInitialized else { return }
         
-        var allThemes: [Theme] = []
-        let categoryFiles = getAllCategoryFiles()
+        print("🔄 Initialisation des catégories...")
+        let knownCategories = [
+            "alimentation", "animaux", "divertissement", "festivals", "geographie",
+            "intime", "langues", "litterature", "marques", "metiers", "mode",
+            "musique", "mythologie", "nature", "nombres", "objets", 
+            "personnages", "politique", "sport"
+        ]
         
-        for categoryFile in categoryFiles {
-            if let themes = loadThemesFromCategory(filename: categoryFile) {
-                allThemes.append(contentsOf: themes)
+        for categoryName in knownCategories {
+            if let categoryData = loadCategoryData(filename: "\(categoryName).json") {
+                cachedCategories.append(categoryData)
+                cachedThemes.append(contentsOf: categoryData.themes)
             }
         }
         
-        cachedThemes = allThemes
-        return allThemes
+        isInitialized = true
+    }
+    
+    private func loadAllThemes() -> [Theme] {
+        return cachedThemes
     }
         
-    private func loadThemesFromCategory(filename: String) -> [Theme]? {
-        guard let url = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".json", with: ""), withExtension: "json", subdirectory: "Resources/Categories"),
-              let data = try? Data(contentsOf: url) else {
-            print("❌ Impossible de charger \(filename) dans Resources/Categories/")
-            return nil
-        }
-        
-        do {
-            let categoryData = try JSONDecoder().decode(CategoryData.self, from: data)
-            return categoryData.themes
-        } catch {
-            print("❌ Erreur décodage \(filename): \(error)")
-            return nil
-        }
-    }
     
     func nextCard() -> Card? {
         guard !cards.isEmpty else { return nil }
@@ -101,56 +98,66 @@ class CardManager: ObservableObject {
     }
     
     func reloadThemes() {
-        cachedThemes = nil
+        cachedThemes.removeAll()
         cachedCategories.removeAll()
+        isInitialized = false
+        initializeCategories()
     }
     
     func getAvailableCategories() -> [String] {
-        loadAllCategories()
         return cachedCategories.map { $0.category }
     }
     
     func getCategoryColor(for category: String) -> String {
-        loadAllCategories()
-        return cachedCategories.first { $0.category == category }?.color ?? "gray"
+        return cachedCategories.first { $0.category.lowercased() == category.lowercased() }?.color ?? "gray"
     }
     
-    private func getAllCategoryFiles() -> [String] {
-        guard let resourcePath = Bundle.main.resourcePath,
-              let categoriesPath = Bundle.main.path(forResource: "Resources/Categories", ofType: nil) else {
-            print("❌ Dossier Resources/Categories introuvable")
-            return []
+    // Génère une carte personnelle pour un joueur basée sur une catégorie
+    func generatePlayerCard(for category: String) -> Card? {
+        // Trouve les thèmes de cette catégorie
+        let categoryThemes = cachedThemes.filter { 
+            $0.category.lowercased() == category.lowercased() 
         }
         
-        do {
-            let files = try FileManager.default.contentsOfDirectory(atPath: categoriesPath)
-            return files.filter { $0.hasSuffix(".json") }
-        } catch {
-            print("❌ Erreur lecture dossier Categories: \(error)")
-            return []
+        // Filtre les thèmes qui ne sont pas déjà utilisés
+        let availableThemes = categoryThemes.filter { theme in
+            !usedCards.contains { $0.theme.title == theme.title }
         }
+        
+        guard let randomTheme = availableThemes.randomElement() else {
+            print("❌ Aucun thème disponible pour la catégorie \(category)")
+            return nil
+        }
+        
+        // Crée la carte personnelle
+        let personalCard = Card(theme: randomTheme)
+        
+        // L'ajoute immédiatement aux cartes utilisées
+        usedCards.append(personalCard)
+        
+        print("✅ Carte personnelle générée: '\(personalCard.theme.title)' (\(category))")
+        return personalCard
     }
     
-    private func loadAllCategories() {
-        guard cachedCategories.isEmpty else { return }
-        
-        let categoryFiles = getAllCategoryFiles()
-        
-        for categoryFile in categoryFiles {
-            if let categoryData = loadCategoryData(filename: categoryFile) {
-                cachedCategories.append(categoryData)
-            }
-        }
-    }
     
     private func loadCategoryData(filename: String) -> CategoryData? {
-        guard let url = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".json", with: ""), withExtension: "json", subdirectory: "Resources/Categories"),
-              let data = try? Data(contentsOf: url) else {
-            print("❌ Impossible de charger \(filename) dans Resources/Categories/")
+        let resourceName = filename.replacingOccurrences(of: ".json", with: "")
+        
+        // Essayons d'abord avec le subdirectory
+        var url = Bundle.main.url(forResource: resourceName, withExtension: "json", subdirectory: "Resources/Categories")
+        
+        // Si pas trouvé, essayons sans subdirectory
+        if url == nil {
+            url = Bundle.main.url(forResource: resourceName, withExtension: "json")
+        }
+        
+        guard let finalURL = url else {
+            print("❌ Impossible de trouver \(resourceName).json")
             return nil
         }
         
         do {
+            let data = try Data(contentsOf: finalURL)
             let categoryData = try JSONDecoder().decode(CategoryData.self, from: data)
             return categoryData
         } catch {

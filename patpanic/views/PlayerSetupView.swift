@@ -10,8 +10,19 @@ struct PlayerSetupView: View {
     @State private var selectedPlayer: Player? = nil
     @State private var alertMessage = ""
     private let gameConst = GameConst()
+    let onContinue:() -> Void
     
     let configuration: BlurReplaceTransition.Configuration = .downUp
+    
+    init(gameManager: GameManager, newPlayerName: String = "", showingAlert: Bool = false, showingConfigPlayer: Bool = false, selectedPlayer: Player? = nil, alertMessage: String = "", onContinue: @escaping () -> Void) {
+        self.gameManager = gameManager
+        self.newPlayerName = newPlayerName
+        self.showingAlert = showingAlert
+        self.showingConfigPlayer = showingConfigPlayer
+        self.selectedPlayer = selectedPlayer
+        self.alertMessage = alertMessage
+        self.onContinue = onContinue
+    }
 
     var body: some View {
         ZStack {
@@ -100,7 +111,7 @@ struct PlayerSetupView: View {
                                     name: player.name,
                                     icon: player.icon,
                                     index: index + 1,
-                                    theme: player.category,
+                                    theme: player.personalCard?.theme.category,
                                     onConfig: {
                                         configurePlayer(at: index)
                                     },
@@ -152,7 +163,8 @@ struct PlayerSetupView: View {
         }
         .sheet(item: $selectedPlayer) { player in
             PlayerConfigView(
-                player: player, 
+                player: player,
+                gameManager: gameManager,
                 onSave: { updatedPlayer in
                     gameManager.updatePlayer(newPlayer: updatedPlayer, player: player)
                 },
@@ -225,11 +237,11 @@ struct PlayerSetupView: View {
         let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
         impactFeedback.impactOccurred()
         
-        gameManager.setState(state: .roundInstruction)
+        onContinue()
     }
 }
 
 #Preview {
     let config = GameManager()
-    return PlayerSetupView(gameManager: config)
+    return PlayerSetupView(gameManager: config, onContinue: {})
 }

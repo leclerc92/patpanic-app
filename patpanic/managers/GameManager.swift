@@ -14,7 +14,7 @@ enum GameState {
     case playerTurnResult
     case roundResult
     case gameResult
-    case paused
+    case playerInstruction
 }
 
 class GameManager: ObservableObject {
@@ -82,7 +82,7 @@ class GameManager: ObservableObject {
     }
     
     func allPlayersHaveCategory() -> Bool {
-        return players.allSatisfy { $0.category != nil }
+        return players.allSatisfy { $0.personalCard != nil }
     }
     
     func allPlayersPlayed() -> Bool {
@@ -91,7 +91,7 @@ class GameManager: ObservableObject {
     
     func getPlayersWithoutCategory() -> [String] {
         return players
-            .filter { $0.category == nil }
+            .filter { $0.personalCard == nil }
             .map { $0.name }
     }
 
@@ -214,6 +214,10 @@ class GameManager: ObservableObject {
     
     func getCategoryColor(for category: String) -> String {
         return cardManager.getCategoryColor(for: category)
+    }
+    
+    func generatePlayerCard(for category: String) -> Card? {
+        return cardManager.generatePlayerCard(for: category)
     }
     
     private func getRoundNumber() -> Int {

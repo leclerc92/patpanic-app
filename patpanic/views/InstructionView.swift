@@ -70,7 +70,7 @@ struct InstructionView: View {
                            subtitle: "Arrete don' le blabla !",
                            icon: "play.rectangle"
                        ) {
-                           print("Nouvelle partie")
+                           onContinue()
                 }
                 
                 
