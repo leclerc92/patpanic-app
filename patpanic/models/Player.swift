@@ -28,6 +28,7 @@ class Player: Hashable, Identifiable {
     var joker:Bool = false
     var isMainPlayer:Bool = false
     var isEliminated:Bool = false
+    private(set) var remainingTurn: Int = 0
     
     init(name: String) {
         self.name = name
@@ -51,6 +52,12 @@ class Player: Hashable, Identifiable {
     func decreaseScore(_ nb:Int) {
         guard score > 0 else {return}
         score -= nb
+    }
+    
+    func decreaseRemainingTurn() {
+        if remainingTurn > 0 {
+            remainingTurn -= 1
+        }
     }
     
     func resetScore() {

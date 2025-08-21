@@ -6,9 +6,11 @@ struct RoundConfig {
     let nbTurns: Int
     let rules: [String]
     let timer: Int
-    let seuil1: ClosedRange<Int>
-    let seuil2: ClosedRange<Int>
-    let seuil3: ClosedRange<Int>
+    let seuil1: ClosedRange<Int>  // Très faible
+    let seuil2: ClosedRange<Int>  // Faible  
+    let seuil3: ClosedRange<Int>  // Moyen
+    let seuil4: ClosedRange<Int>  // Bien
+    let seuil5: ClosedRange<Int>  // Excellent
 }
 
 var rules1: [String] = [
@@ -35,9 +37,11 @@ enum Round: Int, CaseIterable {
                 nbTurns: 1,
                 rules: rules1,
                 timer: 45,
-                seuil1: 0...3,
-                seuil2: 3...6,
-                seuil3: 6...20
+                seuil1: 0...2,   // Très faible
+                seuil2: 3...5,   // Faible  
+                seuil3: 6...8,   // Moyen
+                seuil4: 9...12,  // Bien
+                seuil5: 13...20  // Excellent
             )
         case .round2:
             return RoundConfig(
@@ -46,9 +50,11 @@ enum Round: Int, CaseIterable {
                 nbTurns: 3,
                 rules: rules1,
                 timer: 20,
-                seuil1: 0...2,
-                seuil2: 3...5,
-                seuil3: 6...7
+                seuil1: 0...1,   // Très faible
+                seuil2: 2...3,   // Faible  
+                seuil3: 4...5,   // Moyen
+                seuil4: 6...8,   // Bien
+                seuil5: 9...15   // Excellent
             )
         case .round3:
             return RoundConfig(
@@ -57,13 +63,14 @@ enum Round: Int, CaseIterable {
                 nbTurns: 1,
                 rules: rules1,
                 timer: 15,
-                seuil1: 0...3,
-                seuil2: 4...7,
-                seuil3: 8...10
+                seuil1: 0...2,   // Très faible
+                seuil2: 3...4,   // Faible  
+                seuil3: 5...6,   // Moyen
+                seuil4: 7...9,   // Bien
+                seuil5: 10...15  // Excellent
             )
         }
     }
-    
     
     var isLastRound: Bool {
         self == Round.allCases.last
@@ -73,3 +80,5 @@ enum Round: Int, CaseIterable {
         Round(rawValue: self.rawValue + 1)
     }
 }
+
+

@@ -28,6 +28,14 @@ class GameManager: ObservableObject {
     @Published private(set) var currentPlayerIndex:Int = 0
     
     
+    //MARK: - GAME LOOP
+    
+    func startGame() {
+        
+        
+    }
+    
+    
     // MARK: - PLAYER FUNCTIONS
     
     
@@ -36,7 +44,7 @@ class GameManager: ObservableObject {
         let np = Player(name: name)
         players.append(np)
     }
-        
+    
     func removePlayer(at index: Int) {
         guard index < players.count else {
             print("Index \(index) invalide pour supprimer un joueur")
@@ -45,28 +53,65 @@ class GameManager: ObservableObject {
         players.remove(at: index)
     }
     
-    func getPlayerIndex (player:Player) -> Int? {
-        return  players.firstIndex(where: { $0.id == player.id })
+    func currentPlayer() -> Player {
+        guard currentPlayerIndex < players.count else {
+            fatalError("Index de joueur invalide: \(currentPlayerIndex)")
+        }
+        return players[currentPlayerIndex]
     }
     
-    func updatePlayer(newPlayer:Player, player:Player) {
-        let index = getPlayerIndex(player: player)
-        if index != nil {
-            players[index!] = newPlayer
-        }
+    func getPlayerIndex(player: Player) -> Int? {
+        return players.firstIndex(where: { $0.id == player.id })
+    }
+    
+    func updatePlayer(newPlayer: Player, player: Player) {
+        guard let index = getPlayerIndex(player: player) else { return }
+        players[index] = newPlayer
     }
     
     func allPlayersHaveCategory() -> Bool {
         return players.allSatisfy { $0.category != nil }
     }
     
+    func allPlayersPlayed() -> Bool {
+        return players.allSatisfy { $0.remainingTurn == 0 }
+    }
+    
     func getPlayersWithoutCategory() -> [String] {
-        var names : [String] = []
-        let players = players.filter {
-            $0.category == nil
-        }
-        for p in players { names.append(p.name)}
-        return names
+        return players
+            .filter { $0.category == nil }
+            .map { $0.name }
+    }
+
+    
+    func getNextPlayer() -> Player? {
+        guard !allPlayersPlayed() else { return nil }
+        
+        var nextIndex = currentPlayerIndex
+        let startIndex = currentPlayerIndex
+        
+        repeat {
+            nextIndex = (nextIndex + 1) % players.count
+            let candidate = players[nextIndex]
+            
+            if !candidate.isEliminated && candidate.remainingTurn > 0 {
+                return candidate
+            }
+            
+        } while nextIndex != startIndex
+        
+        return nil
+    }
+    
+    func goToNextPlayer() {
+        guard let nextPlayer = getNextPlayer(),
+              let nextIndex = getPlayerIndex(player: nextPlayer) else { return }
+        
+        currentPlayerIndex = nextIndex
+    }
+    
+    func isLastPlayer() -> Bool {
+        return getNextPlayer() == nil
     }
     
     // MARK: - STATE FUNCTIONS

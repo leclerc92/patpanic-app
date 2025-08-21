@@ -11,7 +11,7 @@ struct InstructionView: View {
     
     let onCancel: () -> Void
     let onContinue: () -> Void
-    let gameManager: GameManager
+    @ObservedObject var gameManager: GameManager
     let roundConst: RoundConfig
     
     init(
@@ -50,7 +50,7 @@ struct InstructionView: View {
                 
                 GameTitle(
                     icon: nil,
-                    title: "ROUND \(gameManager.currentRound.rawValue)",
+                    title: "MANCHE \(gameManager.currentRound.rawValue)",
                     subtitle: nil
                 )
                 

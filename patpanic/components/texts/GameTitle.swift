@@ -75,11 +75,11 @@ extension GameTitle {
     }
     
     // Titre de défaite
-    static func gameOver() -> GameTitle {
+    static func endTurn() -> GameTitle {
         GameTitle(
-            icon: "💥",
-            title: "GAME OVER",
-            subtitle: "Trop tard !"
+            icon: "⏱️",
+            title: "FIN DU TOUR",
+            subtitle: "kéksadi ?"
         )
     }
     
