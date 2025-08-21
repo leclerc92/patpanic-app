@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct ScoreDisplay: View {
-    let playerName: String
     let score: Int
     
     var body: some View {
@@ -29,7 +28,7 @@ struct ScoreDisplay: View {
 
 #Preview {
     VStack(spacing: 20) {
-        ScoreDisplay(playerName: "Alice", score: 5)
-        ScoreDisplay(playerName: "Bob", score: 12)
+        ScoreDisplay( score: 5)
+        ScoreDisplay(score: 12)
     }
 }

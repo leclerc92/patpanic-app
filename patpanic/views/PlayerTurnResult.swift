@@ -23,7 +23,6 @@ struct PlayerTurnResult: View {
     
     var body: some View {
         ZStack {
-            // Arrière-plan gradient
             LinearGradient(
                 colors: [
                     Color.blue.opacity(0.15),
@@ -36,36 +35,30 @@ struct PlayerTurnResult: View {
             .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header fixe
                 HStack {
                     Spacer()
                     CancelButton(action: onCancel)
                 }
                 .padding()
                 
-                // Contenu principal
                 ScrollView {
                     VStack(spacing: 30) {
                         
-                        // Titre de fin de tour
                         GameTitle.endTurn()
                             .padding(.top, 20)
                         
-                        // Nom du joueur avec style
                         PlayerName(
                             playerName: player.name,
                             icon: player.icon
                         )
                         .scaleEffect(1.5)
                         
-                        // Carte de score
                         ScoreCard.forRound(
                             score: player.currentTurnScore,
                             round: gameManager.currentRound,
                             playerIcon: player.icon
                         )
                         
-                        // Espace pour le bouton fixe
                         Spacer(minLength: 100)
                     }
                     .padding(.horizontal)
@@ -74,11 +67,9 @@ struct PlayerTurnResult: View {
                 Spacer()
             }
             
-            // Bouton fixe en bas
             VStack {
                 Spacer()
                 
-                // Bouton adaptatif selon le contexte
                 ButtonMenu(
                     action: onContinue,
                     title: nextButtonTitle,
@@ -113,42 +104,6 @@ struct PlayerTurnResult: View {
         gameManager.isLastPlayer() ? "checkmark.circle.fill" : "arrow.right.circle.fill"
     }
 }
-
-
-
-
-// MARK: - Composant StatCard
-
-struct StatCard: View {
-    let icon: String
-    let title: String
-    let value: String
-    let color: Color
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Text(icon)
-                .font(.title2)
-            
-            Text(value)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundColor(color)
-            
-            Text(title)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(color.opacity(0.1))
-        )
-    }
-}
-
-
 
 #Preview {
     let gameManager = GameManager()

@@ -31,7 +31,10 @@ class GameManager: ObservableObject {
     //MARK: - GAME LOOP
     
     func startGame() {
-        
+
+    }
+    
+    func resetGame() {
         
     }
     
@@ -135,6 +138,12 @@ class GameManager: ObservableObject {
     
     func isLastRound() -> Bool {
         return currentRound.isLastRound
+    }
+    
+    //MARK: - TIME FUNCTION
+    
+    func getTimeRemaining() -> Int {
+        return timeManager.timeRemaining
     }
     
     

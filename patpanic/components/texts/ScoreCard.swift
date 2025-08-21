@@ -450,20 +450,6 @@ extension ScoreCard {
                 )
             }
             
-            Divider()
-                .padding()
-            
-            // Auto selon score
-            VStack(spacing: 20) {
-                Text("Mode automatique")
-                    .font(.headline)
-                
-                HStack(spacing: 15) {
-                    ScoreCard.auto(score: 5)
-                    ScoreCard.auto(score: 25)
-                    ScoreCard.auto(score: 60)
-                }
-            }
         }
         .padding()
     }
