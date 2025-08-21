@@ -1,0 +1,48 @@
+{
+  "category": "Animaux",
+  "color": "orange",
+  "themes": [
+    {
+      "title": "Animaux de compagnie",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Animaux imaginaires",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Animaux bizarres",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Espèce de poule",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Race de chien",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Animaux à cornes",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Animaux imaginaires aillés",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    }
+  ]
+}

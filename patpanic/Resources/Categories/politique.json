@@ -1,0 +1,12 @@
+{
+  "category": "Politique", 
+  "color": "red",
+  "themes": [
+    {
+      "title": "Parti politique",
+      "category": "Politique",
+      "color": "red",
+      "excludedRounds": []
+    }
+  ]
+}

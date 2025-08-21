@@ -26,16 +26,22 @@ class GameManager: ObservableObject {
     @Published private(set) var currentRound:Round = .round1
     @Published private(set) var state:GameState = .playersSetup
     @Published private(set) var currentPlayerIndex:Int = 0
+    @Published var gameConst = GameConst()
+    @Published private(set) var logic: BaseGameLogic()
     
     
     //MARK: - GAME LOOP
     
     func startGame() {
-
+        guard !players.isEmpty, allPlayersHaveCategory() else {
+            print("❌ Impossible de démarrer: joueurs manquants ou catégories non assignées")
+            return
+        }
+               
     }
     
     func resetGame() {
-        
+    
     }
     
     
@@ -117,6 +123,12 @@ class GameManager: ObservableObject {
         return getNextPlayer() == nil
     }
     
+    func resetCurrentRoundPoint() {
+        for player in players {
+            player.resetScore()
+        }
+    }
+    
     // MARK: - STATE FUNCTIONS
     
     func setState(state:GameState) {
@@ -147,6 +159,55 @@ class GameManager: ObservableObject {
     }
     
     
+    // MARK: - CARD FUNCTIONS
+    
+    func generateCardsForCurrentRound() {
+        let roundNumber = getRoundNumber()
+        let cardsNeeded = gameConst.CARDPERPLAYER * players.count
+
+        cardManager.generateGameCards(
+            count: cardsNeeded,
+            category: nil, // Toutes les catégories
+            round: roundNumber
+        )
+        
+    }
+    
+    func generateCardsForCategory(_ category: String) {
+        let roundNumber = getRoundNumber()
+        let cardsNeeded = gameConst.CARDPERPLAYER * players.count
+    
+        cardManager.generateGameCards(
+            count: cardsNeeded,
+            category: category,
+            round: roundNumber
+        )
+    }
+    
+    func getNextCard() -> Card? {
+        return cardManager.nextCard()
+    }
+    
+    func getCurrentCard() -> Card? {
+        return cardManager.currentCard
+    }
+    
+    func getAvailableCategories() -> [String] {
+        return cardManager.getAvailableCategories()
+    }
+    
+    func getCategoryColor(for category: String) -> String {
+        return cardManager.getCategoryColor(for: category)
+    }
+    
+    private func getRoundNumber() -> Int {
+        switch currentRound {
+        case .round1: return 1
+        case .round2: return 2
+        case .round3: return 3
+        }
+    }
+
     // MARK: -  UTILS FUNCTIONS
     
     func displayGameState(){

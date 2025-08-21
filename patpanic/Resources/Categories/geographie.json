@@ -1,0 +1,114 @@
+{
+  "category": "Géographie",
+  "color": "blue",
+  "themes": [
+    {
+      "title": "Pays d'Asie",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pays d'Afrique",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pays d'Europe de l'Est",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pays de l'Union Européenne",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pays ayant accès à la mer",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pays avec des montagnes",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Département français",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Département et territoire d'outre mer",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pays en - Stan",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pays commençant par O",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Lieu de vacances",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Mers et océans",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Points cardinaux",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Station de métro parisien",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Ligne de métro parisien",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Monuments célèbres",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Statues célèbres",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Là où tu aime partir en vacances",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    }
+  ]
+}

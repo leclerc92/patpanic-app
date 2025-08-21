@@ -1,0 +1,18 @@
+{
+  "category": "Langues",
+  "color": "green",
+  "themes": [
+    {
+      "title": "Langues d'Afrique",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Langues d'Europe",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": []
+    }
+  ]
+}

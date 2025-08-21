@@ -14,5 +14,6 @@ struct GameConst {
     let MINPLAYERS =  2
     let MAXPLAYERS =  8
     let NBROUND = 3
+    let CARDPERPLAYER = 30
     
 }

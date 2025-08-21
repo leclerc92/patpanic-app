@@ -65,6 +65,15 @@ class Player: Hashable, Identifiable {
         currentRoundScore = 0
         score = 0
     }
+    
+    func resetRoundScore() {
+        currentTurnScore = 0
+        currentRoundScore = 0
+    }
+    
+    func resetTurnScore() {
+        currentTurnScore = 0
+    }
 
     
     

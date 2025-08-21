@@ -1,0 +1,66 @@
+{
+  "category": "Divertissement",
+  "color": "blue",
+  "themes": [
+    {
+      "title": "Acteurs actrices",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Humoriste",
+      "category": "Divertissement", 
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Film triste",
+      "category": "Divertissement",
+      "color": "blue", 
+      "excludedRounds": []
+    },
+    {
+      "title": "Film drôle",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Réalisateur",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnage de série TV",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnage de télé-réalité",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Trilogies cinématographiques",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": [2, 3]
+    },
+    {
+      "title": "Film de David Lynch",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": [2, 3]
+    },
+    {
+      "title": "Film d'Agnes Varda",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": [2, 3]
+    }
+  ]
+}

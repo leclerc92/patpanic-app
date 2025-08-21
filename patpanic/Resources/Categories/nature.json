@@ -1,0 +1,42 @@
+{
+  "category": "Nature",
+  "color": "green",
+  "themes": [
+    {
+      "title": "Plante",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Arbre",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Fleurs",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Insecte insupportable",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Type de roche",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pierres précieuses",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    }
+  ]
+}

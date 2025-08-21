@@ -1,0 +1,66 @@
+{
+  "category": "Musique",
+  "color": "purple",
+  "themes": [
+    {
+      "title": "Cheffe d'orchestre",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    },
+    {
+      "title": "Marque de guitare",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    },
+    {
+      "title": "Marque de violoncelle",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    },
+    {
+      "title": "Artiste impressionniste",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    },
+    {
+      "title": "Artiste féminine",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    },
+    {
+      "title": "Compositeurs",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    },
+    {
+      "title": "Ballets célèbres",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    },
+    {
+      "title": "Danseurs ou danseuse étoile",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    },
+    {
+      "title": "Chanson de Michel Polnareff",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    },
+    {
+      "title": "Festivals de musique",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": []
+    }
+  ]
+}

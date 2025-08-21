@@ -1,0 +1,48 @@
+{
+  "category": "Marques",
+  "color": "orange",
+  "themes": [
+    {
+      "title": "Marque de chaussure",
+      "category": "Marques",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Marque au logo rouge",
+      "category": "Marques",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Parfumeur célèbre",
+      "category": "Marques",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Marque de préservatifs",
+      "category": "Marques",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Marque de sous vêtements",
+      "category": "Marques",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Bijoutier célèbre",
+      "category": "Marques",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Marque de charbon de bois",
+      "category": "Marques",
+      "color": "orange",
+      "excludedRounds": []
+    }
+  ]
+}

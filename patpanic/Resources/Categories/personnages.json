@@ -1,0 +1,102 @@
+{
+  "category": "Personnages",
+  "color": "orange",
+  "themes": [
+    {
+      "title": "Drag queen",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnage de la petite sirène",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnages de Star war",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Super hero",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Couple célèbre",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnalité décédée",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Roi et reine",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Prince et princesse",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnage de fantasme",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Michel célèbre",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Jeanne célèbre",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Claude célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Fées",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pirates célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Astronautes célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Moustachus célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    }
+  ]
+}

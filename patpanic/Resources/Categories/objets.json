@@ -1,0 +1,60 @@
+{
+  "category": "Objets",
+  "color": "gray",
+  "themes": [
+    {
+      "title": "Jeux de société",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Accessoire de sorcellerie",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Deco de noël",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Couleur des œufs de Pâques",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Accessoire de rando",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Accessoire pour le bain",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Différente sorte de brosse",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Type d'architecture d'église",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Accessoires pour un festival",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    }
+  ]
+}
