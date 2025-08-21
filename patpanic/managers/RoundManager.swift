@@ -36,7 +36,7 @@ enum Round: Int, CaseIterable {
                 icon: "🐍",
                 nbTurns: 1,
                 rules: rules1,
-                timer: 45,
+                timer: 2,
                 seuil1: 0...2,   // Très faible
                 seuil2: 3...5,   // Faible  
                 seuil3: 6...8,   // Moyen
@@ -58,7 +58,7 @@ enum Round: Int, CaseIterable {
             )
         case .round3:
             return RoundConfig(
-                title: "Endurant comme un abeille",
+                title: "Endurant comme une abeille",
                 icon: "🐝",
                 nbTurns: 1,
                 rules: rules1,

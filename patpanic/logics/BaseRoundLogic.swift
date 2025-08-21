@@ -11,8 +11,11 @@ protocol RoundLogicProtocol: ObservableObject {
     
     var roundConst: RoundConfig { get }
     
+    func setupRound()
     func validateCard()
     func passCard()
+    func timerFinished()
+    func getNbResponses() -> Int
 
 }
 
@@ -40,13 +43,27 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
         self.roundConst = round.config
     }
     
+    func setupRound () {
+        gameManager.setPlayersRemainingTurn(nb: roundConst.nbTurns)
+        gameManager.startRoundTimer()
+    }
+    
     
     func validateCard() {
-        gameManager.getNextCard()
+        _ = gameManager.getNextCard()
     }
     
     func passCard() {
-        gameManager.getNextCard()
+        _ = gameManager.getNextCard()
+    }
+    
+    func timerFinished() {
+        print("timer finished")
+    }
+    
+    
+    func getNbResponses() -> Int {
+        return 2
     }
     
     

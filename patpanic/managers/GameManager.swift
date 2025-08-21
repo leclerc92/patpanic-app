@@ -132,6 +132,10 @@ class GameManager: ObservableObject {
         }
     }
     
+    func setPlayersRemainingTurn (nb: Int) {
+      _ = players.map { $0.setRemainingTurn(nb: nb)}
+    }
+    
     // MARK: - STATE FUNCTIONS
     
     func setState(state:GameState) {
@@ -164,6 +168,10 @@ class GameManager: ObservableObject {
     
     func getTimeRemaining() -> Int {
         return timeManager.timeRemaining
+    }
+    
+    func startRoundTimer () {
+        timeManager.startTimer(duration: currentRound.config.timer, onTimeUp: logic.timerFinished)
     }
     
     
@@ -217,7 +225,7 @@ class GameManager: ObservableObject {
     }
 
     // MARK: -  UTILS FUNCTIONS
-    
+
     func displayGameState(){
         print("Nb joueurs : \(players.count)")
         print("round actuel : \(currentRound)")

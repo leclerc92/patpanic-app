@@ -10,8 +10,14 @@ import SwiftUI
 struct GameView: View {
     
     @ObservedObject var gameManager: GameManager
+    @ObservedObject var timeManager: TimeManager
     @State private var isCardEjecting = false
     @State private var isPaused = false
+    
+    init(gameManager: GameManager) {
+        self.gameManager = gameManager
+        self.timeManager = gameManager.timeManager
+    }
     
     var currentPlayer: Player {
         gameManager.currentPlayer()
@@ -53,7 +59,10 @@ struct GameView: View {
                             subtitle: nil
                         ).padding(.horizontal, 10)
                         
-                        GameTimer(timeRemaining: gameManager.getTimeRemaining(), totalTime: roundConst.timer, onTimeUp: {})
+                        GameTimer(
+                            timeRemaining: timeManager.timeRemaining, 
+                            totalTime: roundConst.timer, 
+                        )
                             .scaleEffect(1.3)
                     }
                     
@@ -137,8 +146,13 @@ struct GameView: View {
     
     let gameManager: GameManager = GameManager()
     gameManager.addPlayer(name: "Jean-Michel welbeck")
-    gameManager.generateCardsForCurrentRound()
-    _ = gameManager.getNextCard()
+    
+    // Créer une carte de test pour le preview
+    let testTheme = Theme(category: "Test", title: "Animaux de compagnie", colorName: "blue")
+    let testCard = Card(theme: testTheme)
+    gameManager.cardManager.currentCard = testCard
+    
+    gameManager.logic.setupRound()
     
     return GameView(gameManager: gameManager)
 }

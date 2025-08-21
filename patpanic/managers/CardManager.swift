@@ -66,9 +66,9 @@ class CardManager: ObservableObject {
     }
         
     private func loadThemesFromCategory(filename: String) -> [Theme]? {
-        guard let url = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".json", with: ""), withExtension: "json", subdirectory: "Categories"),
+        guard let url = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".json", with: ""), withExtension: "json", subdirectory: "Resources/Categories"),
               let data = try? Data(contentsOf: url) else {
-            print("❌ Impossible de charger \(filename) dans Categories/")
+            print("❌ Impossible de charger \(filename) dans Resources/Categories/")
             return nil
         }
         
@@ -117,8 +117,8 @@ class CardManager: ObservableObject {
     
     private func getAllCategoryFiles() -> [String] {
         guard let resourcePath = Bundle.main.resourcePath,
-              let categoriesPath = Bundle.main.path(forResource: "Categories", ofType: nil) else {
-            print("❌ Dossier Categories introuvable")
+              let categoriesPath = Bundle.main.path(forResource: "Resources/Categories", ofType: nil) else {
+            print("❌ Dossier Resources/Categories introuvable")
             return []
         }
         
@@ -144,9 +144,9 @@ class CardManager: ObservableObject {
     }
     
     private func loadCategoryData(filename: String) -> CategoryData? {
-        guard let url = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".json", with: ""), withExtension: "json", subdirectory: "Categories"),
+        guard let url = Bundle.main.url(forResource: filename.replacingOccurrences(of: ".json", with: ""), withExtension: "json", subdirectory: "Resources/Categories"),
               let data = try? Data(contentsOf: url) else {
-            print("❌ Impossible de charger \(filename) dans Categories/")
+            print("❌ Impossible de charger \(filename) dans Resources/Categories/")
             return nil
         }
         

@@ -3,7 +3,6 @@ import SwiftUI
 struct GameTimer: View {
     let timeRemaining: Int
     let totalTime: Int
-    let onTimeUp: () -> Void
     
     @State private var pulseAnimation = false
     @State private var shakeAnimation = false
@@ -154,7 +153,6 @@ struct GameTimer: View {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 shakeAnimation = false
-                onTimeUp()
             }
         }
     }
@@ -176,12 +174,10 @@ extension GameTimer {
     static func roundTimer(
         timeRemaining: Int,
         totalTime: Int = 60,
-        onTimeUp: @escaping () -> Void
     ) -> GameTimer {
         GameTimer(
             timeRemaining: timeRemaining,
             totalTime: totalTime,
-            onTimeUp: onTimeUp
         )
     }
     
@@ -189,12 +185,10 @@ extension GameTimer {
     static func quickTimer(
         timeRemaining: Int,
         totalTime: Int = 30,
-        onTimeUp: @escaping () -> Void
     ) -> GameTimer {
         GameTimer(
             timeRemaining: timeRemaining,
             totalTime: totalTime,
-            onTimeUp: onTimeUp
         )
     }
     
@@ -202,12 +196,10 @@ extension GameTimer {
     static func longTimer(
         timeRemaining: Int,
         totalTime: Int = 120,
-        onTimeUp: @escaping () -> Void
     ) -> GameTimer {
         GameTimer(
             timeRemaining: timeRemaining,
             totalTime: totalTime,
-            onTimeUp: onTimeUp
         )
     }
 }
@@ -216,7 +208,6 @@ extension GameTimer {
 struct GameTimerOverlay: View {
     let timeRemaining: Int
     let totalTime: Int
-    let onTimeUp: () -> Void
     
     var body: some View {
         VStack {
@@ -226,7 +217,6 @@ struct GameTimerOverlay: View {
                 GameTimer(
                     timeRemaining: timeRemaining,
                     totalTime: totalTime,
-                    onTimeUp: onTimeUp
                 )
                 .padding(.trailing, 20)
                 .padding(.top, 10)
@@ -242,7 +232,6 @@ struct GameTimerWithLabel: View {
     let timeRemaining: Int
     let totalTime: Int
     let label: String
-    let onTimeUp: () -> Void
     
     var body: some View {
         VStack(spacing: 8) {
@@ -253,7 +242,6 @@ struct GameTimerWithLabel: View {
             GameTimer(
                 timeRemaining: timeRemaining,
                 totalTime: totalTime,
-                onTimeUp: onTimeUp
             )
         }
     }
@@ -317,7 +305,6 @@ class TimerManager: ObservableObject {
                         timeRemaining: 45,
                         totalTime: 60,
                         label: "Normal",
-                        onTimeUp: { print("Normal terminé") }
                     )
                 }
                 
@@ -326,7 +313,6 @@ class TimerManager: ObservableObject {
                         timeRemaining: 8,
                         totalTime: 60,
                         label: "Urgent",
-                        onTimeUp: { print("Urgent terminé") }
                     )
                 }
                 
@@ -335,7 +321,6 @@ class TimerManager: ObservableObject {
                         timeRemaining: 3,
                         totalTime: 60,
                         label: "Critique",
-                        onTimeUp: { print("Critique terminé") }
                     )
                 }
                 
@@ -344,7 +329,6 @@ class TimerManager: ObservableObject {
                         timeRemaining: 0,
                         totalTime: 60,
                         label: "Fini",
-                        onTimeUp: { print("Fini") }
                     )
                 }
             }
@@ -365,8 +349,7 @@ class TimerManager: ObservableObject {
                 
                 GameTimerOverlay(
                     timeRemaining: 25,
-                    totalTime: 60,
-                    onTimeUp: { print("Timer overlay terminé") }
+                    totalTime: 60
                 )
             }
             
@@ -374,18 +357,15 @@ class TimerManager: ObservableObject {
             HStack(spacing: 15) {
                 GameTimer.quickTimer(
                     timeRemaining: 15,
-                    onTimeUp: { print("Quick timer") }
                 )
                 
                 GameTimer.roundTimer(
                     timeRemaining: 35,
-                    onTimeUp: { print("Round timer") }
                 )
                 
                 GameTimer.longTimer(
                     timeRemaining: 90,
                     totalTime: 120,
-                    onTimeUp: { print("Long timer") }
                 )
             }
             

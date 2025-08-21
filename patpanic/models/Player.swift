@@ -52,6 +52,11 @@ class Player: Hashable, Identifiable {
     func decreaseScore(_ nb:Int) {
         guard score > 0 else {return}
         score -= nb
+        
+    }
+    
+    func setRemainingTurn(nb: Int) {
+        remainingTurn = nb
     }
     
     func decreaseRemainingTurn() {
