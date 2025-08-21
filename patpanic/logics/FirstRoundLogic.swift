@@ -10,7 +10,8 @@ import SwiftUI
 
 class FirstRoundLogic : BaseRoundLogic {
     
-    
-    
+    override init(gameManager: GameManager, round: Round) {
+        super.init(gameManager: gameManager, round: round)
+    }
     
 }

@@ -9,14 +9,16 @@ import SwiftUI
 
 struct GameView: View {
     
-    @ObservedObject var gameManager:GameManager
-    var player:Player
-    let roundConst: RoundConfig
-
-    init(gameManager: GameManager) {
-        self.gameManager = gameManager
-        self.player = gameManager.currentPlayer()
-        self.roundConst = gameManager.getCurrentRoundConfig()
+    @ObservedObject var gameManager: GameManager
+    @State private var isCardEjecting = false
+    @State private var isPaused = false
+    
+    var currentPlayer: Player {
+        gameManager.currentPlayer()
+    }
+    
+    var roundConst: RoundConfig {
+        gameManager.logic.roundConst
     }
     
     var body: some View {
@@ -60,22 +62,37 @@ struct GameView: View {
                 
                 Spacer()
                 
-                PlayerName(playerName: player.name, icon: player.icon)
+                PlayerName(playerName: currentPlayer.name, icon: currentPlayer.icon)
                     .padding(.bottom,20)
                 
-                GameCard(theme: "Les pistaches", size: .large, onPause: {})
+                if let currentCard = gameManager.getCurrentCard() {
+                    GameCard(
+                        theme: currentCard.theme,
+                        size: .large,
+                        isEjecting: isCardEjecting,
+                        onPause: {
+                            isPaused.toggle()
+                            print(isPaused ? "Jeu en pause" : "Jeu repris")
+                        }
+                    )
+                } else {
+                    Text("Plus de cartes disponibles")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                        .padding()
+                }
                    
             
                 Spacer()
                 
-                ScoreDisplay(score: player.currentTurnScore)
+                ScoreDisplay(score: currentPlayer.currentTurnScore)
                     .padding(.top)
                 Spacer()
                 
                 HStack{
-                    RoundButton.validateButton(action: {})
+                    RoundButton.validateButton(action: validateCard)
                         .padding(.horizontal,50)
-                    RoundButton.skipButton(action: {})
+                    RoundButton.skipButton(action: passCard)
                         .padding(.horizontal,50)
 
                 }.padding()
@@ -84,12 +101,44 @@ struct GameView: View {
             
         }
     }
+    
+    private func validateCard() {
+        // Animation d'éjection de carte
+        withAnimation {
+            isCardEjecting = true
+        }
+        
+        // Appeler la logique de validation
+        gameManager.logic.validateCard()
+        
+        // Réinitialiser l'animation après un délai
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            isCardEjecting = false
+        }
+    }
+    
+    private func passCard() {
+        // Animation d'éjection de carte
+        withAnimation {
+            isCardEjecting = true
+        }
+        
+        // Appeler la logique de passage
+        gameManager.logic.passCard()
+        
+        // Réinitialiser l'animation après un délai
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            isCardEjecting = false
+        }
+    }
 }
 
 #Preview {
     
     let gameManager: GameManager = GameManager()
     gameManager.addPlayer(name: "Jean-Michel welbeck")
+    gameManager.generateCardsForCurrentRound()
+    _ = gameManager.getNextCard()
     
     return GameView(gameManager: gameManager)
 }

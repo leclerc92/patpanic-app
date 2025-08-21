@@ -1,8 +1,7 @@
 import SwiftUI
 
 struct GameCard: View {
-    let theme: String
-    let colors: [Color]
+    let theme:Theme
     let onPause: () -> Void
     let isEjecting: Bool
     let size: CardSize
@@ -51,14 +50,12 @@ struct GameCard: View {
     }
     
     init(
-        theme: String,
-        colors: [Color] = [.blue, .purple],
+        theme: Theme,
         size: CardSize = .large,
         isEjecting: Bool = false,
         onPause: @escaping () -> Void
     ) {
         self.theme = theme
-        self.colors = colors
         self.onPause = onPause
         self.isEjecting = isEjecting
         self.size = size
@@ -77,7 +74,7 @@ struct GameCard: View {
                 RoundedRectangle(cornerRadius: size.cornerRadius)
                     .fill(
                         LinearGradient(
-                            colors: colors,
+                            colors: [theme.color, theme.color],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -113,7 +110,7 @@ struct GameCard: View {
                 VStack(spacing: 0) {
                     // Section supérieure avec petit texte
                     VStack(spacing: 4) {
-                        Text(theme.uppercased())
+                        Text(theme.title.uppercased())
                             .font(.system(size: size.fontSize * 0.6, weight: .bold, design: .rounded))
                             .foregroundColor(.white.opacity(0.8))
                             .multilineTextAlignment(.center)
@@ -128,7 +125,7 @@ struct GameCard: View {
                     Spacer()
                     
                     VStack(spacing: 8) {
-                        Text(theme.uppercased())
+                        Text(theme.title.uppercased())
                             .font(.system(size: size.fontSize, weight: .black, design: .rounded))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
@@ -151,7 +148,7 @@ struct GameCard: View {
                     
                     // Section inférieure avec petit texte (inversé style Uno)
                     VStack(spacing: 4) {
-                        Text(theme.uppercased())
+                        Text(theme.title.uppercased())
                             .font(.system(size: size.fontSize * 0.6, weight: .bold, design: .rounded))
                             .foregroundColor(.white.opacity(0.8))
                             .multilineTextAlignment(.center)
@@ -184,7 +181,7 @@ struct GameCard: View {
         .rotationEffect(.degrees(ejectionRotation))
         .opacity(ejectionOpacity)
         .shadow(
-            color: colors.first?.opacity(0.4) ?? .black.opacity(0.2),
+            color: theme.color.opacity(0.4) ?? .black.opacity(0.2),
             radius: isPressed ? 8 : 12,
             x: 0,
             y: isPressed ? 4 : 8
@@ -244,85 +241,6 @@ struct GameCard: View {
     }
 }
 
-// MARK: - Extensions pour différents thèmes
-
-extension GameCard {
-    
-    static func animals(
-        theme: String,
-        size: CardSize = .large,
-        isEjecting: Bool = false,
-        onPause: @escaping () -> Void
-    ) -> GameCard {
-        GameCard(
-            theme: theme,
-            colors: [.green, .mint],
-            size: size,
-            isEjecting: isEjecting,
-            onPause: onPause
-        )
-    }
-    
-    static func food(
-        theme: String,
-        size: CardSize = .large,
-        isEjecting: Bool = false,
-        onPause: @escaping () -> Void
-    ) -> GameCard {
-        GameCard(
-            theme: theme,
-            colors: [.orange, .yellow],
-            size: size,
-            isEjecting: isEjecting,
-            onPause: onPause
-        )
-    }
-    
-    static func sports(
-        theme: String,
-        size: CardSize = .large,
-        isEjecting: Bool = false,
-        onPause: @escaping () -> Void
-    ) -> GameCard {
-        GameCard(
-            theme: theme,
-            colors: [.blue, .cyan],
-            size: size,
-            isEjecting: isEjecting,
-            onPause: onPause
-        )
-    }
-    
-    static func movies(
-        theme: String,
-        size: CardSize = .large,
-        isEjecting: Bool = false,
-        onPause: @escaping () -> Void
-    ) -> GameCard {
-        GameCard(
-            theme: theme,
-            colors: [.purple, .pink],
-            size: size,
-            isEjecting: isEjecting,
-            onPause: onPause
-        )
-    }
-    
-    static func travel(
-        theme: String,
-        size: CardSize = .large,
-        isEjecting: Bool = false,
-        onPause: @escaping () -> Void
-    ) -> GameCard {
-        GameCard(
-            theme: theme,
-            colors: [.teal, .blue],
-            size: size,
-            isEjecting: isEjecting,
-            onPause: onPause
-        )
-    }
-}
 
 // MARK: - Vue de démonstration avec effet de deck
 
@@ -377,8 +295,7 @@ struct GameCardDemoView: View {
                     
                     // Carte principale
                     GameCard(
-                        theme: currentTheme,
-                        colors: currentColors,
+                        theme: Theme(category: "Categorie", title: "Theme", colorName: ".blue"),
                         size: .large,
                         isEjecting: isEjecting,
                         onPause: {

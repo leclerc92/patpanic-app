@@ -27,8 +27,11 @@ class GameManager: ObservableObject {
     @Published private(set) var state:GameState = .playersSetup
     @Published private(set) var currentPlayerIndex:Int = 0
     @Published var gameConst = GameConst()
-    @Published private(set) var logic: BaseGameLogic()
+    @Published private(set) var logic: BaseRoundLogic!
     
+    init() {
+        self.logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
+    }
     
     //MARK: - GAME LOOP
     
@@ -145,7 +148,12 @@ class GameManager: ObservableObject {
     func nextRound() {
         if let next = currentRound.next {
             currentRound = next
+            updateLogicForCurrentRound()
         }
+    }
+    
+    private func updateLogicForCurrentRound() {
+        logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
     }
     
     func isLastRound() -> Bool {

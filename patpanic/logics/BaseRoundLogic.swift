@@ -11,9 +11,23 @@ protocol RoundLogicProtocol: ObservableObject {
     
     var roundConst: RoundConfig { get }
     
-   
+    func validateCard()
+    func passCard()
+
+}
+
+class RoundLogicFactory {
     
-  
+    static func createLogic(for round: Round, gameManager: GameManager) -> BaseRoundLogic {
+        switch round {
+        case .round1:
+            return FirstRoundLogic(gameManager: gameManager, round: round)
+        case .round2:
+            return SecondRoundLogic(gameManager: gameManager, round: round)
+        case .round3:
+            return ThirdRoundLogic(gameManager: gameManager, round: round)
+        }
+    }
 }
 
 class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
@@ -21,10 +35,22 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     let gameManager: GameManager
     let roundConst: RoundConfig
     
-    init(gameManager: GameManager) {
+    init(gameManager: GameManager, round: Round) {
         self.gameManager = gameManager
-        self.roundConst = Round.round1.config
+        self.roundConst = round.config
     }
     
     
+    func validateCard() {
+        gameManager.getNextCard()
+    }
+    
+    func passCard() {
+        gameManager.getNextCard()
+    }
+    
+    
+    
 }
+
+
