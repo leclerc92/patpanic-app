@@ -8,138 +8,112 @@
 import SwiftUI
 
 struct GameView: View {
-    
-    @ObservedObject var gameManager: GameManager
-    @ObservedObject var timeManager: TimeManager
-    @State private var isCardEjecting = false
-    @State private var isPaused = false
+    @StateObject private var viewModel: GameViewModel
     
     init(gameManager: GameManager) {
-        self.gameManager = gameManager
-        self.timeManager = gameManager.timeManager
-    }
-    
-    var currentPlayer: Player {
-        gameManager.currentPlayer()
-    }
-    
-    var roundConst: RoundConfig {
-        gameManager.logic.roundConst
+        self._viewModel = StateObject(
+            wrappedValue: GameViewModel(gameManager: gameManager)
+        )
     }
     
     var body: some View {
         ZStack {
-            // Arrière-plan gradient
-            LinearGradient(
-                colors: [
-                    Color.blue.opacity(0.15),
-                    Color.purple.opacity(0.15),
-                    Color.pink.opacity(0.15)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
+            backgroundGradient
             
             VStack {
-                
-                HStack {
-                    Spacer()
-                    CancelButton(action: gameManager.resetGame)
-                }.padding()
-                
-                VStack {
-                    
-                    HStack {
-                        
-                        GameTitle(
-                            icon: nil,
-                            title: "MANCHE \(gameManager.currentRound.rawValue)",
-                            subtitle: nil
-                        ).padding(.horizontal, 10)
-                        
-                        GameTimer(
-                            timeRemaining: timeManager.timeRemaining, 
-                            totalTime: roundConst.timer, 
-                        )
-                            .scaleEffect(1.3)
-                    }
-                    
-                }
-                .padding(.bottom)
-                
+                headerSection
+                titleAndTimerSection
                 Spacer()
-                
-                PlayerName(playerName: currentPlayer.name, icon: currentPlayer.icon)
-                    .padding(.bottom,20)
-                
-                if let currentCard = gameManager.getCurrentCard() {
-                    GameCard(
-                        theme: currentCard.theme,
-                        size: .large,
-                        isEjecting: isCardEjecting,
-                        onPause: {
-                            isPaused.toggle()
-                            print(isPaused ? "Jeu en pause" : "Jeu repris")
-                        }
-                    )
-                } else {
-                    Text("Plus de cartes disponibles")
-                        .font(.title2)
-                        .foregroundColor(.secondary)
-                        .padding()
-                }
-                   
-            
+                playerSection
+                cardSection
                 Spacer()
-                
-                ScoreDisplay(score: currentPlayer.currentTurnScore)
-                    .padding(.top)
+                scoreSection
                 Spacer()
-                
-                HStack{
-                    RoundButton.validateButton(action: validateCard)
-                        .padding(.horizontal,50)
-                    RoundButton.skipButton(action: passCard)
-                        .padding(.horizontal,50)
-
-                }.padding()
-                
+                actionButtonsSection
             }.padding()
-            
         }
     }
     
-    private func validateCard() {
-        // Animation d'éjection de carte
-        withAnimation {
-            isCardEjecting = true
+    // MARK: - View Components
+    private var backgroundGradient: some View {
+        LinearGradient(
+            colors: [
+                Color.blue.opacity(0.15),
+                Color.purple.opacity(0.15),
+                Color.pink.opacity(0.15)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+    }
+    
+    private var headerSection: some View {
+        HStack {
+            Spacer()
+            CancelButton(action: viewModel.resetGame)
+        }.padding()
+    }
+    
+    private var titleAndTimerSection: some View {
+        VStack {
+            HStack {
+                GameTitle(
+                    icon: nil,
+                    title: viewModel.roundTitle,
+                    subtitle: nil
+                ).padding(.horizontal, 10)
+                
+                GameTimer(
+                    timeRemaining: viewModel.timeRemaining,
+                    totalTime: viewModel.totalTime
+                )
+                .scaleEffect(1.3)
+            }
         }
-        
-        // Appeler la logique de validation
-        gameManager.logic.validateCard()
-        
-        // Réinitialiser l'animation après un délai
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            isCardEjecting = false
+        .padding(.bottom)
+    }
+    
+    private var playerSection: some View {
+        PlayerName(
+            playerName: viewModel.currentPlayerName,
+            icon: viewModel.currentPlayerIcon
+        )
+        .padding(.bottom, 20)
+    }
+    
+    private var cardSection: some View {
+        Group {
+            if let currentCard = viewModel.currentCard {
+                GameCard(
+                    theme: currentCard.theme,
+                    size: .large,
+                    isEjecting: viewModel.isCardEjecting,
+                    onPause: viewModel.togglePause
+                )
+            } else {
+                Text("Plus de cartes disponibles")
+                    .font(.title2)
+                    .foregroundColor(.secondary)
+                    .padding()
+            }
         }
     }
     
-    private func passCard() {
-        // Animation d'éjection de carte
-        withAnimation {
-            isCardEjecting = true
-        }
-        
-        // Appeler la logique de passage
-        gameManager.logic.passCard()
-        
-        // Réinitialiser l'animation après un délai
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            isCardEjecting = false
-        }
+    private var scoreSection: some View {
+        ScoreDisplay(score: viewModel.currentPlayerScore)
+            .padding(.top)
     }
+    
+    private var actionButtonsSection: some View {
+        HStack {
+            RoundButton.validateButton(action: viewModel.validateCard)
+                .padding(.horizontal, 50)
+            RoundButton.skipButton(action: viewModel.passCard)
+                .padding(.horizontal, 50)
+        }.padding()
+    }
+    
 }
 
 #Preview {

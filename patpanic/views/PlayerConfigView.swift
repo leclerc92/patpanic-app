@@ -1,31 +1,17 @@
 import SwiftUI
 
 struct PlayerConfigView: View {
-    
-    @State var player: Player  // Garde une copie locale
-    let onSave: (Player) -> Void  // Callback pour sauvegarder
-    let onClose: () -> Void
-    let gameManager: GameManager  // Pour accéder au CardManager
-    
-    @State private var selectedIcon = "🕺"
-    @State private var selectedCategory = ""
-    @State private var showThemeEmptyError = false
-    
-    private let playerIcons = ["🕺", "💃", "🧑‍🎤", "🤵", "👸", "🧙‍♂️", "🧙‍♀️", "🦸‍♂️", "🦸‍♀️", "🤴", "👑", "🎭", "🎨", "🎯", "🚀", "⭐", "🔥", "💎", "🌟", "⚡"]
-    
-    private var availableCategories: [String] {
-        gameManager.getAvailableCategories()
-    }
-    
-    private var hasPersonalCard: Bool {
-        player.personalCard != nil
-    }
+    @StateObject private var viewModel: PlayerConfigViewModel
     
     init(player: Player, gameManager: GameManager, onSave: @escaping (Player) -> Void, onClose: @escaping () -> Void) {
-        self.player = player
-        self.gameManager = gameManager
-        self.onClose = onClose
-        self.onSave = onSave
+        self._viewModel = StateObject(
+            wrappedValue: PlayerConfigViewModel(
+                player: player,
+                gameManager: gameManager,
+                onSave: onSave,
+                onClose: onClose
+            )
+        )
     }
     
     var body: some View {
@@ -38,14 +24,14 @@ struct PlayerConfigView: View {
                                 .font(.system(size: 18, weight: .bold))
                                 .foregroundColor(.primary)
                             
-                            Text("Personnalise \(player.name)")
+                            Text("Personnalise \(viewModel.playerName)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
                         
                         Spacer()
                         
-                        CancelButton(action: onClose)
+                        CancelButton(action: viewModel.cancel)
                 }
                 .padding()
                 .background(Color(.systemBackground))
@@ -55,17 +41,11 @@ struct PlayerConfigView: View {
             // Contenu sans scroll
             VStack(alignment: .leading, spacing: 16) {
                 // Sélection d'icône
-                IconSelectionSection(selectedIcon: $selectedIcon, playerIcons: playerIcons)
+                IconSelectionSection(viewModel: viewModel)
                     .padding()
                 
                 // Sélection de catégorie
-                CategorySelectionSection(
-                    selectedCategory: $selectedCategory,
-                    availableCategories: availableCategories,
-                    gameManager: gameManager,
-                    showThemeEmptyError: showThemeEmptyError,
-                    isLocked: hasPersonalCard
-                )
+                CategorySelectionSection(viewModel: viewModel)
                     .padding()
             }
             .padding(.horizontal, 16)
@@ -74,65 +54,22 @@ struct PlayerConfigView: View {
             
             Spacer()
             // Boutons d'action compacts
-            ActionButtonsSection(saveConfiguration: saveConfiguration, onClose: onClose)
+            ActionButtonsSection(viewModel: viewModel)
             .padding()
             .background(Color(.systemBackground))
             }
             .background(Color(.systemBackground))
-            .onAppear {
-                selectedIcon = player.icon
-                if let personalCard = player.personalCard,
-                   availableCategories.contains(personalCard.theme.category) {
-                    selectedCategory = personalCard.theme.category
-                } else if !availableCategories.isEmpty {
-                    selectedCategory = availableCategories.first ?? ""
-                }
-            }
-            .onChange(of: selectedCategory) {
-                // Cache l'erreur quand l'utilisateur sélectionne
-                if showThemeEmptyError {
-                    showThemeEmptyError = false
-                }
-            }
         }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
+        .presentationDetents([.large])
+        .presentationDragIndicator(.hidden)
     }
     
-    private func saveConfiguration() {
-        if selectedCategory.isEmpty {
-            showThemeEmptyError = true
-            return
-        }
-        
-        showThemeEmptyError = false
-        player.icon = selectedIcon
-        
-        // Si le joueur a déjà une carte, on ne fait que sauvegarder l'icône
-        if hasPersonalCard {
-            onSave(player)
-            onClose()
-            return
-        }
-        
-        // Génère la carte personnelle basée sur la catégorie sélectionnée
-        if let personalCard = gameManager.generatePlayerCard(for: selectedCategory) {
-            player.personalCard = personalCard
-            onSave(player)  // Appelle le callback avec le player modifié
-            onClose()
-        } else {
-            // Gestion d'erreur si aucune carte ne peut être générée
-            print("❌ Impossible de générer une carte pour \(selectedCategory)")
-            showThemeEmptyError = true
-        }
-    }
     
   
 }
 
 struct IconSelectionSection: View {
-    @Binding var selectedIcon: String
-    let playerIcons: [String]
+    @ObservedObject var viewModel: PlayerConfigViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -142,9 +79,9 @@ struct IconSelectionSection: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
-                    ForEach(playerIcons, id: \.self) { icon in
-                        IconButton(icon: icon, isSelected: selectedIcon == icon) {
-                            selectedIcon = icon
+                    ForEach(viewModel.playerIcons, id: \.self) { icon in
+                        IconButton(icon: icon, isSelected: viewModel.isIconSelected(icon)) {
+                            viewModel.selectIcon(icon)
                         }
                     }
                 }
@@ -177,11 +114,7 @@ struct IconButton: View {
 }
 
 struct CategorySelectionSection: View {
-    @Binding var selectedCategory: String
-    let availableCategories: [String]
-    let gameManager: GameManager
-    let showThemeEmptyError: Bool
-    let isLocked: Bool
+    @ObservedObject var viewModel: PlayerConfigViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -192,18 +125,18 @@ struct CategorySelectionSection: View {
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.primary)
                         
-                        if isLocked {
+                        if viewModel.hasPersonalCard {
                             Text("🔒")
                                 .font(.system(size: 12))
                                 .foregroundColor(.orange)
                         }
                     }
                     
-                    Text(isLocked ? "Ta catégorie est déjà définie !" : "Choisis ta spécialité pour la 3ème manche !")
+                    Text(viewModel.categoryLockText)
                         .font(.caption)
-                        .foregroundColor(isLocked ? .orange : .secondary)
+                        .foregroundColor(viewModel.categoryLockColor)
                     
-                    if !isLocked {
+                    if !viewModel.hasPersonalCard {
                         Text("💡 Utilise le bouton mélange pour une sélection aléatoire")
                             .font(.system(size: 10))
                             .foregroundColor(.secondary)
@@ -215,57 +148,55 @@ struct CategorySelectionSection: View {
                 
                 // Bouton shuffle pour sélection aléatoire (désactivé si verrouillé)
                 RoundButton(
-                    action: shuffleCategory,
+                    action: viewModel.shuffleCategory,
                     icon: "shuffle",
                     colors: [.purple, .indigo],
                     size: 44,
                     iconColor: .white
                 )
-                .disabled(isLocked)
-                .opacity(isLocked ? 0.5 : 1.0)
+                .disabled(viewModel.hasPersonalCard)
+                .opacity(viewModel.hasPersonalCard ? 0.5 : 1.0)
             }
             
             VStack(spacing: 8) {
                 // Picker moderne avec style menu (désactivé si verrouillé)
                 Menu {
-                    ForEach(availableCategories, id: \.self) { category in
+                    ForEach(viewModel.availableCategories, id: \.self) { category in
                         Button(action: {
-                            if !isLocked {
-                                selectedCategory = category
-                            }
+                            viewModel.selectCategory(category)
                         }) {
                             HStack {
                                 Text(category.capitalized)
                                 Spacer()
-                                if selectedCategory == category {
+                                if viewModel.isCategorySelected(category) {
                                     Image(systemName: "checkmark")
                                         .foregroundColor(.blue)
                                 }
                             }
                         }
-                        .disabled(isLocked)
+                        .disabled(viewModel.hasPersonalCard)
                     }
                 } label: {
                     HStack {
-                        Text(selectedCategory.isEmpty ? "Sélectionne une catégorie" : selectedCategory.capitalized)
+                        Text(viewModel.categoryDisplayText)
                             .font(.system(size: 14))
                             .foregroundColor(
-                                isLocked ? .secondary : 
-                                (selectedCategory.isEmpty ? .secondary : .primary)
+                                viewModel.hasPersonalCard ? .secondary : 
+                                (viewModel.selectedCategory.isEmpty ? .secondary : .primary)
                             )
-                            .animation(.easeInOut(duration: 0.3), value: selectedCategory)
+                            .animation(.easeInOut(duration: 0.3), value: viewModel.selectedCategory)
                         
                         Spacer()
                         
                         // Badge coloré selon la catégorie
-                        if !selectedCategory.isEmpty {
+                        if !viewModel.selectedCategory.isEmpty {
                             Circle()
-                                .fill(colorForCategory(selectedCategory))
+                                .fill(viewModel.colorForCategory(viewModel.selectedCategory))
                                 .frame(width: 12, height: 12)
-                                .opacity(isLocked ? 0.6 : 1.0)
+                                .opacity(viewModel.hasPersonalCard ? 0.6 : 1.0)
                         }
                         
-                        if isLocked {
+                        if viewModel.hasPersonalCard {
                             Image(systemName: "lock.fill")
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.orange)
@@ -280,17 +211,17 @@ struct CategorySelectionSection: View {
                     .background(
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color(.systemGray6))
-                            .opacity(isLocked ? 0.7 : 1.0)
+                            .opacity(viewModel.hasPersonalCard ? 0.7 : 1.0)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(showThemeEmptyError ? Color.red : Color.clear, lineWidth: 1)
+                                    .stroke(viewModel.showThemeEmptyError ? Color.red : Color.clear, lineWidth: 1)
                             )
                     )
                 }
-                .disabled(isLocked)
+                .disabled(viewModel.hasPersonalCard)
                 
                 // Message d'erreur
-                if showThemeEmptyError {
+                if viewModel.showThemeEmptyError {
                     HStack(spacing: 4) {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundColor(.red)
@@ -303,31 +234,28 @@ struct CategorySelectionSection: View {
                 }
                 
                 // Preview de la catégorie sélectionnée
-                if !selectedCategory.isEmpty {
+                if !viewModel.selectedCategory.isEmpty {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(isLocked ? "Carte réservée" : "Aperçu")
+                        Text(viewModel.previewTitleText)
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(.secondary)
                         
                         HStack(spacing: 8) {
                             Circle()
-                                .fill(colorForCategory(selectedCategory))
+                                .fill(viewModel.colorForCategory(viewModel.selectedCategory))
                                 .frame(width: 8, height: 8)
-                                .opacity(isLocked ? 0.6 : 1.0)
+                                .opacity(viewModel.hasPersonalCard ? 0.6 : 1.0)
                             
-                            Text(isLocked ? 
-                                "Ta carte secrète de \"\(selectedCategory.capitalized)\" est réservée pour la 3ème manche !" :
-                                "Tu joueras avec les thèmes de \"\(selectedCategory.capitalized)\""
-                            )
+                            Text(viewModel.categoryPreviewText)
                                 .font(.system(size: 11))
-                                .foregroundColor(isLocked ? .orange : .secondary)
+                                .foregroundColor(viewModel.previewTextColor)
                                 .italic()
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(colorForCategory(selectedCategory).opacity(isLocked ? 0.05 : 0.1))
+                                .fill(viewModel.colorForCategory(viewModel.selectedCategory).opacity(viewModel.hasPersonalCard ? 0.05 : 0.1))
                         )
                     }
                 }
@@ -335,44 +263,14 @@ struct CategorySelectionSection: View {
         }
     }
     
-    private func colorForCategory(_ category: String) -> Color {
-        let colorName = gameManager.getCategoryColor(for: category)
-        
-        switch colorName.lowercased() {
-        case "red": return .red
-        case "blue": return .blue
-        case "green": return .green
-        case "orange": return .orange
-        case "purple": return .purple
-        case "pink": return .pink
-        case "yellow": return .yellow
-        case "cyan": return .cyan
-        case "mint": return .mint
-        case "indigo": return .indigo
-        default: return .gray
-        }
-    }
-    
-    private func shuffleCategory() {
-        guard !availableCategories.isEmpty else { return }
-        
-        // Sélectionne une catégorie aléatoire différente de l'actuelle si possible
-        let otherCategories = availableCategories.filter { $0 != selectedCategory }
-        let categoriesToChooseFrom = otherCategories.isEmpty ? availableCategories : otherCategories
-        
-        if let randomCategory = categoriesToChooseFrom.randomElement() {
-            selectedCategory = randomCategory
-        }
-    }
 }
 
 struct ActionButtonsSection: View {
-    let saveConfiguration: () -> Void
-    let onClose: () -> Void
+    @ObservedObject var viewModel: PlayerConfigViewModel
     
     var body: some View {
         HStack(spacing: 12) {
-            Button(action: onClose) {
+            Button(action: viewModel.cancel) {
                 Text("Annuler")
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.secondary)
@@ -382,7 +280,7 @@ struct ActionButtonsSection: View {
                     .cornerRadius(10)
             }
             
-            Button(action: saveConfiguration) {
+            Button(action: viewModel.saveConfiguration) {
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark")
                     Text("Valider")

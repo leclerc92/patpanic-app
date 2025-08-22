@@ -2,26 +2,17 @@ import SwiftUI
 import UIKit
 
 struct PlayerSetupView: View {
-    
-    @ObservedObject var gameManager: GameManager
-    @State private var newPlayerName = ""
-    @State private var showingAlert = false
-    @State private var showingConfigPlayer = false
-    @State private var selectedPlayer: Player? = nil
-    @State private var alertMessage = ""
-    private let gameConst = GameConst()
-    let onContinue:() -> Void
+    @StateObject private var viewModel: PlayerSetupViewModel
     
     let configuration: BlurReplaceTransition.Configuration = .downUp
     
-    init(gameManager: GameManager, newPlayerName: String = "", showingAlert: Bool = false, showingConfigPlayer: Bool = false, selectedPlayer: Player? = nil, alertMessage: String = "", onContinue: @escaping () -> Void) {
-        self.gameManager = gameManager
-        self.newPlayerName = newPlayerName
-        self.showingAlert = showingAlert
-        self.showingConfigPlayer = showingConfigPlayer
-        self.selectedPlayer = selectedPlayer
-        self.alertMessage = alertMessage
-        self.onContinue = onContinue
+    init(gameManager: GameManager, onContinue: @escaping () -> Void) {
+        self._viewModel = StateObject(
+            wrappedValue: PlayerSetupViewModel(
+                gameManager: gameManager,
+                onContinue: onContinue
+            )
+        )
     }
 
     var body: some View {
@@ -43,8 +34,8 @@ struct PlayerSetupView: View {
                 VStack(spacing: 20) {
                     // Titre fixe en haut
                     GameTitle(
-                        icon: gameConst.GAMEICON,
-                        title: gameConst.GAMETITLE,
+                        icon: viewModel.gameIcon,
+                        title: viewModel.gameTitle,
                         subtitle: "Configuration des joueurs"
                     )
                     .padding(.top)
@@ -52,15 +43,15 @@ struct PlayerSetupView: View {
 
                     // Section ajout de joueur fixe
                     GameInput.addPlayer(
-                        content: $newPlayerName,
-                        action: addPlayer
+                        content: $viewModel.newPlayerName,
+                        action: viewModel.addPlayer
                     )
                     
                     // Section titre de la liste
                     HStack {
                         Text("👥")
                             .font(.title2)
-                        Text("Joueurs inscrits (\(gameManager.players.count))")
+                        Text("Joueurs inscrits (\(viewModel.playersCount))")
                             .font(.system(size: 18, weight: .bold, design: .rounded))
                             .foregroundStyle(
                                 LinearGradient(
@@ -75,7 +66,7 @@ struct PlayerSetupView: View {
                 }
                 
                 // Zone scrollable pour la liste des joueurs uniquement
-                if gameManager.players.isEmpty {
+                if viewModel.isEmpty {
                     // État vide avec style
                     VStack(spacing: 12) {
                         Text("🎯")
@@ -86,7 +77,7 @@ struct PlayerSetupView: View {
                             .font(.system(size: 16, weight: .medium, design: .rounded))
                             .foregroundColor(.secondary)
                         
-                        Text("Ajoutez au moins \(gameConst.MINPLAYERS) joueurs pour commencer")
+                        Text("Ajoutez au moins \(viewModel.minPlayers) joueurs pour commencer")
                             .font(.system(size: 14, design: .rounded))
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -106,17 +97,17 @@ struct PlayerSetupView: View {
                     // Liste scrollable des joueurs
                     ScrollView {
                         LazyVStack(spacing: 12) {
-                            ForEach(Array(gameManager.players.enumerated()), id: \.element.id) { index, player in
+                            ForEach(Array(viewModel.players.enumerated()), id: \.element.id) { index, player in
                                 PlayerRowView(
                                     name: player.name,
                                     icon: player.icon,
                                     index: index + 1,
                                     theme: player.personalCard?.theme.category,
                                     onConfig: {
-                                        configurePlayer(at: index)
+                                        viewModel.configurePlayer(at: index)
                                     },
                                     onDelete: {
-                                        gameManager.removePlayer(at: index)
+                                        viewModel.removePlayer(at: index)
                                     }
                                 )
                                 .transition(.asymmetric(
@@ -142,103 +133,39 @@ struct PlayerSetupView: View {
                     
                     // Bouton commencer avec notre ButtonMenu
                     ButtonMenu(
-                        action: startGame,
+                        action: viewModel.startGame,
                         title:  "COMMENCER LA PARTIE",
                         subtitle: "Que le meilleur gagne !",
                         icon: "play.fill",
-                        colors: gameManager.players.count >= gameConst.MINPLAYERS ? [.green, .mint] : [.gray.opacity(0.6), .gray.opacity(0.4)]
+                        colors: viewModel.startButtonColors
                     )
-                    .disabled(gameManager.players.count < gameConst.MINPLAYERS)
-                    .scaleEffect(gameManager.players.count >= gameConst.MINPLAYERS ? 1.0 : 0.98)
+                    .disabled(!viewModel.canStartGame)
+                    .scaleEffect(viewModel.startButtonScale)
                     .padding(.horizontal)
                     .padding(.bottom, 10)
                     .background(Color(.systemBackground))
                 }
             }
         }
-        .alert("Attention", isPresented: $showingAlert) {
-            Button("OK") { }
+        .alert("Attention", isPresented: $viewModel.showingAlert) {
+            Button("OK") { viewModel.dismissAlert() }
         } message: {
-            Text(alertMessage)
+            Text(viewModel.alertMessage)
         }
-        .sheet(item: $selectedPlayer) { player in
+        .sheet(item: $viewModel.selectedPlayer) { player in
             PlayerConfigView(
                 player: player,
-                gameManager: gameManager,
+                gameManager: viewModel.gameManager,
                 onSave: { updatedPlayer in
-                    gameManager.updatePlayer(newPlayer: updatedPlayer, player: player)
+                    viewModel.updatePlayer(updatedPlayer, originalPlayer: player)
                 },
                 onClose: {
-                    selectedPlayer = nil
+                    viewModel.closePlayerConfig()
                 }
             )
         }
     }
     
-    private func addPlayer() {
-        let trimmedName = newPlayerName.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        guard !trimmedName.isEmpty else {
-            alertMessage = "Le nom du joueur ne peut pas être vide"
-            showingAlert = true
-            return
-        }
-        
-        guard gameManager.players.count < 8 else {
-            alertMessage = "Maximum 8 joueurs autorisés"
-            showingAlert = true
-            return
-        }
-        
-        guard !gameManager.players.contains(where: { $0.name.lowercased() == trimmedName.lowercased() }) else {
-            alertMessage = "Ce nom de joueur existe déjà"
-            showingAlert = true
-            return
-        }
-        
-        // Animation d'ajout
-        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-            gameManager.addPlayer(name: trimmedName)
-        }
-        
-        // Réinitialiser le champ
-        newPlayerName = ""
-        
-        // Vibration de succès
-        let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-        impactFeedback.impactOccurred()
-    }
-    
-    private func configurePlayer(at index: Int) {
-        guard index < gameManager.players.count else { return }
-        selectedPlayer = gameManager.players[index]
-    }
-    
-    private func startGame() {
-        guard gameManager.players.count >= gameConst.MINPLAYERS else {
-            alertMessage = "Il faut au moins 2 joueurs pour commencer"
-            showingAlert = true
-            return
-        }
-        
-        guard gameManager.allPlayersHaveCategory() else {
-            let players = gameManager.getPlayersWithoutCategory()
-            var names = ""
-            for p in players {
-                names.append(p + ", ")
-            }
-            let message = "Des joueurs n'ont pas de catégorie : " + names
-            alertMessage = message
-            showingAlert = true
-            return
-        }
-        
-        // Vibration de démarrage
-        let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
-        impactFeedback.impactOccurred()
-        
-        onContinue()
-    }
 }
 
 #Preview {

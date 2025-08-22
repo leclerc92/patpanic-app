@@ -68,14 +68,6 @@ func currentPlayer() -> Player {
 
 ## 🔧 OPTIMISATIONS RECOMMANDÉES
 
-### 13. **ARCHITECTURE MVI/MVVM**
-**Actuel**: Logique métier mélangée dans les vues  
-**Recommandation**: Séparer clairement Model-View-Logic avec des ViewModels dédiés
-
-### 14. **DEPENDENCY INJECTION**
-**Actuel**: Managers créés directement dans les vues  
-**Recommandation**: Injecter via Environment pour faciliter les tests
-
 ### 15. **CONSTANTS MANAGEMENT**
 **Actuel**: GameConst en struct avec let  
 **Recommandation**: Enum avec static let pour de meilleures performances

@@ -8,142 +8,101 @@
 import SwiftUI
 
 struct LeaderboardView: View {
+    @StateObject private var viewModel: LeaderboardViewModel
     
-    @ObservedObject var gameManager: GameManager
-    let isRoundEnd: Bool
-    let onContinue: () -> Void
-    let onCancel: () -> Void
-        
-    private var sortedPlayers: [Player] {
-        // Tri par score total décroissant
-        gameManager.players.sorted { $0.score > $1.score }
-    }
-    
-    private var winner: Player? {
-        sortedPlayers.first
+    init(gameManager: GameManager, isRoundEnd: Bool, onContinue: @escaping () -> Void, onCancel: @escaping () -> Void) {
+        self._viewModel = StateObject(
+            wrappedValue: LeaderboardViewModel(
+                gameManager: gameManager,
+                isRoundEnd: isRoundEnd,
+                onCancel: onCancel,
+                onContinue: onContinue
+            )
+        )
     }
     
     var body: some View {
         ZStack {
-            // Background gradient
-            LinearGradient(
-                colors: [
-                    Color.blue.opacity(0.15),
-                    Color.purple.opacity(0.15),
-                    Color.pink.opacity(0.15)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            backgroundGradient
             
             VStack(spacing: 0) {
-                HStack {
-                    Spacer()
-                    CancelButton(action: onCancel)
-                }.padding()
-            
-            
-                // Header avec titre
-                VStack(spacing: 20) {
-                    if isRoundEnd {
-                        GameTitle(
-                            icon: "🏁",
-                            title: "FIN DU ROUND \(gameManager.currentRound.rawValue)",
-                            subtitle: "Classement temporaire"
-                        )
-                    } else {
-                        GameTitle(
-                            icon: "🏆",
-                            title: "PARTIE TERMINÉE",
-                            subtitle: "Classement final"
-                        )
-                    }
-                    
-                    // Podium spécial pour le gagnant si fin de partie
-                    if !isRoundEnd, let winner = winner {
-                        WinnerPodium(winner: winner)
-
-                    }
-                }
-                .padding(.top, 20)
-                .padding(.horizontal)
-                
-                // Liste des joueurs classés
-                ScrollView {
-                    LazyVStack(spacing: 16) {
-                        ForEach(Array(sortedPlayers.enumerated()), id: \.element.id) { index, player in
-                            LeaderboardRow(
-                                player: player,
-                                position: index + 1,
-                                isWinner: !isRoundEnd && index == 0
-                            )
-
-                            
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 30)
-                }
-                
+                headerSection
+                titleSection
+                leaderboardSection
                 Spacer()
-                
-                // Boutons d'action
-                VStack(spacing: 16) {
-                    if isRoundEnd && !gameManager.isLastRound() {
-                        // Bouton pour continuer au round suivant
-                        ButtonMenu(
-                            action: onContinue,
-                            title: "ROUND SUIVANT",
-                            subtitle: nextRoundSubtitle,
-                            icon: "arrow.right.circle.fill",
-                            colors: [.green, .mint]
-                        )
-  
-                        
-                    } else if isRoundEnd && gameManager.isLastRound() {
-                        // Bouton pour aller au classement final
-                        ButtonMenu(
-                            action: onContinue,
-                            title: "CLASSEMENT FINAL",
-                            subtitle: "Voir les résultats définitifs",
-                            icon: "trophy.fill",
-                            colors: [.yellow, .orange]
-                        )
-           
-                        
-                    } else {
-                        // Fin de partie - Nouvelle partie
-                        ButtonMenu(
-                            action: onContinue,
-                            title: "NOUVELLE PARTIE",
-                            subtitle: "Recommencer avec les mêmes joueurs",
-                            icon: "arrow.clockwise.circle.fill",
-                            colors: [.blue, .purple]
-                        )
-
-                        
-                    }
-                
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 20)
+                actionButtonSection
             }
         }
-        
     }
     
-    private var nextRoundSubtitle: String {
-        let nextRound = gameManager.currentRound.next
-        switch nextRound {
-        case .round2:
-            return "Érudit comme un hibou 🦉"
-        case .round3:
-            return "Endurant comme une abeille 🐝"
-        default:
-            return "Prêt pour la suite ?"
+    // MARK: - View Components
+    private var backgroundGradient: some View {
+        LinearGradient(
+            colors: [
+                Color.blue.opacity(0.15),
+                Color.purple.opacity(0.15),
+                Color.pink.opacity(0.15)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+    }
+    
+    private var headerSection: some View {
+        HStack {
+            Spacer()
+            CancelButton(action: viewModel.cancelButton)
+        }.padding()
+    }
+    
+    private var titleSection: some View {
+        VStack(spacing: 20) {
+            GameTitle(
+                icon: viewModel.titleIcon,
+                title: viewModel.titleText,
+                subtitle: viewModel.titleSubtitle
+            )
+            
+            // Podium spécial pour le gagnant si fin de partie
+            if viewModel.showWinnerPodium, let winner = viewModel.winner {
+                WinnerPodium(winner: winner)
+            }
+        }
+        .padding(.top, 20)
+        .padding(.horizontal)
+    }
+    
+    private var leaderboardSection: some View {
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(Array(viewModel.sortedPlayers.enumerated()), id: \.element.id) { index, player in
+                    LeaderboardRow(
+                        player: player,
+                        position: index + 1,
+                        isWinner: viewModel.isWinner(at: index)
+                    )
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, 30)
         }
     }
+    
+    private var actionButtonSection: some View {
+        VStack(spacing: 16) {
+            ButtonMenu(
+                action: viewModel.continueButton,
+                title: viewModel.buttonTitle,
+                subtitle: viewModel.buttonSubtitle,
+                icon: viewModel.buttonIcon,
+                colors: viewModel.buttonColors
+            )
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 20)
+    }
+    
 }
 
 // MARK: - Podium du gagnant
@@ -286,7 +245,7 @@ extension LeaderboardView {
     gameManager.players[3].validateRound()
     
      return VStack {
-        LeaderboardView.gameEnd(
+        LeaderboardView.roundEnd(
             gameManager: gameManager,
             onContinue: { print("Nouvelle partie") },
             onCancel: { print("Retour menu") }
