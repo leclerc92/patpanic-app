@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct InstructionView: View {
+struct RoundInstructionView: View {
     
     let onCancel: () -> Void
     let onContinue: () -> Void
@@ -82,7 +82,7 @@ struct InstructionView: View {
 }
 
 #Preview {
-    InstructionView(
+    RoundInstructionView(
         onCancel: {
         },
         onContinue: {},
