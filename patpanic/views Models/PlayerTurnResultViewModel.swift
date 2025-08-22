@@ -1,118 +1,71 @@
-//
-//  PlayerTurnResult.swift
-//  patpanic
-//
-//  Created by clement leclerc on 21/08/2025.
-//
-
 import SwiftUI
+  import Combine
 
-struct PlayerTurnResult: View {
-    
-    @ObservedObject var gameManager: GameManager
-    let onCancel: () -> Void
-    let onContinue: () -> Void
-    let player: Player
-    
-    init(gameManager: GameManager, onCancel: @escaping () -> Void, onContinue: @escaping () -> Void) {
-        self.gameManager = gameManager
-        self.onCancel = onCancel
-        self.onContinue = onContinue
-        self.player = gameManager.currentPlayer()
-    }
-    
-    var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [
-                    Color.blue.opacity(0.15),
-                    Color.purple.opacity(0.15),
-                    Color.pink.opacity(0.15)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                HStack {
-                    Spacer()
-                    CancelButton(action: onCancel)
-                }
-                .padding()
-                
-                ScrollView {
-                    VStack(spacing: 30) {
-                        
-                        GameTitle.endTurn()
-                            .padding(.top, 20)
-                        
-                        PlayerName(
-                            playerName: player.name,
-                            icon: player.icon
-                        )
-                        .scaleEffect(1.5)
-                        
-                        ScoreCard.forRound(
-                            score: player.currentTurnScore,
-                            round: gameManager.currentRound,
-                            playerIcon: player.icon
-                        )
-                        
-                        Spacer(minLength: 100)
-                    }
-                    .padding(.horizontal)
-                }
-                
-                Spacer()
-            }
-            
-            VStack {
-                Spacer()
-                
-                ButtonMenu(
-                    action: onContinue,
-                    title: nextButtonTitle,
-                    subtitle: nextButtonSubtitle,
-                    icon: nextButtonIcon,
-                    colors: [.green, .mint]
-                )
-                .padding(.horizontal)
-                .padding(.bottom, 20)
-            }
-        }
-    }
-    
-    private var nextButtonTitle: String {
-        if gameManager.isLastPlayer() {
-            return "TERMINER LE ROUND"
-        } else {
-            return "JOUEUR SUIVANT"
-        }
-    }
-    
-    private var nextButtonSubtitle: String {
-        if gameManager.isLastPlayer() {
-            return "Voir les résultats du round"
-        } else {
-            let nextPlayer = gameManager.getNextPlayer()
-            return "Au tour de \(nextPlayer?.name ?? "...")"
-        }
-    }
-    
-    private var nextButtonIcon: String {
-        gameManager.isLastPlayer() ? "checkmark.circle.fill" : "arrow.right.circle.fill"
-    }
-}
+  @MainActor
+  class PlayerTurnResultViewModel: ObservableObject {
+      // MARK: - Published Properties
+      @Published var playerName: String = ""
+      @Published var playerIcon: String = ""
+      @Published var currentTurnScore: Int = 0
+      @Published var currentRound: Round = .round1
+      @Published var nextButtonTitle: String = ""
+      @Published var nextButtonSubtitle: String = ""
+      @Published var nextButtonIcon: String = ""
+      @Published var isLastPlayer: Bool = false
 
-#Preview {
-    let gameManager = GameManager()
-    gameManager.addPlayer(name: "Jean-Michel")
-    gameManager.currentPlayer().addTurnScore(25)
-    
-    return PlayerTurnResult(
-        gameManager: gameManager,
-        onCancel: { print("Cancel") },
-        onContinue: { print("Continue") }
-    )
-}
+      // MARK: - Dependencies
+      private let gameManager: GameManager
+      private let onCancel: () -> Void
+      private let onContinue: () -> Void
+
+      // MARK: - Initialization
+      init(gameManager: GameManager, onCancel: @escaping () -> Void, onContinue: @escaping () -> Void) {
+          self.gameManager = gameManager
+          self.onCancel = onCancel
+          self.onContinue = onContinue
+          setupData()
+      }
+
+      // MARK: - Setup
+      private func setupData() {
+          let player = gameManager.currentPlayer()
+
+          // Mise à jour des propriétés du player
+          playerName = player.name
+          playerIcon = player.icon
+          currentTurnScore = player.currentTurnScore
+          currentRound = gameManager.currentRound
+
+          // Mise à jour des propriétés du bouton
+          updateButtonState()
+      }
+
+      // MARK: - Actions
+      func cancelButton() {
+          onCancel()
+      }
+
+      func continueButton() {
+          onContinue()
+      }
+
+      // MARK: - Private Methods
+      private func updateButtonState() {
+          isLastPlayer = gameManager.isLastPlayer()
+
+          if isLastPlayer {
+              nextButtonTitle = "TERMINER LE ROUND"
+              nextButtonSubtitle = "Voir les résultats du round"
+              nextButtonIcon = "checkmark.circle.fill"
+          } else {
+              nextButtonTitle = "JOUEUR SUIVANT"
+              nextButtonIcon = "arrow.right.circle.fill"
+
+              if let nextPlayer = gameManager.getNextPlayer() {
+                  nextButtonSubtitle = "Au tour de \(nextPlayer.name)"
+              } else {
+                  nextButtonSubtitle = "Prochain joueur"
+              }
+          }
+      }
+  }

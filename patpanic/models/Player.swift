@@ -8,17 +8,16 @@
 import Foundation
 
 class Player: Hashable, Identifiable {
-    let id = UUID()
     
     static func == (lhs: Player, rhs: Player) -> Bool {
-            return lhs.name == rhs.name
+            return lhs.id == rhs.id
     }
     
     func hash(into hasher: inout Hasher) {
-            hasher.combine(name)  
+            hasher.combine(id)
     }
     
-    
+    let id = UUID()
     let name:String
     var icon:String = "🕺"
     var personalCard: Card? = nil

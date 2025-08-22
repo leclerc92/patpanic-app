@@ -8,76 +8,88 @@
 import SwiftUI
 
 struct RoundInstructionView: View {
-    
-    let onCancel: () -> Void
-    let onContinue: () -> Void
-    @ObservedObject var gameManager: GameManager
-    let roundConst: RoundConfig
+    @StateObject private var viewModel: RoundInstructionViewModel
     
     init(
         onCancel: @escaping () -> Void,
         onContinue: @escaping () -> Void,
         gameManager: GameManager
     ) {
-        self.onCancel = onCancel
-        self.onContinue = onContinue
-        self.gameManager = gameManager
-        self.roundConst = gameManager.getCurrentRoundConfig()
+        self._viewModel = StateObject(
+            wrappedValue: RoundInstructionViewModel(
+                gameManager: gameManager,
+                onCancel: onCancel,
+                onContinue: onContinue
+            )
+        )
     }
     
     var body: some View {
         ZStack {
-            // Arrière-plan gradient
-            LinearGradient(
-                colors: [
-                    Color.blue.opacity(0.15),
-                    Color.purple.opacity(0.15),
-                    Color.pink.opacity(0.15)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            backgroundGradient
             
             VStack {
-                
-                HStack {
-                    CancelButton(action: onCancel)
-                    Spacer()
-                }
-                
+                headerSection
                 Spacer()
-                
-                GameTitle(
-                    icon: nil,
-                    title: "MANCHE \(gameManager.currentRound.rawValue)",
-                    subtitle: nil
-                )
-                
-                GameTitle(
-                    icon: roundConst.icon,
-                    title: roundConst.title,
-                    subtitle: nil
-                )
-                
+                roundTitleSection
+                gameInstructionsSection
                 Spacer()
-                
-                InstructionsSection(rules: roundConst.rules)
-                    .padding()
-                
-                ButtonMenu.primaryButton(
-                           title: "J'ai compris ! ",
-                           subtitle: "Arrete don' le blabla !",
-                           icon: "play.rectangle"
-                       ) {
-                           onContinue()
-                }
-                
-                
+                instructionsSection
+                continueButton
             }.padding()
         }
-        
-        
+    }
+    
+    // MARK: - View Components
+    private var backgroundGradient: some View {
+        LinearGradient(
+            colors: [
+                Color.blue.opacity(0.15),
+                Color.purple.opacity(0.15),
+                Color.pink.opacity(0.15)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+    }
+    
+    private var headerSection: some View {
+        HStack {
+            CancelButton(action: viewModel.cancelButton)
+            Spacer()
+        }
+    }
+    
+    private var roundTitleSection: some View {
+        GameTitle(
+            icon: nil,
+            title: viewModel.roundNumber,
+            subtitle: nil
+        )
+    }
+    
+    private var gameInstructionsSection: some View {
+        GameTitle(
+            icon: viewModel.roundIcon,
+            title: viewModel.roundTitle,
+            subtitle: nil
+        )
+    }
+    
+    private var instructionsSection: some View {
+        InstructionsSection(rules: viewModel.roundRules)
+            .padding()
+    }
+    
+    private var continueButton: some View {
+        ButtonMenu.primaryButton(
+            title: "J'ai compris !",
+            subtitle: "Arrete don' le blabla !",
+            icon: "play.rectangle"
+        ) {
+            viewModel.continueButton()
+        }
     }
 }
 

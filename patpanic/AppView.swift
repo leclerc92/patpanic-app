@@ -23,7 +23,7 @@ struct AppView: View {
             )
             
         case .roundInstruction:
-            InstructionView(
+            RoundInstructionView(
                 onCancel: {
                     gameManager.setState(state: .playersSetup)
                 },
@@ -48,7 +48,7 @@ struct AppView: View {
             GameView(gameManager: gameManager,)
             
         case .playerTurnResult:
-            PlayerTurnResult(
+            PlayerTurnResultView(
                 gameManager: gameManager,
                 onCancel: {
                     gameManager.setState(state: .playersSetup)
