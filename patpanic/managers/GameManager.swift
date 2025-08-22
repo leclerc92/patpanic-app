@@ -26,7 +26,6 @@ class GameManager: ObservableObject {
     @Published private(set) var currentRound:Round = .round1
     @Published private(set) var state:GameState = .playersSetup
     @Published private(set) var currentPlayerIndex:Int = 0
-    @Published var gameConst = GameConst()
     @Published private(set) var logic: BaseRoundLogic!
     
     init() {
@@ -179,7 +178,7 @@ class GameManager: ObservableObject {
     
     func generateCardsForCurrentRound() {
         let roundNumber = getRoundNumber()
-        let cardsNeeded = gameConst.CARDPERPLAYER * players.count
+        let cardsNeeded = GameConst.CARDPERPLAYER * players.count
 
         cardManager.generateGameCards(
             count: cardsNeeded,
@@ -191,7 +190,7 @@ class GameManager: ObservableObject {
     
     func generateCardsForCategory(_ category: String) {
         let roundNumber = getRoundNumber()
-        let cardsNeeded = gameConst.CARDPERPLAYER * players.count
+        let cardsNeeded = GameConst.CARDPERPLAYER * players.count
     
         cardManager.generateGameCards(
             count: cardsNeeded,

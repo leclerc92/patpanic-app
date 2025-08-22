@@ -22,7 +22,6 @@ class PlayerSetupViewModel: ObservableObject {
     
     // MARK: - Dependencies
     let gameManager: GameManager  // Expose pour PlayerConfigView
-    private let gameConst = GameConst()
     private let onContinue: () -> Void
     private var cancellables = Set<AnyCancellable>()
     
@@ -46,7 +45,7 @@ class PlayerSetupViewModel: ObservableObject {
     }
     
     private func updateGameState() {
-        canStartGame = players.count >= gameConst.MINPLAYERS
+        canStartGame = players.count >= GameConst.MINPLAYERS
     }
     
     // MARK: - Public Methods
@@ -101,15 +100,15 @@ class PlayerSetupViewModel: ObservableObject {
     
     // MARK: - Computed Properties
     var gameTitle: String {
-        gameConst.GAMETITLE
+        GameConst.GAMETITLE
     }
     
     var gameIcon: String {
-        gameConst.GAMEICON
+        GameConst.GAMEICON
     }
     
     var minPlayers: Int {
-        gameConst.MINPLAYERS
+        GameConst.MINPLAYERS
     }
     
     var playersCount: Int {
@@ -149,7 +148,7 @@ class PlayerSetupViewModel: ObservableObject {
     }
     
     private func validateGameStart() -> Bool {
-        guard players.count >= gameConst.MINPLAYERS else {
+        guard players.count >= GameConst.MINPLAYERS else {
             showError("Il faut au moins 2 joueurs pour commencer")
             return false
         }

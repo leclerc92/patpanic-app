@@ -68,9 +68,6 @@ func currentPlayer() -> Player {
 
 ## 🔧 OPTIMISATIONS RECOMMANDÉES
 
-### 15. **CONSTANTS MANAGEMENT**
-**Actuel**: GameConst en struct avec let  
-**Recommandation**: Enum avec static let pour de meilleures performances
 
 ### 16. **PREVIEW IMPROVEMENTS**
 **Problème**: Previews créent des données mockées inline  

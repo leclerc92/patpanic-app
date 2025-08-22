@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct GameConst {
+enum GameConst {
     
-    let GAMETITLE = "PAT'PANIC"
-    let GAMEICON = "🫣"
-    let MINPLAYERS =  2
-    let MAXPLAYERS =  8
-    let NBROUND = 3
-    let CARDPERPLAYER = 30
+    static let GAMETITLE = "PAT'PANIC"
+    static let GAMEICON = "🫣"
+    static let MINPLAYERS = 2
+    static let MAXPLAYERS = 8
+    static let NBROUND = 3
+    static let CARDPERPLAYER = 30
     
 }
