@@ -101,9 +101,9 @@ struct GameView: View {
                             endRadius: 100
                         )
                     )
-                    .scaleEffect(viewModel.isPlayerNameEjecting ? 2.0 : 0.5)
-                    .opacity(viewModel.isPlayerNameEjecting ? 0.7 : 0)
-                    .animation(.easeInOut(duration: 0.5), value: viewModel.isPlayerNameEjecting)
+                    .scaleEffect(viewModel.isPlayerNameEjecting ? 2.5 : 0.3)
+                    .opacity(viewModel.isPlayerNameEjecting ? 0.8 : 0)
+                    .animation(.interpolatingSpring(stiffness: 300, damping: 25), value: viewModel.isPlayerNameEjecting)
             }
             
             // Nom du joueur
@@ -127,7 +127,7 @@ struct GameView: View {
             )
         }
         .padding(.bottom, viewModel.isRound3 ? 35 : 20)
-        .animation(.spring(response: 0.5, dampingFraction: 0.7), value: viewModel.isPlayerNameEjecting)
+        .animation(.interpolatingSpring(stiffness: 400, damping: 30), value: viewModel.isPlayerNameEjecting)
     }
     
     private var cardSection: some View {
@@ -219,8 +219,8 @@ struct GameView: View {
                 Spacer()
             }
         }
-        .transition(.opacity)
-        .animation(.easeInOut(duration: 0.3), value: viewModel.showPauseOverlay)
+        .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 0.8)), removal: .opacity.combined(with: .scale(scale: 1.1))))
+        .animation(.interpolatingSpring(stiffness: 500, damping: 35), value: viewModel.showPauseOverlay)
     }
     
 }

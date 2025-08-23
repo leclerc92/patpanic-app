@@ -186,10 +186,10 @@ struct GameCard: View {
             x: 0,
             y: isPressed ? 4 : 8
         )
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
-        .animation(.spring(response: 0.4, dampingFraction: 0.6), value: bounceAnimation)
+        .animation(.interpolatingSpring(stiffness: 600, damping: 35), value: isPressed)
+        .animation(.interpolatingSpring(stiffness: 200, damping: 20), value: bounceAnimation)
         .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-            withAnimation(.easeInOut(duration: 0.15)) {
+            withAnimation(.interpolatingSpring(stiffness: 700, damping: 40)) {
                 isPressed = pressing
             }
         }, perform: {})
@@ -218,22 +218,32 @@ struct GameCard: View {
     }
     
     private func ejectCard() {
-        // Animation d'éjection vers la droite avec rotation
-        withAnimation(.spring(response: 0.8, dampingFraction: 0.7)) {
-            ejectionOffset = CGSize(width: 400, height: -50)
-            ejectionRotation = Double.random(in: 15...25)
+        // Animation d'éjection ultra-rapide et fluide avec effet de vitesse
+        let randomDirection = Bool.random()
+        let exitX: CGFloat = randomDirection ? 500 : -500
+        let exitY: CGFloat = CGFloat.random(in: -80...80)
+        let rotation = randomDirection ? Double.random(in: 20...35) : Double.random(in: -35...(-20))
+        
+        withAnimation(.interpolatingSpring(stiffness: 400, damping: 25)) {
+            ejectionOffset = CGSize(width: exitX, height: exitY)
+            ejectionRotation = rotation
             ejectionOpacity = 0
         }
     }
     
     private func resetCard() {
-        // Réinitialiser la position pour une nouvelle carte
-        ejectionOffset = CGSize(width: -400, height: 50)
-        ejectionRotation = Double.random(in: -25...(-15))
+        // Position initiale depuis l'arrière avec effet de profondeur
+        let randomEntry = Bool.random()
+        let entryX: CGFloat = randomEntry ? -450 : 450
+        let entryY: CGFloat = CGFloat.random(in: -60...60)
+        let entryRotation = randomEntry ? Double.random(in: -30...(-15)) : Double.random(in: 15...30)
+        
+        ejectionOffset = CGSize(width: entryX, height: entryY)
+        ejectionRotation = entryRotation
         ejectionOpacity = 0
         
-        // Animation d'entrée depuis la gauche
-        withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.2)) {
+        // Animation d'entrée rapide et dynamique avec rebond subtil
+        withAnimation(.interpolatingSpring(stiffness: 350, damping: 30).delay(0.05)) {
             ejectionOffset = .zero
             ejectionRotation = 0
             ejectionOpacity = 1
@@ -365,14 +375,14 @@ struct GameCardDemoView: View {
         // Déclencher l'éjection
         isEjecting = true
         
-        // Changer le thème après un délai
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+        // Changer le thème après un délai ultra-court pour une transition fluide
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
             currentIndex = newIndex
             currentTheme = themes[newIndex].0
             currentColors = themes[newIndex].1
             
-            // Faire rentrer la nouvelle carte
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            // Faire rentrer la nouvelle carte immédiatement
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.02) {
                 isEjecting = false
             }
         }
