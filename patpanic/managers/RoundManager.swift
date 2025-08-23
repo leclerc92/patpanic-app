@@ -50,8 +50,8 @@ enum Round: Int, CaseIterable {
                 nbTurns: 3,
                 rules: rules1,
                 timer: 30,
-                seuil1: 0...1,   // Très faible
-                seuil2: 2...3,   // Faible  
+                seuil1: -30...1,   // Très faible
+                seuil2: 2...3,   // Faible
                 seuil3: 4...5,   // Moyen
                 seuil4: 6...8,   // Bien
                 seuil5: 9...15   // Excellent
