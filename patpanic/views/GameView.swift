@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GameView: View {
     @StateObject private var viewModel: GameViewModel
+    @State private var cardIntroScale: CGFloat = 1.0
     
     init(gameManager: GameManager) {
         self._viewModel = StateObject(
@@ -37,6 +38,14 @@ struct GameView: View {
         }
         .onAppear {
             viewModel.viewDidAppear()
+            
+            // Animation d'introduction pour Round 3
+            if viewModel.isRound3 {
+                cardIntroScale = 2.2
+                withAnimation(.interpolatingSpring(stiffness: 200, damping: 25).delay(0.5)) {
+                    cardIntroScale = 1.0
+                }
+            }
         }
         .onDisappear {
             viewModel.viewWillDisappear()
@@ -139,6 +148,7 @@ struct GameView: View {
                     isEjecting: viewModel.isRound3 ? false : viewModel.isCardEjecting,
                     onPause: viewModel.togglePause
                 )
+                .scaleEffect(viewModel.isRound3 ? cardIntroScale : 1.0)
             } else {
                 Text("Plus de cartes disponibles")
                     .font(.title2)

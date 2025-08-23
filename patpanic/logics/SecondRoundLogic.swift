@@ -24,6 +24,7 @@ class SecondRoundLogic : BaseRoundLogic {
     override func passCard() {
         _ = gameManager.getNextCard()
         gameManager.currentPlayer().decreaseScore(getNbCardExpectedResponses())
+        print(gameManager.cardManager.cards.count)
     }
     
     

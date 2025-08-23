@@ -55,8 +55,7 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     
     func prepareCards() {
         // Implémentation par défaut : générer des cartes normalement
-        let nbCard = GameConst.CARDPERPLAYER - gameManager.cardManager.cards.count
-        gameManager.cardManager.generateGameCards(count: nbCard, round: gameManager.currentRound.rawValue)
+        gameManager.cardManager.generateGameCards(count: GameConst.CARDPERPLAYER, round: gameManager.currentRound.rawValue)
     }
     
     func startTurn() {

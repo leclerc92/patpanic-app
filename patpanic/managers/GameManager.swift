@@ -25,7 +25,7 @@ class GameManager: ObservableObject {
     @Published var gameState: GameState = .playersSetup
     
     @Published private(set) var players: [Player] = []
-    @Published private(set) var currentRound:Round = .round2
+    @Published private(set) var currentRound:Round = .round3
     @Published private(set) var currentPlayerIndex:Int = 0
     @Published private(set) var logic: BaseRoundLogic!
     
