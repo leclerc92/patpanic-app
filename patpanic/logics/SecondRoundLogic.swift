@@ -22,9 +22,17 @@ class SecondRoundLogic : BaseRoundLogic {
     
     /// Passer une carte : juste passer à la carte suivante (sans points)
     override func passCard() {
+        gameManager.currentPlayer().currentTurnPassedCard += 1
         _ = gameManager.getNextCard()
         gameManager.currentPlayer().decreaseTurnScore(getNbCardExpectedResponses())
         print(gameManager.cardManager.cards.count)
+    }
+    
+    override func endPlayerTurn() {
+        gameManager.currentPlayer().decreaseTurnScore(getNbCardExpectedResponses())
+        gameManager.currentPlayer().decreaseRemainingTurn()
+        gameManager.currentPlayer().isMainPlayer = false
+        gameManager.setState(state: .playerTurnResult)
     }
     
     

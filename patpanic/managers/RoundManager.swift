@@ -49,7 +49,7 @@ enum Round: Int, CaseIterable {
                 icon: "🦉",
                 nbTurns: 3,
                 rules: rules1,
-                timer: 30,
+                timer: 1,
                 seuil1: -30...1,   // Très faible
                 seuil2: 2...3,   // Faible
                 seuil3: 4...5,   // Moyen

@@ -69,7 +69,8 @@ struct PlayerTurnResultView: View {
                   ScoreCard.forRound(
                       score: viewModel.currentTurnScore,
                       round: viewModel.currentRound,
-                      playerIcon: viewModel.playerIcon
+                      playerIcon: viewModel.playerIcon,
+                      passedCard: viewModel.currentTurnPassedCard
                   )
 
                   Spacer(minLength: 100)
@@ -99,10 +100,9 @@ struct PlayerTurnResultView: View {
 #Preview {
     let gameManager = GameManager()
     gameManager.addPlayer(name: "Jean_MICHEL DELE")
-    gameManager.currentPlayer().addTurnScore(25)
+    gameManager.currentPlayer().addTurnScore(-15)
     
     return PlayerTurnResultView(
         gameManager: gameManager,
-
     )
 }

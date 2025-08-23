@@ -70,6 +70,7 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     
     func passCard() {
         _ = gameManager.getNextCard()
+        gameManager.currentPlayer().currentTurnPassedCard += 1
     }
     
     func timerFinished() {

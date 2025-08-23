@@ -15,6 +15,7 @@ struct ScoreCard: View {
     let score: Int
     let colors: [Color]
     let shadowColor: Color
+    let passedCard: Int?
     
     @State private var animateScore = false
     @State private var animateIcon = false
@@ -25,7 +26,8 @@ struct ScoreCard: View {
         secondaryMessage: String? = nil,
         score: Int,
         colors: [Color] = [.blue, .purple],
-        shadowColor: Color = .purple
+        shadowColor: Color = .purple,
+        passedCard: Int? = nil
     ) {
         self.icon = icon
         self.primaryMessage = primaryMessage
@@ -33,6 +35,8 @@ struct ScoreCard: View {
         self.score = score
         self.colors = colors
         self.shadowColor = shadowColor
+        self.passedCard = passedCard
+        
     }
     
     var body: some View {
@@ -47,21 +51,30 @@ struct ScoreCard: View {
             
             // Score principal
             VStack(spacing: 8) {
-                Text(score >= 0 ? "+\(score)" : "\(score)")
-                    .font(.system(size: 64, weight: .black, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: colors,
-                            startPoint: .top,
-                            endPoint: .bottom
+                HStack {
+                    Text(score >= 0 ? "+\(score)" : "\(score) ")
+                        .font(.system(size: 64, weight: .black, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: colors,
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
                         )
-                    )
-                    .scaleEffect(animateScore ? 1.1 : 1.0)
-                    .animation(.spring(response: 0.8, dampingFraction: 0.6), value: animateScore)
+                        .scaleEffect(animateScore ? 1.1 : 1.0)
+                        .animation(.spring(response: 0.8, dampingFraction: 0.6), value: animateScore)
+                    
+                    Text("pts")
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                        .foregroundColor(.secondary)
+                }
                 
-                Text("points")
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
-                    .foregroundColor(.secondary)
+                if let passedCard = passedCard {
+                    Text("\(passedCard) cartes passées")
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
+                        .foregroundColor(.secondary)
+                }
+                    
             }
             
             // Messages
@@ -120,7 +133,8 @@ extension ScoreCard {
     static func excellent(
         score: Int,
         primaryMessage: String = "Excellent !",
-        secondaryMessage: String? = "Performance remarquable !"
+        secondaryMessage: String? = "Performance remarquable !",
+        passedCard: Int? = nil
     ) -> ScoreCard {
         ScoreCard(
             icon: "🔥",
@@ -128,7 +142,8 @@ extension ScoreCard {
             secondaryMessage: secondaryMessage,
             score: score,
             colors: [.green, .mint],
-            shadowColor: .green
+            shadowColor: .green,
+            passedCard: passedCard
         )
     }
     
@@ -136,7 +151,8 @@ extension ScoreCard {
     static func great(
         score: Int,
         primaryMessage: String = "Très bien !",
-        secondaryMessage: String? = "Continue comme ça !"
+        secondaryMessage: String? = "Continue comme ça !",
+        passedCard: Int? = nil
     ) -> ScoreCard {
         ScoreCard(
             icon: "😎",
@@ -144,7 +160,8 @@ extension ScoreCard {
             secondaryMessage: secondaryMessage,
             score: score,
             colors: [.blue, .cyan],
-            shadowColor: .blue
+            shadowColor: .blue,
+            passedCard: passedCard
         )
     }
     
@@ -152,7 +169,8 @@ extension ScoreCard {
     static func good(
         score: Int,
         primaryMessage: String = "Bien joué !",
-        secondaryMessage: String? = "Pas mal du tout !"
+        secondaryMessage: String? = "Pas mal du tout !",
+        passedCard: Int? = nil
     ) -> ScoreCard {
         ScoreCard(
             icon: "👍",
@@ -160,7 +178,8 @@ extension ScoreCard {
             secondaryMessage: secondaryMessage,
             score: score,
             colors: [.orange, .yellow],
-            shadowColor: .orange
+            shadowColor: .orange,
+            passedCard: passedCard
         )
     }
     
@@ -168,7 +187,8 @@ extension ScoreCard {
     static func average(
         score: Int,
         primaryMessage: String = "Pas mal !",
-        secondaryMessage: String? = "Tu peux faire mieux !"
+        secondaryMessage: String? = "Tu peux faire mieux !",
+        passedCard: Int? = nil
     ) -> ScoreCard {
         ScoreCard(
             icon: "🙂",
@@ -176,7 +196,8 @@ extension ScoreCard {
             secondaryMessage: secondaryMessage,
             score: score,
             colors: [.purple, .indigo],
-            shadowColor: .purple
+            shadowColor: .purple,
+            passedCard: passedCard
         )
     }
     
@@ -184,7 +205,8 @@ extension ScoreCard {
     static func poor(
         score: Int,
         primaryMessage: String = "Allez !",
-        secondaryMessage: String? = "La prochaine sera meilleure !"
+        secondaryMessage: String? = "La prochaine sera meilleure !",
+        passedCard: Int? = nil
     ) -> ScoreCard {
         ScoreCard(
             icon: "😅",
@@ -192,7 +214,8 @@ extension ScoreCard {
             secondaryMessage: secondaryMessage,
             score: score,
             colors: [.gray, .secondary],
-            shadowColor: .gray
+            shadowColor: .gray,
+            passedCard: passedCard
         )
     }
     
@@ -200,7 +223,8 @@ extension ScoreCard {
     static func penalty(
         score: Int,
         primaryMessage: String = "Oups !",
-        secondaryMessage: String? = "Attention la prochaine fois !"
+        secondaryMessage: String? = "Attention la prochaine fois !",
+        passedCard: Int? = nil
     ) -> ScoreCard {
         ScoreCard(
             icon: "😬",
@@ -208,7 +232,8 @@ extension ScoreCard {
             secondaryMessage: secondaryMessage,
             score: score,
             colors: [.red, .pink],
-            shadowColor: .red
+            shadowColor: .red,
+            passedCard: passedCard
         )
     }
     
@@ -216,7 +241,8 @@ extension ScoreCard {
     static func bonus(
         score: Int,
         primaryMessage: String = "BONUS !",
-        secondaryMessage: String? = "Fantastique !"
+        secondaryMessage: String? = "Fantastique !",
+        passedCard: Int? = nil
     ) -> ScoreCard {
         ScoreCard(
             icon: "⭐",
@@ -224,7 +250,8 @@ extension ScoreCard {
             secondaryMessage: secondaryMessage,
             score: score,
             colors: [.yellow, .orange],
-            shadowColor: .yellow
+            shadowColor: .yellow,
+            passedCard: passedCard
         )
     }
     
@@ -233,7 +260,8 @@ extension ScoreCard {
         score: Int,
         comboCount: Int,
         primaryMessage: String? = nil,
-        secondaryMessage: String? = nil
+        secondaryMessage: String? = nil,
+        passedCard: Int? = nil
     ) -> ScoreCard {
         ScoreCard(
             icon: "🚀",
@@ -241,7 +269,8 @@ extension ScoreCard {
             secondaryMessage: secondaryMessage ?? "Tu es en feu !",
             score: score,
             colors: [.pink, .purple],
-            shadowColor: .pink
+            shadowColor: .pink,
+            passedCard: passedCard
         )
     }
     
@@ -249,7 +278,8 @@ extension ScoreCard {
     static func final(
         score: Int,
         primaryMessage: String = "Score final",
-        secondaryMessage: String? = "Partie terminée !"
+        secondaryMessage: String? = "Partie terminée !",
+        passedCard: Int? = nil
     ) -> ScoreCard {
         ScoreCard(
             icon: "🏆",
@@ -257,7 +287,8 @@ extension ScoreCard {
             secondaryMessage: secondaryMessage,
             score: score,
             colors: [.yellow, .orange],
-            shadowColor: .yellow
+            shadowColor: .yellow,
+            passedCard: passedCard
         )
     }
 }
@@ -270,7 +301,9 @@ extension ScoreCard {
     static func forRound(
         score: Int,
         round: Round,
-        playerIcon: String
+        playerIcon: String,
+        passedCard: Int?
+
     ) -> ScoreCard {
         let config = round.config
         
@@ -321,15 +354,15 @@ extension ScoreCard {
         // Créer la ScoreCard appropriée
         switch cardType {
         case .poor:
-            return .poor(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage)
+            return .poor(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage, passedCard: passedCard)
         case .average:
-            return .average(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage)
+            return .average(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage,passedCard: passedCard)
         case .good:
-            return .good(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage)
+            return .good(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage,passedCard: passedCard)
         case .great:
-            return .great(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage)
+            return .great(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage,passedCard: passedCard)
         case .excellent:
-            return .excellent(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage)
+            return .excellent(score: score, primaryMessage: primaryMessage, secondaryMessage: secondaryMessage,passedCard: passedCard)
         }
     }
     

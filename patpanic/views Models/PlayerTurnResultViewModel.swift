@@ -13,6 +13,7 @@ import SwiftUI
       @Published var nextButtonIcon: String = ""
       @Published var isLastPlayer: Bool = false
       @Published var allPlayerMain: Bool = false
+      @Published var currentTurnPassedCard: Int = 0
 
       // MARK: - Dependencies
       private let gameManager: GameManager
@@ -33,8 +34,9 @@ import SwiftUI
           playerName = player.name
           playerIcon = player.icon
           currentTurnScore = player.currentTurnScore
+          currentTurnPassedCard = player.currentTurnPassedCard
           currentRound = gameManager.currentRound
-
+          
           // Mise à jour des propriétés du bouton
           updateButtonState()
       }

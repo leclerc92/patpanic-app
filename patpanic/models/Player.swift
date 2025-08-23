@@ -24,11 +24,12 @@ class Player: Hashable, Identifiable {
     private(set) var score:Int = 0
     private(set) var currentRoundScore = 0
     private(set) var currentTurnScore = 0
-    var joker:Bool = false
+    var currentTurnPassedCard:Int = 0
     var isMainPlayer:Bool = false
     var hasBeenMainPlayer:Bool = false
     var isEliminated:Bool = false
     private(set) var remainingTurn: Int = 0
+    
     
     init(name: String) {
         self.name = name
@@ -46,6 +47,7 @@ class Player: Hashable, Identifiable {
         score += currentTurnScore
         if score < 0 { score = 0 }
         currentTurnScore = 0
+        currentTurnPassedCard = 0
     }
     
     

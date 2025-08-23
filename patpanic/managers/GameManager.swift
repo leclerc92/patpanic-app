@@ -62,6 +62,7 @@ class GameManager: ObservableObject {
     func continueWithNextRound() {
         resetPlayersMainState()
         resetPlayerEliminated()
+        resetPlayerCardPassed()
         nextRound()
         currentPlayerIndex = 0  // Retour au premier joueur pour le nouveau round
         goToRoundInstructionView(needSetupRound: true)
@@ -241,6 +242,12 @@ class GameManager: ObservableObject {
     func resetPlayerEliminated() {
         for player in players {
             player.isEliminated = false
+        }
+    }
+    
+    func resetPlayerCardPassed() {
+        for player in players {
+            player.currentTurnPassedCard = 0
         }
     }
     
