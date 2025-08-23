@@ -97,6 +97,8 @@ class GameViewModel: ObservableObject {
         animateCardEjection {
             // 2. Logique métier pendant l'animation
             self.gameManager.logic.passCard()
+            self.updateCurrentPlayer()
+
         }
     }
     

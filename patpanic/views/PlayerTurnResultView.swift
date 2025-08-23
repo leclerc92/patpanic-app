@@ -64,7 +64,7 @@ struct PlayerTurnResultView: View {
                       playerName: viewModel.playerName,
                       icon: viewModel.playerIcon
                   )
-                  .scaleEffect(1.5)
+                  
 
                   ScoreCard.forRound(
                       score: viewModel.currentTurnScore,
@@ -98,7 +98,7 @@ struct PlayerTurnResultView: View {
 
 #Preview {
     let gameManager = GameManager()
-    gameManager.addPlayer(name: "Jean-Michel")
+    gameManager.addPlayer(name: "Jean_MICHEL DELE")
     gameManager.currentPlayer().addTurnScore(25)
     
     return PlayerTurnResultView(

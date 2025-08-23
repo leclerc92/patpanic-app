@@ -54,6 +54,7 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     
     func startTurn() {
         _ = gameManager.getNextCard()
+        gameManager.setCurrentPlayerMain()
         gameManager.startRoundTimer()
     }
     
@@ -71,12 +72,12 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
         
     func endPlayerTurn() {
         gameManager.currentPlayer().decreaseRemainingTurn()
+        gameManager.currentPlayer().isMainPlayer = false
         gameManager.setState(state: .playerTurnResult)
     }
     
     func validatePlayerTurn () {
         gameManager.currentPlayer().validateTurn()
-        gameManager.goToNextPlayer()
     }
     
     func getNbCardExpectedResponses() -> Int {

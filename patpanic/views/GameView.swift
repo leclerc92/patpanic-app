@@ -19,9 +19,7 @@ struct GameView: View {
     var body: some View {
         ZStack {
             backgroundGradient
-            
             VStack {
-                headerSection
                 titleAndTimerSection
                 Spacer()
                 playerSection
@@ -54,12 +52,7 @@ struct GameView: View {
         .ignoresSafeArea()
     }
     
-    private var headerSection: some View {
-        HStack {
-            Spacer()
-            CancelButton(action: viewModel.resetGame)
-        }.padding()
-    }
+
     
     private var titleAndTimerSection: some View {
         VStack {

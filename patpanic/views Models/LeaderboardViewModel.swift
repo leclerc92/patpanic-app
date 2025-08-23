@@ -43,13 +43,19 @@ class LeaderboardViewModel: ObservableObject {
     
     // MARK: - Actions
     func cancelButton() {
+        gameManager.resetGame()
     }
     
     func continueButton() {
         
-        if isRoundEnd {
-            gameManager.goToNextRound()
+        if isRoundEnd && !gameManager.isLastRound() {
+            // Continuer au round suivant
+            gameManager.continueWithNextRound()
+        } else if isRoundEnd && gameManager.isLastRound() {
+            // Aller au classement final (fin de partie)
+            gameManager.goToGameResult()
         } else {
+            // Nouvelle partie
             gameManager.resetGame()
         }
         
@@ -64,7 +70,7 @@ class LeaderboardViewModel: ObservableObject {
     private func updateTitleSection() {
         if isRoundEnd {
             titleIcon = "🏁"
-            titleText = "FIN DU ROUND \(gameManager.currentRound.rawValue)"
+            titleText = "FIN DE LA MANCHE \(gameManager.currentRound.rawValue)"
             titleSubtitle = "Classement temporaire"
             showWinnerPodium = false
         } else {
@@ -78,7 +84,7 @@ class LeaderboardViewModel: ObservableObject {
     private func updateButtonSection() {
         if isRoundEnd && !gameManager.isLastRound() {
             // Bouton pour continuer au round suivant
-            buttonTitle = "ROUND SUIVANT"
+            buttonTitle = "MANCHE SUIVANTE"
             buttonSubtitle = getNextRoundSubtitle()
             buttonIcon = "arrow.right.circle.fill"
             buttonColors = [.green, .mint]

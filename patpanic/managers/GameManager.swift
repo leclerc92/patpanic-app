@@ -25,7 +25,7 @@ class GameManager: ObservableObject {
     @Published var gameState: GameState = .playersSetup
     
     @Published private(set) var players: [Player] = []
-    @Published private(set) var currentRound:Round = .round2
+    @Published private(set) var currentRound:Round = .round3
     @Published private(set) var currentPlayerIndex:Int = 0
     @Published private(set) var logic: BaseRoundLogic!
     
@@ -38,15 +38,7 @@ class GameManager: ObservableObject {
     func setState(state: GameState) {
         gameState = state
     }
-    
-    func startGame() {
-        guard !players.isEmpty, allPlayersHaveCategory() else {
-            print("❌ Impossible de démarrer: joueurs manquants ou catégories non assignées")
-            return
-        }
-        gameState = .roundInstruction
-    }
-    
+        
     func resetGame() {
         for player in players {
             player.resetScore()
@@ -55,13 +47,49 @@ class GameManager: ObservableObject {
         gameState = .playersSetup
     }
     
-    func startPlayerTurn () {
+    func goToPlayingView() {
         let nbCard = GameConst.CARDPERPLAYER - cardManager.cards.count
         cardManager.generateGameCards(count: nbCard, round: currentRound.rawValue)
         logic.startTurn()
         gameState = .playing
     }
     
+    func continueWithNextPlayer() {
+        currentPlayer().validateTurn()
+        setToNextPlayerIndex()
+        goToPlayerInstructionView()
+    }
+    
+    func continueWithNextRound() {
+        resetPlayersMainState()
+        resetPlayerEliminated()
+        nextRound()
+        currentPlayerIndex = 0  // Retour au premier joueur pour le nouveau round
+        goToRoundInstructionView()
+    }
+    
+    func goToRoundInstructionView() {
+        gameState = .roundInstruction
+    }
+    
+    func goToPlayerInstructionView() {
+        gameState = .playerInstruction
+    }
+    
+    func goToPlayerResultView() {
+        gameState = .playerTurnResult
+    }
+    
+    func goToRoundResult() {
+        currentPlayer().validateTurn()
+        gameState = .roundResult
+    }
+    
+    func goToGameResult() {
+        currentPlayer().validateTurn()
+        gameState = .gameResult
+    }
+        
     func endPlayerTurn () {
         logic.endPlayerTurn()
     }
@@ -69,27 +97,6 @@ class GameManager: ObservableObject {
     func setupRound() {
         logic.setupRound()
     }
-    
-    func goToNextRound () {
-        nextRound()
-        resetPlayersRoundScore()
-        goToNextPlayer()
-        setState(state: .roundInstruction)
-    }
-        
-    func goToNextPlayerTurn() {
-        logic.validatePlayerTurn()
-        setState(state: .playerInstruction)
-    }
-    
-    func goToEndOfRound() {
-        logic.validatePlayerTurn()
-        setState(state: .roundResult)
-    }
-
-    
-    
-    
     
     // MARK: - PLAYER FUNCTIONS
     
@@ -115,6 +122,10 @@ class GameManager: ObservableObject {
         return players[currentPlayerIndex]
     }
     
+    func mainPlayer() -> Player? {
+        return players.first(where: { $0.isMainPlayer })
+    }
+    
     func getPlayerIndex(player: Player) -> Int? {
         return players.firstIndex(where: { $0.id == player.id })
     }
@@ -132,6 +143,10 @@ class GameManager: ObservableObject {
         return players.allSatisfy { $0.remainingTurn == 0 }
     }
     
+    func allPlayersHadBeenMain() -> Bool {
+        return players.allSatisfy { $0.hasBeenMainPlayer }
+    }
+    
     func getPlayersWithoutCategory() -> [String] {
         return players
             .filter { $0.personalCard == nil }
@@ -140,6 +155,10 @@ class GameManager: ObservableObject {
     
     func addPointToCurrentPlayer(nb: Int) {
         currentPlayer().addTurnScore(nb)
+    }
+    
+    func addPointToMainPlayer(nb: Int) {
+        mainPlayer()?.addTurnScore(nb)
     }
 
     
@@ -153,8 +172,24 @@ class GameManager: ObservableObject {
             nextIndex = (nextIndex + 1) % players.count
             let candidate = players[nextIndex]
             
-            if !candidate.isEliminated && candidate.remainingTurn > 0 {
-                return candidate
+            // Pour le round 3, on cherche le prochain joueur qui n'a pas encore été main
+            if currentRound == .round3 {
+                // Pendant un tour : ne sélectionner que les joueurs non éliminés
+                // Entre les tours : chercher le prochain qui n'a pas été main
+                if gameState == .playing {
+                    if !candidate.isEliminated && candidate.remainingTurn > 0 {
+                        return candidate
+                    }
+                } else {
+                    if !candidate.isEliminated && candidate.remainingTurn > 0 && !candidate.hasBeenMainPlayer {
+                        return candidate
+                    }
+                }
+            } else {
+                // Pour les autres rounds, logique normale
+                if !candidate.isEliminated && candidate.remainingTurn > 0 {
+                    return candidate
+                }
             }
             
         } while nextIndex != startIndex
@@ -162,7 +197,8 @@ class GameManager: ObservableObject {
         return nil
     }
     
-    func goToNextPlayer() {
+    
+    func setToNextPlayerIndex() {
         guard let nextPlayer = getNextPlayer(),
               let nextIndex = getPlayerIndex(player: nextPlayer) else { return }
         
@@ -171,6 +207,11 @@ class GameManager: ObservableObject {
     
     func isLastPlayer() -> Bool {
         return getNextPlayer() == nil
+    }
+    
+    func resetPlayersForRound() {
+        resetPlayersRoundScore()
+        resetPlayersMainState()
     }
     
     func resetPlayersScore() {
@@ -191,6 +232,28 @@ class GameManager: ObservableObject {
         }
     }
     
+    func resetPlayersMainState() {
+        for player in players {
+            player.isMainPlayer = false
+            player.hasBeenMainPlayer = false
+        }
+    }
+    
+    func resetPlayerEliminated() {
+        for player in players {
+            player.isEliminated = false
+        }
+    }
+    
+    func setCurrentPlayerMain() {
+        currentPlayer().isMainPlayer = true
+        currentPlayer().hasBeenMainPlayer = true
+    }
+    
+    func setMainPayerIsCurrentPLayer() {
+        let playerIndex = getPlayerIndex(player: mainPlayer()!)
+        currentPlayerIndex = playerIndex!
+    }
     
     
     
@@ -210,10 +273,6 @@ class GameManager: ObservableObject {
     
     private func updateLogicForCurrentRound() {
         logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
-        // Appeler setupRound après la création de la logique
-        DispatchQueue.main.async {
-            self.logic.setupRound()
-        }
     }
     
     func isLastRound() -> Bool {
@@ -295,6 +354,7 @@ class GameManager: ObservableObject {
         print("Nb cartes : \(cardManager.cards.count)")
         print("Nb cartes utilisées : \(cardManager.usedCards.count)")
         print("Joueur actuel : \(currentPlayerIndex) - \(players[currentPlayerIndex].name)")
+        print("Joueur main : \(String(describing: mainPlayer()?.name))" )
         print("dernier joueur du round : \(isLastPlayer())")
         print("-----------------------------")
 

@@ -44,8 +44,7 @@ class RoundInstructionViewModel: ObservableObject {
     }
     
     func continueButton() {
-        gameManager.setState(state: .playerInstruction)
-        gameManager.displayGameState()
+        gameManager.goToPlayerInstructionView()
     }
     
     func viewDidAppear () {

@@ -36,7 +36,7 @@ enum Round: Int, CaseIterable {
                 icon: "🐍",
                 nbTurns: 1,
                 rules: rules1,
-                timer: 5,
+                timer: 2,
                 seuil1: 0...2,   // Très faible
                 seuil2: 3...5,   // Faible  
                 seuil3: 6...8,   // Moyen
@@ -49,7 +49,7 @@ enum Round: Int, CaseIterable {
                 icon: "🦉",
                 nbTurns: 3,
                 rules: rules1,
-                timer: 20,
+                timer: 30,
                 seuil1: 0...1,   // Très faible
                 seuil2: 2...3,   // Faible  
                 seuil3: 4...5,   // Moyen
@@ -62,7 +62,7 @@ enum Round: Int, CaseIterable {
                 icon: "🐝",
                 nbTurns: 1,
                 rules: rules1,
-                timer: 15,
+                timer: 2,
                 seuil1: 0...2,   // Très faible
                 seuil2: 3...4,   // Faible  
                 seuil3: 5...6,   // Moyen

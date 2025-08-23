@@ -85,7 +85,7 @@ class PlayerSetupViewModel: ObservableObject {
         let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
         impactFeedback.impactOccurred()
         
-        gameManager.startGame()
+        gameManager.goToRoundInstructionView()
         
     }
     

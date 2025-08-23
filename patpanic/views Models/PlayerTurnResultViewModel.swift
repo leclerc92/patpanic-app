@@ -12,6 +12,7 @@ import SwiftUI
       @Published var nextButtonSubtitle: String = ""
       @Published var nextButtonIcon: String = ""
       @Published var isLastPlayer: Bool = false
+      @Published var allPlayerMain: Bool = false
 
       // MARK: - Dependencies
       private let gameManager: GameManager
@@ -45,9 +46,9 @@ import SwiftUI
 
       func continueButton() {
           if isLastPlayer {
-              gameManager.goToEndOfRound()
+              gameManager.goToRoundResult()
           } else {
-              gameManager.goToNextPlayerTurn()
+              gameManager.continueWithNextPlayer()
           }
       }
 
@@ -55,8 +56,8 @@ import SwiftUI
       private func updateButtonState() {
           isLastPlayer = gameManager.isLastPlayer()
 
-          if isLastPlayer {
-              nextButtonTitle = "TERMINER LE ROUND"
+          if isLastPlayer  {
+              nextButtonTitle = "TERMINER LA MANCHE"
               nextButtonSubtitle = "Voir les résultats du round"
               nextButtonIcon = "checkmark.circle.fill"
           } else {

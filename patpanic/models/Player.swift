@@ -26,6 +26,7 @@ class Player: Hashable, Identifiable {
     private(set) var currentTurnScore = 0
     var joker:Bool = false
     var isMainPlayer:Bool = false
+    var hasBeenMainPlayer:Bool = false
     var isEliminated:Bool = false
     private(set) var remainingTurn: Int = 0
     

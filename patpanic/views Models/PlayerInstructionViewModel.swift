@@ -60,12 +60,11 @@ import SwiftUI
       }
 
       func continuerButton() {
-          gameManager.startPlayerTurn()
-          gameManager.displayGameState()
+          gameManager.goToPlayingView()
       }
 
       func showRulesPressed() {
-          gameManager.setState(state: .roundInstruction)
+          gameManager.goToRoundInstructionView()
       }
 
       // MARK: - Private Methods
