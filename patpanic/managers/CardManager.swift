@@ -55,7 +55,6 @@ class CardManager: ObservableObject {
     private func initializeCategories() {
         guard !isInitialized else { return }
         
-        print("🔄 Initialisation des catégories...")
         let knownCategories = [
             "alimentation", "animaux", "divertissement", "festivals", "geographie",
             "intime", "langues", "litterature", "marques", "metiers", "mode",
@@ -135,7 +134,6 @@ class CardManager: ObservableObject {
         // L'ajoute immédiatement aux cartes utilisées
         usedCards.append(personalCard)
         
-        print("✅ Carte personnelle générée: '\(personalCard.theme.title)' (\(category))")
         return personalCard
     }
     

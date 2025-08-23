@@ -32,6 +32,12 @@ struct GameView: View {
                 actionButtonsSection
             }.padding()
         }
+        .onAppear {
+            viewModel.viewDidAppear()
+        }
+        .onDisappear {
+            viewModel.viewWillDisappear()
+        }
     }
     
     // MARK: - View Components
@@ -107,9 +113,9 @@ struct GameView: View {
     
     private var actionButtonsSection: some View {
         HStack {
-            RoundButton.validateButton(action: viewModel.validateCard)
-                .padding(.horizontal, 50)
             RoundButton.skipButton(action: viewModel.passCard)
+                .padding(.horizontal, 50)
+            RoundButton.validateButton(action: viewModel.validateCard)
                 .padding(.horizontal, 50)
         }.padding()
     }
@@ -117,7 +123,6 @@ struct GameView: View {
 }
 
 #Preview {
-    
     let gameManager: GameManager = GameManager()
     gameManager.addPlayer(name: "Jean-Michel welbeck")
     

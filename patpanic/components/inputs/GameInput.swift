@@ -94,12 +94,15 @@ struct GameInput: View {
                             )
                     )
                     .focused($isTextFieldFocused)
+                    .submitLabel(.done)
                     .onSubmit {
                         if !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             action()
+                        } else {
+                            isTextFieldFocused = false
                         }
                     }
-                    .onChange(of: isTextFieldFocused) { focused in
+                    .onChange(of: isTextFieldFocused) { _, focused in
                         withAnimation(.easeInOut(duration: 0.1)) {
                             isFocused = focused
                         }

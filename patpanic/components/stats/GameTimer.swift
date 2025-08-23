@@ -114,7 +114,7 @@ struct GameTimer: View {
                 y: 2
             )
         }
-        .onChange(of: timeRemaining) { newTime in
+        .onChange(of: timeRemaining) { _, newTime in
             handleTimeChange(newTime)
         }
         .onAppear {

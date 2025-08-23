@@ -10,12 +10,10 @@ import SwiftUI
 struct PlayerTurnResultView: View {
       @StateObject private var viewModel: PlayerTurnResultViewModel
 
-      init(gameManager: GameManager, onCancel: @escaping () -> Void, onContinue: @escaping () -> Void) {
+      init(gameManager: GameManager) {
           self._viewModel = StateObject(
               wrappedValue: PlayerTurnResultViewModel(
                   gameManager: gameManager,
-                  onCancel: onCancel,
-                  onContinue: onContinue
               )
           )
       }
@@ -105,7 +103,6 @@ struct PlayerTurnResultView: View {
     
     return PlayerTurnResultView(
         gameManager: gameManager,
-        onCancel: { print("Cancel") },
-        onContinue: { print("Continue") }
+
     )
 }

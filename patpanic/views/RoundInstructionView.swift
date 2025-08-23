@@ -11,15 +11,11 @@ struct RoundInstructionView: View {
     @StateObject private var viewModel: RoundInstructionViewModel
     
     init(
-        onCancel: @escaping () -> Void,
-        onContinue: @escaping () -> Void,
         gameManager: GameManager
     ) {
         self._viewModel = StateObject(
             wrappedValue: RoundInstructionViewModel(
                 gameManager: gameManager,
-                onCancel: onCancel,
-                onContinue: onContinue
             )
         )
     }
@@ -38,7 +34,11 @@ struct RoundInstructionView: View {
                 continueButton
             }.padding()
         }
+        .onAppear {
+            viewModel.viewDidAppear()
+        }
     }
+        
     
     // MARK: - View Components
     private var backgroundGradient: some View {
@@ -56,8 +56,8 @@ struct RoundInstructionView: View {
     
     private var headerSection: some View {
         HStack {
-            CancelButton(action: viewModel.cancelButton)
             Spacer()
+            CancelButton(action: viewModel.cancelButton)
         }
     }
     
@@ -95,8 +95,5 @@ struct RoundInstructionView: View {
 
 #Preview {
     RoundInstructionView(
-        onCancel: {
-        },
-        onContinue: {},
         gameManager: GameManager())
 }

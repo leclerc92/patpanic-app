@@ -26,14 +26,10 @@ import SwiftUI
 
       // MARK: - Dependencies
       private let gameManager: GameManager
-      private let onCancel: () -> Void
-      private let onContinue: () -> Void
 
       // MARK: - Initialization
-      init(gameManager: GameManager, onCancel: @escaping () -> Void, onContinue: @escaping () -> Void) {
+      init(gameManager: GameManager) {
           self.gameManager = gameManager
-          self.onCancel = onCancel
-          self.onContinue = onContinue
           setupData()
       }
 
@@ -60,15 +56,16 @@ import SwiftUI
 
       // MARK: - Actions
       func cancelButton() {
-          onCancel()
+          gameManager.resetGame()
       }
 
       func continuerButton() {
-          onContinue()
+          gameManager.startPlayerTurn()
+          gameManager.displayGameState()
       }
 
       func showRulesPressed() {
-          showRules = true
+          gameManager.setState(state: .roundInstruction)
       }
 
       // MARK: - Private Methods
@@ -77,7 +74,7 @@ import SwiftUI
           case 1:
               return MissionCard.speedChallenge(timeLimit: config.timer)
           case 2:
-              let responseCount = gameManager.logic.getNbResponses()
+              let responseCount = gameManager.logic.getNbCardExpectedResponses()
               return MissionCard.giveWords(count: responseCount)
           case 3:
               return MissionCard.eliminate()

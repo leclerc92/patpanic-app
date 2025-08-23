@@ -42,11 +42,10 @@ class Player: Hashable, Identifiable {
     
     func validateTurn () {
         currentRoundScore += currentTurnScore
+        score += currentTurnScore
+        currentTurnScore = 0
     }
     
-    func validateRound() {
-        score += currentRoundScore
-    }
     
     func decreaseScore(_ nb:Int) {
         guard score > 0 else {return}

@@ -10,12 +10,10 @@ import SwiftUI
 struct PlayerInstructionView: View {
       @StateObject private var viewModel: PlayerInstructionViewModel
 
-      init(gameManager: GameManager, onCancel: @escaping () -> Void, onContinue: @escaping () -> Void) {
+      init(gameManager: GameManager) {
           self._viewModel = StateObject(
               wrappedValue: PlayerInstructionViewModel(
                   gameManager: gameManager,
-                  onCancel: onCancel,
-                  onContinue: onContinue
               )
           )
       }
@@ -132,8 +130,6 @@ struct PlayerInstructionView: View {
 
     
      return PlayerInstructionView(
-        gameManager: gameManager,
-        onCancel: {},
-        onContinue: {},
+        gameManager: gameManager
     )
 }

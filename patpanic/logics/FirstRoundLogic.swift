@@ -14,4 +14,16 @@ class FirstRoundLogic : BaseRoundLogic {
         super.init(gameManager: gameManager, round: round)
     }
     
+    // MARK: - Logique spécifique du premier round
+    
+    /// Valider une carte : +1 point au joueur et passer à la carte suivante
+    override func validateCard() {
+        gameManager.addPointToCurrentPlayer(nb: 1)
+        _ = gameManager.getNextCard()
+    }
+    
+    /// Passer une carte : juste passer à la carte suivante (sans points)
+    override func passCard() {
+        _ = gameManager.getNextCard()
+    }
 }

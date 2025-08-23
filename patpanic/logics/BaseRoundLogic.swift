@@ -7,18 +7,21 @@
 
 import SwiftUI
 
+@MainActor
 protocol RoundLogicProtocol: ObservableObject {
     
     var roundConst: RoundConfig { get }
     
     func setupRound()
+    func startTurn()
     func validateCard()
     func passCard()
     func timerFinished()
-    func getNbResponses() -> Int
+    func getNbCardExpectedResponses() -> Int
 
 }
 
+@MainActor
 class RoundLogicFactory {
     
     static func createLogic(for round: Round, gameManager: GameManager) -> BaseRoundLogic {
@@ -33,6 +36,7 @@ class RoundLogicFactory {
     }
 }
 
+@MainActor
 class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     
     let gameManager: GameManager
@@ -44,10 +48,14 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     }
     
     func setupRound () {
+        print("setup round")
         gameManager.setPlayersRemainingTurn(nb: roundConst.nbTurns)
-        gameManager.startRoundTimer()
     }
     
+    func startTurn() {
+        _ = gameManager.getNextCard()
+        gameManager.startRoundTimer()
+    }
     
     func validateCard() {
         _ = gameManager.getNextCard()
@@ -58,11 +66,20 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     }
     
     func timerFinished() {
-        print("timer finished")
+        endPlayerTurn()
+    }
+        
+    func endPlayerTurn() {
+        gameManager.currentPlayer().decreaseRemainingTurn()
+        gameManager.setState(state: .playerTurnResult)
     }
     
+    func validatePlayerTurn () {
+        gameManager.currentPlayer().validateTurn()
+        gameManager.goToNextPlayer()
+    }
     
-    func getNbResponses() -> Int {
+    func getNbCardExpectedResponses() -> Int {
         return 2
     }
     

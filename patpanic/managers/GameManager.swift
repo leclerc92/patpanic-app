@@ -9,22 +9,23 @@ import Foundation
 
 enum GameState {
     case playersSetup
-    case playing
     case roundInstruction
+    case playerInstruction
+    case playing
     case playerTurnResult
     case roundResult
     case gameResult
-    case playerInstruction
 }
 
+@MainActor
 class GameManager: ObservableObject {
     
     @Published var cardManager: CardManager = CardManager()
     @Published var timeManager: TimeManager = TimeManager()
+    @Published var gameState: GameState = .playersSetup
     
     @Published private(set) var players: [Player] = []
-    @Published private(set) var currentRound:Round = .round1
-    @Published private(set) var state:GameState = .playersSetup
+    @Published private(set) var currentRound:Round = .round2
     @Published private(set) var currentPlayerIndex:Int = 0
     @Published private(set) var logic: BaseRoundLogic!
     
@@ -32,19 +33,62 @@ class GameManager: ObservableObject {
         self.logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
     }
     
-    //MARK: - GAME LOOP
+    //MARK: - GAME STATE MANAGEMENT
+    
+    func setState(state: GameState) {
+        gameState = state
+    }
     
     func startGame() {
         guard !players.isEmpty, allPlayersHaveCategory() else {
             print("❌ Impossible de démarrer: joueurs manquants ou catégories non assignées")
             return
         }
-               
+        gameState = .roundInstruction
     }
     
     func resetGame() {
-    
+        for player in players {
+            player.resetScore()
+            player.personalCard = nil
+        }
+        gameState = .playersSetup
     }
+    
+    func startPlayerTurn () {
+        let nbCard = GameConst.CARDPERPLAYER - cardManager.cards.count
+        cardManager.generateGameCards(count: nbCard, round: currentRound.rawValue)
+        logic.startTurn()
+        gameState = .playing
+    }
+    
+    func endPlayerTurn () {
+        logic.endPlayerTurn()
+    }
+    
+    func setupRound() {
+        logic.setupRound()
+    }
+    
+    func goToNextRound () {
+        nextRound()
+        resetPlayersRoundScore()
+        goToNextPlayer()
+        setState(state: .roundInstruction)
+    }
+        
+    func goToNextPlayerTurn() {
+        logic.validatePlayerTurn()
+        setState(state: .playerInstruction)
+    }
+    
+    func goToEndOfRound() {
+        logic.validatePlayerTurn()
+        setState(state: .roundResult)
+    }
+
+    
+    
     
     
     // MARK: - PLAYER FUNCTIONS
@@ -93,6 +137,10 @@ class GameManager: ObservableObject {
             .filter { $0.personalCard == nil }
             .map { $0.name }
     }
+    
+    func addPointToCurrentPlayer(nb: Int) {
+        currentPlayer().addTurnScore(nb)
+    }
 
     
     func getNextPlayer() -> Player? {
@@ -125,25 +173,30 @@ class GameManager: ObservableObject {
         return getNextPlayer() == nil
     }
     
-    func resetCurrentRoundPoint() {
+    func resetPlayersScore() {
         for player in players {
             player.resetScore()
         }
     }
     
+    func resetPlayersRoundScore() {
+        for player in players {
+            player.resetRoundScore()
+        }
+    }
+    
     func setPlayersRemainingTurn (nb: Int) {
-      _ = players.map { $0.setRemainingTurn(nb: nb)}
+        for player in players {
+            player.setRemainingTurn(nb: nb)
+        }
     }
     
-    // MARK: - STATE FUNCTIONS
     
-    func setState(state:GameState) {
-        self.state = state
-    }
     
     
     // MARK: - ROUNDS FUNCTIONS
     
+ 
     func getCurrentRoundConfig() -> RoundConfig {
         currentRound.config
     }
@@ -157,6 +210,10 @@ class GameManager: ObservableObject {
     
     private func updateLogicForCurrentRound() {
         logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
+        // Appeler setupRound après la création de la logique
+        DispatchQueue.main.async {
+            self.logic.setupRound()
+        }
     }
     
     func isLastRound() -> Bool {
@@ -230,11 +287,17 @@ class GameManager: ObservableObject {
     // MARK: -  UTILS FUNCTIONS
 
     func displayGameState(){
+        print("-----------------------------")
+        print("state du jeu : \(gameState)")
         print("Nb joueurs : \(players.count)")
+        print("joueurs theme : \(allPlayersHaveCategory())")
         print("round actuel : \(currentRound)")
         print("Nb cartes : \(cardManager.cards.count)")
         print("Nb cartes utilisées : \(cardManager.usedCards.count)")
         print("Joueur actuel : \(currentPlayerIndex) - \(players[currentPlayerIndex].name)")
+        print("dernier joueur du round : \(isLastPlayer())")
+        print("-----------------------------")
+
     }
     
     

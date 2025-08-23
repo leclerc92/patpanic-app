@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 
 // Timer Manager principal pour gérer le décompte
+@MainActor
 class TimeManager: ObservableObject {
     @Published var timeRemaining: Int = 0
     @Published var isRunning: Bool = false
@@ -14,6 +15,15 @@ class TimeManager: ObservableObject {
     
     // MARK: - Initialisation
     init() {}
+    
+    // MARK: - Cleanup
+    deinit {
+        // Nettoie le timer pour éviter les fuites mémoire
+        timer?.invalidate()
+        timer = nil
+        onTimeUpCallback = nil
+        onTickCallback = nil
+    }
     
     // MARK: - Contrôles du timer
     
@@ -66,6 +76,17 @@ class TimeManager: ObservableObject {
         timeRemaining = 0
     }
     
+    /// Nettoie les ressources du timer (à appeler lors des changements de vue)
+    func cleanup() {
+        timer?.invalidate()
+        timer = nil
+        isRunning = false
+        isPaused = false
+        timeRemaining = 0
+        onTimeUpCallback = nil
+        onTickCallback = nil
+    }
+    
     /// Ajoute du temps bonus
     func addBonusTime(_ seconds: Int) {
         timeRemaining += seconds
@@ -94,18 +115,20 @@ class TimeManager: ObservableObject {
     
     private func startInternalTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            self?.tick()
+            Task { @MainActor in
+                self?.tick()
+            }
         }
     }
     
     private func tick() {
-        if timeRemaining > 0 {
-            timeRemaining -= 1
-            onTickCallback?(timeRemaining)
+        if self.timeRemaining > 0 {
+            self.timeRemaining -= 1
+            self.onTickCallback?(self.timeRemaining)
         } else {
             // Temps écoulé
-            stopTimer()
-            onTimeUpCallback?()
+            self.stopTimer()
+            self.onTimeUpCallback?()
         }
     }
 }

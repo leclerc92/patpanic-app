@@ -15,14 +15,12 @@ import SwiftUI
 
       // MARK: - Dependencies
       private let gameManager: GameManager
-      private let onCancel: () -> Void
-      private let onContinue: () -> Void
+
 
       // MARK: - Initialization
-      init(gameManager: GameManager, onCancel: @escaping () -> Void, onContinue: @escaping () -> Void) {
+      init(gameManager: GameManager) {
           self.gameManager = gameManager
-          self.onCancel = onCancel
-          self.onContinue = onContinue
+
           setupData()
       }
 
@@ -42,11 +40,15 @@ import SwiftUI
 
       // MARK: - Actions
       func cancelButton() {
-          onCancel()
+          gameManager.resetGame()
       }
 
       func continueButton() {
-          onContinue()
+          if isLastPlayer {
+              gameManager.goToEndOfRound()
+          } else {
+              gameManager.goToNextPlayerTurn()
+          }
       }
 
       // MARK: - Private Methods

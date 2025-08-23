@@ -15,8 +15,19 @@ class SecondRoundLogic : BaseRoundLogic {
         super.init(gameManager: gameManager, round: round)
     }
     
+    override func validateCard() {
+        gameManager.addPointToCurrentPlayer(nb: gameManager.getTimeRemaining())
+        endPlayerTurn()
+    }
     
-    override func getNbResponses() -> Int {
+    /// Passer une carte : juste passer à la carte suivante (sans points)
+    override func passCard() {
+        _ = gameManager.getNextCard()
+        gameManager.currentPlayer().resetScore()
+    }
+    
+    
+    override func getNbCardExpectedResponses() -> Int {
         switch (gameManager.currentPlayer().remainingTurn) {
         case 3 :
             return 3

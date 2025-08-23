@@ -25,15 +25,12 @@ class LeaderboardViewModel: ObservableObject {
     // MARK: - Dependencies
     private let gameManager: GameManager
     private let isRoundEnd: Bool
-    private let onContinue: () -> Void
-    private let onCancel: () -> Void
+
     
     // MARK: - Initialization
-    init(gameManager: GameManager, isRoundEnd: Bool, onCancel: @escaping () -> Void, onContinue: @escaping () -> Void) {
+    init(gameManager: GameManager, isRoundEnd: Bool) {
         self.gameManager = gameManager
         self.isRoundEnd = isRoundEnd
-        self.onCancel = onCancel
-        self.onContinue = onContinue
         setupData()
     }
     
@@ -46,11 +43,16 @@ class LeaderboardViewModel: ObservableObject {
     
     // MARK: - Actions
     func cancelButton() {
-        onCancel()
     }
     
     func continueButton() {
-        onContinue()
+        
+        if isRoundEnd {
+            gameManager.goToNextRound()
+        } else {
+            gameManager.resetGame()
+        }
+        
     }
     
     // MARK: - Private Methods

@@ -6,11 +6,10 @@ struct PlayerSetupView: View {
     
     let configuration: BlurReplaceTransition.Configuration = .downUp
     
-    init(gameManager: GameManager, onContinue: @escaping () -> Void) {
+    init(gameManager: GameManager) {
         self._viewModel = StateObject(
             wrappedValue: PlayerSetupViewModel(
                 gameManager: gameManager,
-                onContinue: onContinue
             )
         )
     }
@@ -147,6 +146,9 @@ struct PlayerSetupView: View {
                 }
             }
         }
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
         .alert("Attention", isPresented: $viewModel.showingAlert) {
             Button("OK") { viewModel.dismissAlert() }
         } message: {
@@ -164,11 +166,19 @@ struct PlayerSetupView: View {
                 }
             )
         }
+        .onAppear(){
+            viewModel.gameManager.addPlayer(name: "C")
+            viewModel.gameManager.addPlayer(name: "V")
+            let cardc = Card(theme: Theme(category: "alimentation", title: "c", colorName: "blue", excludedRounds: []))
+            let cardv = Card(theme: Theme(category: "alimentation", title: "v", colorName: "blue", excludedRounds: []))
+            viewModel.gameManager.players[0].personalCard = cardc
+            viewModel.gameManager.players[1].personalCard = cardv
+        }
     }
     
 }
 
 #Preview {
     let config = GameManager()
-    return PlayerSetupView(gameManager: config, onContinue: {})
+    return PlayerSetupView(gameManager: config)
 }

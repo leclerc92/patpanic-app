@@ -22,13 +22,11 @@ class PlayerSetupViewModel: ObservableObject {
     
     // MARK: - Dependencies
     let gameManager: GameManager  // Expose pour PlayerConfigView
-    private let onContinue: () -> Void
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Initialization
-    init(gameManager: GameManager, onContinue: @escaping () -> Void) {
+    init(gameManager: GameManager) {
         self.gameManager = gameManager
-        self.onContinue = onContinue
         setupBindings()
         updateGameState()
     }
@@ -87,7 +85,8 @@ class PlayerSetupViewModel: ObservableObject {
         let impactFeedback = UIImpactFeedbackGenerator(style: .heavy)
         impactFeedback.impactOccurred()
         
-        onContinue()
+        gameManager.startGame()
+        
     }
     
     func closePlayerConfig() {

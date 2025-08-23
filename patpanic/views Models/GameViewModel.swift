@@ -38,6 +38,16 @@ class GameViewModel: ObservableObject {
         updateCurrentCard()
     }
     
+    // MARK: - Cleanup
+    deinit {
+        // Nettoie le timer pour éviter les fuites mémoire
+        let timer = timeManager
+        Task { @MainActor in
+            timer.cleanup()
+        }
+        cancellables.removeAll()
+    }
+    
     // MARK: - Setup
     private func setupBindings() {
         // Observer les changements du player courant
@@ -72,15 +82,20 @@ class GameViewModel: ObservableObject {
     func validateCard() {
         guard !isCardEjecting else { return }
         
+        // 1. Animation d'abord (bloque les clics)
         animateCardEjection {
+            // 2. Logique métier pendant l'animation
             self.gameManager.logic.validateCard()
+            self.updateCurrentPlayer()
         }
     }
     
     func passCard() {
         guard !isCardEjecting else { return }
         
+        // 1. Animation d'abord (bloque les clics)
         animateCardEjection {
+            // 2. Logique métier pendant l'animation
             self.gameManager.logic.passCard()
         }
     }
@@ -92,9 +107,25 @@ class GameViewModel: ObservableObject {
     func togglePause() {
         isPaused.toggle()
         print(isPaused ? "Jeu en pause" : "Jeu repris")
-        // Ici vous pouvez ajouter la logique de pause du timer si nécessaire
-        // timeManager.pause() / timeManager.resume()
+        
+        // Gestion de la pause du timer
+        if isPaused {
+            timeManager.pauseTimer()
+        } else {
+            timeManager.resumeTimer()
+        }
     }
+    
+    func viewWillDisappear() {
+        // Appelé quand la vue va disparaître - nettoie le timer
+        timeManager.stopTimer()
+    }
+    
+    func viewDidAppear() {
+        self.gameManager.logic.startTurn()
+        updateTimer()
+    }
+    
     
     // MARK: - Private Methods
     private func updateCurrentPlayer() {
@@ -126,12 +157,10 @@ class GameViewModel: ObservableObject {
         withAnimation {
             isCardEjecting = true
         }
-        
-        completion()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             withAnimation {
                 self.isCardEjecting = false
+                completion()
             }
         }
     }

@@ -14,6 +14,6 @@ enum GameConst {
     static let MINPLAYERS = 2
     static let MAXPLAYERS = 8
     static let NBROUND = 3
-    static let CARDPERPLAYER = 30
+    static let CARDPERPLAYER = 50
     
 }

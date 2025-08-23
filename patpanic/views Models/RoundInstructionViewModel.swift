@@ -18,14 +18,12 @@ class RoundInstructionViewModel: ObservableObject {
     
     // MARK: - Dependencies
     private let gameManager: GameManager
-    private let onCancel: () -> Void
-    private let onContinue: () -> Void
+
     
     // MARK: - Initialization
-    init(gameManager: GameManager, onCancel: @escaping () -> Void, onContinue: @escaping () -> Void) {
+    init(gameManager: GameManager) {
         self.gameManager = gameManager
-        self.onCancel = onCancel
-        self.onContinue = onContinue
+
         setupData()
     }
     
@@ -42,10 +40,15 @@ class RoundInstructionViewModel: ObservableObject {
     
     // MARK: - Actions
     func cancelButton() {
-        onCancel()
+        gameManager.resetGame()
     }
     
     func continueButton() {
-        onContinue()
+        gameManager.setState(state: .playerInstruction)
+        gameManager.displayGameState()
+    }
+    
+    func viewDidAppear () {
+        gameManager.setupRound()
     }
 }

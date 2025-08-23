@@ -181,7 +181,7 @@ struct GameCard: View {
         .rotationEffect(.degrees(ejectionRotation))
         .opacity(ejectionOpacity)
         .shadow(
-            color: theme.color.opacity(0.4) ?? .black.opacity(0.2),
+            color: theme.color.opacity(0.4),
             radius: isPressed ? 8 : 12,
             x: 0,
             y: isPressed ? 4 : 8
@@ -196,7 +196,7 @@ struct GameCard: View {
         .onAppear {
             startAnimations()
         }
-        .onChange(of: isEjecting) { ejecting in
+        .onChange(of: isEjecting) { _, ejecting in
             if ejecting {
                 ejectCard()
             } else {

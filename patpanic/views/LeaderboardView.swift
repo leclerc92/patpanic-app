@@ -10,13 +10,11 @@ import SwiftUI
 struct LeaderboardView: View {
     @StateObject private var viewModel: LeaderboardViewModel
     
-    init(gameManager: GameManager, isRoundEnd: Bool, onContinue: @escaping () -> Void, onCancel: @escaping () -> Void) {
+    init(gameManager: GameManager, isRoundEnd: Bool) {
         self._viewModel = StateObject(
             wrappedValue: LeaderboardViewModel(
                 gameManager: gameManager,
                 isRoundEnd: isRoundEnd,
-                onCancel: onCancel,
-                onContinue: onContinue
             )
         )
     }
@@ -191,28 +189,24 @@ extension LeaderboardView {
     // Vue pour fin de round
     static func roundEnd(
         gameManager: GameManager,
-        onContinue: @escaping () -> Void,
-        onCancel: @escaping () -> Void
+
     ) -> LeaderboardView {
         LeaderboardView(
             gameManager: gameManager,
             isRoundEnd: true,
-            onContinue: onContinue,
-            onCancel: onCancel
+
         )
     }
     
     // Vue pour fin de partie
     static func gameEnd(
         gameManager: GameManager,
-        onContinue: @escaping () -> Void,
-        onCancel: @escaping () -> Void
+
     ) -> LeaderboardView {
         LeaderboardView(
             gameManager: gameManager,
             isRoundEnd: false,
-            onContinue: onContinue,
-            onCancel: onCancel
+
         )
     }
 }
@@ -225,30 +219,28 @@ extension LeaderboardView {
     gameManager.addPlayer(name: "Alice")
     gameManager.players[0].icon = "👩‍🔬"
     // Simulation de scores (normalement fait via les méthodes du Player)
-    gameManager.players[0].validateTurn()
     gameManager.players[0].addTurnScore(45)
-    gameManager.players[0].validateRound()
+    gameManager.players[0].validateTurn()
+
     
     gameManager.addPlayer(name: "Bob")
     gameManager.players[1].icon = "🧑‍🎨"
     gameManager.players[1].addTurnScore(38)
-    gameManager.players[1].validateRound()
-    
+    gameManager.players[1].validateTurn()
+
     gameManager.addPlayer(name: "Charlie")
     gameManager.players[2].icon = "👨‍🚀"
     gameManager.players[2].addTurnScore(52)
-    gameManager.players[2].validateRound()
-    
+    gameManager.players[2].validateTurn()
+
     gameManager.addPlayer(name: "Diana")
     gameManager.players[3].icon = "👩‍🎤"
     gameManager.players[3].addTurnScore(23)
-    gameManager.players[3].validateRound()
-    
+    gameManager.players[3].validateTurn()
+
      return VStack {
         LeaderboardView.roundEnd(
-            gameManager: gameManager,
-            onContinue: { print("Nouvelle partie") },
-            onCancel: { print("Retour menu") }
+            gameManager: gameManager
         )
     }
 }
