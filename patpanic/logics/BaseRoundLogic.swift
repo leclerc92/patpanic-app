@@ -13,6 +13,7 @@ protocol RoundLogicProtocol: ObservableObject {
     var roundConst: RoundConfig { get }
     
     func setupRound()
+    func prepareCards()
     func startTurn()
     func validateCard()
     func passCard()
@@ -50,6 +51,12 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     func setupRound () {
         print("setup round")
         gameManager.setPlayersRemainingTurn(nb: roundConst.nbTurns)
+    }
+    
+    func prepareCards() {
+        // Implémentation par défaut : générer des cartes normalement
+        let nbCard = GameConst.CARDPERPLAYER - gameManager.cardManager.cards.count
+        gameManager.cardManager.generateGameCards(count: nbCard, round: gameManager.currentRound.rawValue)
     }
     
     func startTurn() {

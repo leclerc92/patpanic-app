@@ -21,9 +21,17 @@ class GameViewModel: ObservableObject {
     @Published var totalTime: Int = 0
     @Published var currentCard: Card?
     @Published var showNoCardsMessage: Bool = false
+    @Published var showPauseOverlay: Bool = false
+    @Published var showInstructionsSheet: Bool = false
+    @Published var isPlayerNameEjecting: Bool = false
+    
+    // MARK: - Computed Properties
+    var isRound3: Bool {
+        return gameManager.currentRound == .round3
+    }
     
     // MARK: - Dependencies
-    private let gameManager: GameManager
+    let gameManager: GameManager
     private let timeManager: TimeManager
     private var cancellables = Set<AnyCancellable>()
     
@@ -80,25 +88,40 @@ class GameViewModel: ObservableObject {
     
     // MARK: - Actions
     func validateCard() {
-        guard !isCardEjecting else { return }
+        // Empêcher les clics pendant l'animation
+        guard !isCardEjecting && !isPlayerNameEjecting else { return }
         
-        // 1. Animation d'abord (bloque les clics)
-        animateCardEjection {
-            // 2. Logique métier pendant l'animation
-            self.gameManager.logic.validateCard()
-            self.updateCurrentPlayer()
+        if isRound3 {
+            // Round 3 : animer le nom du joueur
+            animatePlayerNameEjection {
+                self.gameManager.logic.validateCard()
+                self.updateCurrentPlayer()
+            }
+        } else {
+            // Autres rounds : animer la carte
+            animateCardEjection {
+                self.gameManager.logic.validateCard()
+                self.updateCurrentPlayer()
+            }
         }
     }
     
     func passCard() {
-        guard !isCardEjecting else { return }
+        // Empêcher les clics pendant l'animation
+        guard !isCardEjecting && !isPlayerNameEjecting else { return }
         
-        // 1. Animation d'abord (bloque les clics)
-        animateCardEjection {
-            // 2. Logique métier pendant l'animation
-            self.gameManager.logic.passCard()
-            self.updateCurrentPlayer()
-
+        if isRound3 {
+            // Round 3 : animer le nom du joueur
+            animatePlayerNameEjection {
+                self.gameManager.logic.passCard()
+                self.updateCurrentPlayer()
+            }
+        } else {
+            // Autres rounds : animer la carte
+            animateCardEjection {
+                self.gameManager.logic.passCard()
+                self.updateCurrentPlayer()
+            }
         }
     }
     
@@ -108,6 +131,7 @@ class GameViewModel: ObservableObject {
     
     func togglePause() {
         isPaused.toggle()
+        showPauseOverlay = isPaused
         print(isPaused ? "Jeu en pause" : "Jeu repris")
         
         // Gestion de la pause du timer
@@ -116,6 +140,22 @@ class GameViewModel: ObservableObject {
         } else {
             timeManager.resumeTimer()
         }
+    }
+    
+    func resumeGame() {
+        isPaused = false
+        showPauseOverlay = false
+        timeManager.resumeTimer()
+        print("Jeu repris")
+    }
+    
+    func showInstructions() {
+        showInstructionsSheet = true
+    }
+    
+    func exitGame() {
+
+        gameManager.resetGame()
     }
     
     func viewWillDisappear() {
@@ -159,10 +199,29 @@ class GameViewModel: ObservableObject {
         withAnimation {
             isCardEjecting = true
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             withAnimation {
                 self.isCardEjecting = false
                 completion()
+            }
+        }
+    }
+    
+    private func animatePlayerNameEjection(completion: @escaping () -> Void) {
+        // Phase 1 : Grossissement et fondu
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+            isPlayerNameEjecting = true
+        }
+        
+        // Phase 2 : Changement de joueur au milieu de l'animation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            completion()
+        }
+        
+        // Phase 3 : Retour à la normale avec rebond
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                self.isPlayerNameEjecting = false
             }
         }
     }

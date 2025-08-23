@@ -15,15 +15,20 @@ class RoundInstructionViewModel: ObservableObject {
     @Published var roundIcon: String = ""
     @Published var roundTitle: String = ""
     @Published var roundRules: [String] = []
+    @Published var needSetupRound: Bool
+    @Published var isDisplayedInSheet: Bool
     
     // MARK: - Dependencies
     private let gameManager: GameManager
+    private let onSheetDismiss: (() -> Void)?
 
     
     // MARK: - Initialization
-    init(gameManager: GameManager) {
+    init(gameManager: GameManager, needSetupRound: Bool, isDisplayedInSheet: Bool = false, onSheetDismiss: (() -> Void)? = nil) {
         self.gameManager = gameManager
-
+        self.needSetupRound = needSetupRound
+        self.isDisplayedInSheet = isDisplayedInSheet
+        self.onSheetDismiss = onSheetDismiss
         setupData()
     }
     
@@ -40,14 +45,26 @@ class RoundInstructionViewModel: ObservableObject {
     
     // MARK: - Actions
     func cancelButton() {
-        gameManager.resetGame()
+        if isDisplayedInSheet {
+            onSheetDismiss?()
+        } else {
+            gameManager.resetGame()
+        }
     }
     
     func continueButton() {
-        gameManager.goToPlayerInstructionView()
+        if isDisplayedInSheet {
+            // Si affiché en sheet, fermer le sheet
+            onSheetDismiss?()
+        } else {
+            // Comportement normal : aller vers playerInstruction
+            gameManager.goToPlayerInstructionView()
+        }
     }
     
     func viewDidAppear () {
-        gameManager.setupRound()
+        if needSetupRound {
+            gameManager.setupRound()
+        }
     }
 }

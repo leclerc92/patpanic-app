@@ -29,12 +29,27 @@ struct GameView: View {
                 Spacer()
                 actionButtonsSection
             }.padding()
+            
+            // Overlay de pause
+            if viewModel.showPauseOverlay {
+                pauseOverlay
+            }
         }
         .onAppear {
             viewModel.viewDidAppear()
         }
         .onDisappear {
             viewModel.viewWillDisappear()
+        }
+        .sheet(isPresented: $viewModel.showInstructionsSheet) {
+            RoundInstructionView(
+                gameManager: viewModel.gameManager,
+                needSetupRound: false,
+                isDisplayedInSheet: true,
+                onSheetDismiss: {
+                    viewModel.showInstructionsSheet = false
+                }
+            )
         }
     }
     
@@ -74,11 +89,45 @@ struct GameView: View {
     }
     
     private var playerSection: some View {
-        PlayerName(
-            playerName: viewModel.currentPlayerName,
-            icon: viewModel.currentPlayerIcon
-        )
-        .padding(.bottom, 20)
+        ZStack {
+            // Effet de pulsation en arrière-plan pour Round 3
+            if viewModel.isRound3 && viewModel.isPlayerNameEjecting {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [.blue.opacity(0.3), .purple.opacity(0.2), .clear],
+                            center: .center,
+                            startRadius: 20,
+                            endRadius: 100
+                        )
+                    )
+                    .scaleEffect(viewModel.isPlayerNameEjecting ? 2.0 : 0.5)
+                    .opacity(viewModel.isPlayerNameEjecting ? 0.7 : 0)
+                    .animation(.easeInOut(duration: 0.5), value: viewModel.isPlayerNameEjecting)
+            }
+            
+            // Nom du joueur
+            PlayerName(
+                playerName: viewModel.currentPlayerName,
+                icon: viewModel.currentPlayerIcon
+            )
+            .scaleEffect(
+                viewModel.isRound3 ? 
+                (viewModel.isPlayerNameEjecting ? 1.4 : 1.2) : 
+                (viewModel.isPlayerNameEjecting ? 0.9 : 1.0)
+            )
+            .opacity(viewModel.isPlayerNameEjecting ? 0.3 : 1.0)
+            .rotationEffect(.degrees(viewModel.isPlayerNameEjecting && viewModel.isRound3 ? 5 : 0))
+            .blur(radius: viewModel.isPlayerNameEjecting && viewModel.isRound3 ? 2 : 0)
+            .shadow(
+                color: viewModel.isRound3 && viewModel.isPlayerNameEjecting ? .blue.opacity(0.8) : .clear,
+                radius: viewModel.isPlayerNameEjecting ? 20 : 0,
+                x: 0,
+                y: 0
+            )
+        }
+        .padding(.bottom, viewModel.isRound3 ? 35 : 20)
+        .animation(.spring(response: 0.5, dampingFraction: 0.7), value: viewModel.isPlayerNameEjecting)
     }
     
     private var cardSection: some View {
@@ -86,8 +135,8 @@ struct GameView: View {
             if let currentCard = viewModel.currentCard {
                 GameCard(
                     theme: currentCard.theme,
-                    size: .large,
-                    isEjecting: viewModel.isCardEjecting,
+                    size: viewModel.isRound3 ? .medium : .large,
+                    isEjecting: viewModel.isRound3 ? false : viewModel.isCardEjecting,
                     onPause: viewModel.togglePause
                 )
             } else {
@@ -113,6 +162,67 @@ struct GameView: View {
         }.padding()
     }
     
+    private var pauseOverlay: some View {
+        ZStack {
+            // Fond semi-transparent
+            Color.black.opacity(0.7)
+                .ignoresSafeArea()
+            
+            VStack(spacing: 30) {
+
+                
+                Spacer()
+                
+                // Phrase marrante
+                Text("Alors on a besoin de débattre ?")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                
+                Spacer()
+                
+                // Boutons d'action
+                VStack(spacing: 20) {
+                    
+                    ButtonMenu.warningButton(
+                        title: "Quitter le jeu",
+                        subtitle: "Oh ba non pourquoi ?",
+                        icon: "return"
+                    ) {
+                        viewModel.exitGame()
+                    }.padding()
+                    
+                    // Bouton pour les instructions
+                    ButtonMenu.secondaryButton(
+                        title: "Instructions",
+                        subtitle: "Rappel des règles",
+                        icon: "book.fill"
+                    ) {
+                        viewModel.showInstructions()
+                    }.padding()
+                    
+                    // Bouton pour reprendre
+                    ButtonMenu.primaryButton(
+                        title: "Reprendre",
+                        subtitle: "Continuer la partie",
+                        icon: "play.fill"
+                    ) {
+                        viewModel.resumeGame()
+                    }.padding()
+                    
+                    
+                }
+                .padding(.horizontal)
+                
+                Spacer()
+            }
+        }
+        .transition(.opacity)
+        .animation(.easeInOut(duration: 0.3), value: viewModel.showPauseOverlay)
+    }
+    
 }
 
 #Preview {
@@ -123,6 +233,7 @@ struct GameView: View {
     let testTheme = Theme(category: "Test", title: "Animaux de compagnie", colorName: "blue")
     let testCard = Card(theme: testTheme)
     gameManager.cardManager.currentCard = testCard
+    
     
     gameManager.logic.setupRound()
     

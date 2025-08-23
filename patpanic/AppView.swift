@@ -19,9 +19,10 @@ struct AppView: View {
                 gameManager: gameManager
             )
             
-        case .roundInstruction:
+        case .roundInstruction(let needSetupRound):
             RoundInstructionView(
-                gameManager: gameManager
+                gameManager: gameManager,
+                needSetupRound: needSetupRound
             )
         case .playerInstruction:
             PlayerInstructionView(

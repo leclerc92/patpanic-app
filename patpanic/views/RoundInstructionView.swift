@@ -11,11 +11,17 @@ struct RoundInstructionView: View {
     @StateObject private var viewModel: RoundInstructionViewModel
     
     init(
-        gameManager: GameManager
+        gameManager: GameManager,
+        needSetupRound: Bool,
+        isDisplayedInSheet: Bool = false,
+        onSheetDismiss: (() -> Void)? = nil
     ) {
         self._viewModel = StateObject(
             wrappedValue: RoundInstructionViewModel(
-                gameManager: gameManager,
+                gameManager: gameManager, 
+                needSetupRound: needSetupRound,
+                isDisplayedInSheet: isDisplayedInSheet,
+                onSheetDismiss: onSheetDismiss
             )
         )
     }
@@ -95,5 +101,5 @@ struct RoundInstructionView: View {
 
 #Preview {
     RoundInstructionView(
-        gameManager: GameManager())
+        gameManager: GameManager(),needSetupRound: false)
 }

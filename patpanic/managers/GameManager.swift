@@ -7,9 +7,9 @@
 
 import Foundation
 
-enum GameState {
+enum GameState: Equatable {
     case playersSetup
-    case roundInstruction
+    case roundInstruction(needSetupRound: Bool)
     case playerInstruction
     case playing
     case playerTurnResult
@@ -48,8 +48,7 @@ class GameManager: ObservableObject {
     }
     
     func goToPlayingView() {
-        let nbCard = GameConst.CARDPERPLAYER - cardManager.cards.count
-        cardManager.generateGameCards(count: nbCard, round: currentRound.rawValue)
+        logic.prepareCards()
         logic.startTurn()
         gameState = .playing
     }
@@ -65,11 +64,11 @@ class GameManager: ObservableObject {
         resetPlayerEliminated()
         nextRound()
         currentPlayerIndex = 0  // Retour au premier joueur pour le nouveau round
-        goToRoundInstructionView()
+        goToRoundInstructionView(needSetupRound: true)
     }
     
-    func goToRoundInstructionView() {
-        gameState = .roundInstruction
+    func goToRoundInstructionView(needSetupRound:Bool) {
+        gameState = .roundInstruction(needSetupRound: needSetupRound)
     }
     
     func goToPlayerInstructionView() {

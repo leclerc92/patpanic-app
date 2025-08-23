@@ -64,7 +64,7 @@ import SwiftUI
       }
 
       func showRulesPressed() {
-          gameManager.goToRoundInstructionView()
+          gameManager.goToRoundInstructionView(needSetupRound: false)
       }
 
       // MARK: - Private Methods

@@ -76,13 +76,13 @@ struct PlayerInstructionView: View {
 
       private var statsSection: some View {
           HStack {
-              StatCard.turnsRemaining(
-                  count: viewModel.remainingTurns,
-                  size: .compact
-              )
               StatCard.roundScore(
                   score: viewModel.currentRoundScore,
-                  roundNumber: viewModel.roundNumber
+                  roundNumber: viewModel.roundNumber,
+                  size: .compact
+              )
+              StatCard.turnsRemaining(
+                  count: viewModel.remainingTurns,
               )
               StatCard.totalScore(
                   score: viewModel.totalScore,

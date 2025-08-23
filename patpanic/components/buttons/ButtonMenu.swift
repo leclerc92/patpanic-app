@@ -122,7 +122,22 @@ extension ButtonMenu {
                 icon: icon,
                 colors: [Color.orange, Color.red]
             )
-        }
+    }
+    
+    static func warningButton(
+            title: String,
+            subtitle: String? = nil,
+            icon: String? = nil,
+            action: @escaping () -> Void
+        ) -> ButtonMenu {
+            ButtonMenu(
+                action: action,
+                title: title,
+                subtitle: subtitle,
+                icon: icon,
+                colors: [Color.red, Color.red]
+            )
+    }
 }
 
 #Preview {
@@ -144,6 +159,14 @@ extension ButtonMenu {
                    print("Multijoueur")
         }
         
+        ButtonMenu.warningButton(
+                   title: "Quitter le jeu ",
+                   subtitle: "etes vous sur ?",
+                   icon: "person.2.fill"
+               ) {
+                   print("Multijoueur")
+        }
+        
         ButtonMenu(
             action: { print("Personnalisé") },
             title: "Paramètres",
@@ -160,5 +183,7 @@ extension ButtonMenu {
             icon: nil,
             colors: [Color.gray, Color.secondary]
         )
+        
+        
     }.padding()
 }

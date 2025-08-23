@@ -189,9 +189,9 @@ extension StatCard {
     ) -> StatCard {
         StatCard(
             icon: "🔄",
-            title: size == .compact ? "Tours" : "Tours restants",
+            title:  "Tours" ,
             value: "\(count)",
-            subtitle: count == 1 ? (size == .compact ? "dernier" : "dernier tour") : "tours restants",
+            subtitle: count == 1 ? (size == .compact ? "dernier" : "dernier tour") : "restants",
             colors: count <= 1 ? [.red, .orange] : [.blue, .cyan],
             size: size
         )
@@ -220,9 +220,9 @@ extension StatCard {
     ) -> StatCard {
         StatCard(
             icon: "🎯",
-            title: "Round \(roundNumber)",
+            title: "Manche \(roundNumber)",
             value: "\(score)",
-            subtitle: "points ce round",
+            subtitle: "pts",
             colors: [.blue, .cyan],
             size: size
         )
