@@ -16,12 +16,14 @@ class SecondRoundLogic : BaseRoundLogic {
     }
     
     override func validateCard() {
+        gameManager.audioManager.playValidateCardSound()
         gameManager.addPointToCurrentPlayer(nb: gameManager.getTimeRemaining())
         endPlayerTurn()
     }
     
     /// Passer une carte : juste passer à la carte suivante (sans points)
     override func passCard() {
+        gameManager.audioManager.playPassCardSound()
         gameManager.currentPlayer().currentTurnPassedCard += 1
         _ = gameManager.getNextCard()
         gameManager.currentPlayer().decreaseTurnScore(getNbCardExpectedResponses())

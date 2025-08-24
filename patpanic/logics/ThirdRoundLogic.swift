@@ -27,11 +27,13 @@ class ThirdRoundLogic : BaseRoundLogic {
     }
     
     override func validateCard() {
+        gameManager.audioManager.playValidateCardSound()
         gameManager.startRoundTimer()
         gameManager.setToNextPlayerIndex()
     }
     
     override func passCard() {
+        gameManager.audioManager.playPassCardSound()
         if gameManager.currentPlayer().isMainPlayer {
             endPlayerTurn()
         } else {

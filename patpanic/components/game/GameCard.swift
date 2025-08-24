@@ -110,7 +110,7 @@ struct GameCard: View {
                 VStack(spacing: 0) {
                     // Section supérieure avec petit texte
                     VStack(spacing: 4) {
-                        Text(theme.title.uppercased())
+                        Text(theme.category.uppercased())
                             .font(.system(size: size.fontSize * 0.6, weight: .bold, design: .rounded))
                             .foregroundColor(.white.opacity(0.8))
                             .multilineTextAlignment(.center)
@@ -148,7 +148,7 @@ struct GameCard: View {
                     
                     // Section inférieure avec petit texte (inversé style Uno)
                     VStack(spacing: 4) {
-                        Text(theme.title.uppercased())
+                        Text(theme.category.uppercased())
                             .font(.system(size: size.fontSize * 0.6, weight: .bold, design: .rounded))
                             .foregroundColor(.white.opacity(0.8))
                             .multilineTextAlignment(.center)
