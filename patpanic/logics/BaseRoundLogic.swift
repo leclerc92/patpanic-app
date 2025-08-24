@@ -66,11 +66,14 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     
     func validateCard() {
         _ = gameManager.getNextCard()
+        gameManager.audioManager.playValidateCardSound()
+
     }
     
     func passCard() {
         _ = gameManager.getNextCard()
         gameManager.currentPlayer().currentTurnPassedCard += 1
+        gameManager.audioManager.playPassCardSound()
     }
     
     func timerFinished() {
@@ -78,6 +81,7 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     }
         
     func endPlayerTurn() {
+        gameManager.audioManager.playEndTimer()
         gameManager.currentPlayer().decreaseRemainingTurn()
         gameManager.currentPlayer().isMainPlayer = false
         gameManager.setState(state: .playerTurnResult)

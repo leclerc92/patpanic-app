@@ -18,12 +18,14 @@ class FirstRoundLogic : BaseRoundLogic {
     
     /// Valider une carte : +1 point au joueur et passer à la carte suivante
     override func validateCard() {
+        gameManager.audioManager.playValidateCardSound()
         gameManager.addPointToCurrentPlayer(nb: 1)
         _ = gameManager.getNextCard()
     }
     
     /// Passer une carte : juste passer à la carte suivante (sans points)
     override func passCard() {
+        gameManager.audioManager.playPassCardSound()
         gameManager.currentPlayer().currentTurnPassedCard += 1
         _ = gameManager.getNextCard()
     }

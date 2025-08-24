@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 enum GameState: Equatable {
     case playersSetup
@@ -22,15 +23,44 @@ class GameManager: ObservableObject {
     
     @Published var cardManager: CardManager = CardManager()
     @Published var timeManager: TimeManager = TimeManager()
+    @Published var audioManager: AudioManager = AudioManager()
     @Published var gameState: GameState = .playersSetup
     
     @Published private(set) var players: [Player] = []
-    @Published private(set) var currentRound:Round = .round2
+    @Published private(set) var currentRound:Round = .round1
     @Published private(set) var currentPlayerIndex:Int = 0
     @Published private(set) var logic: BaseRoundLogic!
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
         self.logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
+        setupBackgroundMusic()
+        
+        // Démarrer la musique immédiatement puisqu'on commence en playersSetup
+        audioManager.playBackgroundMusic()
+    }
+    
+    // MARK: - BACKGROUND MUSIC MANAGEMENT
+    private func setupBackgroundMusic() {
+        // Observer les changements d'état pour gérer la musique
+        $gameState
+            .sink { [weak self] newState in
+                self?.handleBackgroundMusicForState(newState)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func handleBackgroundMusicForState(_ state: GameState) {
+        switch state {
+        case .playing:
+            // Arrêter la musique avec fade out quand on joue
+            audioManager.fadeOutBackgroundMusic(duration: 1.0)
+        case .playersSetup, .roundInstruction, .playerInstruction, .playerTurnResult, .roundResult, .gameResult:
+            // Jouer la musique de fond pour tous les autres états
+            if !audioManager.isMusicPlaying {
+                audioManager.playBackgroundMusic()
+            }
+        }
     }
     
     //MARK: - GAME STATE MANAGEMENT
@@ -292,7 +322,48 @@ class GameManager: ObservableObject {
     }
     
     func startRoundTimer () {
-        timeManager.startTimer(duration: currentRound.config.timer, onTimeUp: logic.timerFinished)
+        timeManager.startTimer(
+            duration: currentRound.config.timer, 
+            onTimeUp: { [weak self] in
+                self?.stopCriticalTicks() // Arrêter la boucle critique
+                self?.logic.timerFinished()
+            },
+            onTick: { [weak self] timeRemaining in
+                self?.playTimerTick(timeRemaining: timeRemaining)
+                
+                // Arrêter la boucle critique si on sort de la zone rouge
+                if timeRemaining == 0 || timeRemaining > 5 {
+                    self?.stopCriticalTicks()
+                }
+            }
+        )
+    }
+    
+    private func playTimerTick(timeRemaining: Int) {
+        let totalTime = currentRound.config.timer
+        let intensity = audioManager.calculateTickIntensity(timeRemaining: timeRemaining, totalTime: totalTime)
+        let tickType = audioManager.getTimerTickType(timeRemaining: timeRemaining)
+        
+        switch tickType {
+        case .normal:
+            // Tic-tac simple
+            audioManager.playTimerTick(intensity: intensity)
+            
+        case .urgent:
+            // Double tic-tac pour zone orange
+            audioManager.playDoubleTimerTick(intensity: intensity)
+            
+        case .critical:
+            // Démarrer la boucle continue pour zone rouge (seulement au début)
+            if timeRemaining == 5 {
+                audioManager.startCriticalTickLoop(intensity: intensity)
+            }
+        }
+    }
+    
+    // Arrêter la boucle critique quand nécessaire
+    func stopCriticalTicks() {
+        audioManager.stopCriticalTickLoop()
     }
     
     

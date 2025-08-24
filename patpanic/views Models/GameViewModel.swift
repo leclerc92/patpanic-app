@@ -90,7 +90,7 @@ class GameViewModel: ObservableObject {
     func validateCard() {
         // Empêcher les clics pendant l'animation
         guard !isCardEjecting && !isPlayerNameEjecting else { return }
-        
+                
         if isRound3 {
             // Round 3 : animer le nom du joueur
             animatePlayerNameEjection {
@@ -164,8 +164,10 @@ class GameViewModel: ObservableObject {
     }
     
     func viewDidAppear() {
+        // La musique est maintenant gérée automatiquement par le GameManager
         self.gameManager.logic.startTurn()
         updateTimer()
+        setupTimerTicks()
     }
     
     
@@ -188,6 +190,11 @@ class GameViewModel: ObservableObject {
     private func updateTimer() {
         let roundConfig = gameManager.logic.roundConst
         totalTime = roundConfig.timer
+    }
+    
+    private func setupTimerTicks() {
+        // Le callback onTick sera appelé à chaque seconde par le TimeManager
+        // On l'utilisera pour jouer le tic-tac avec intensité croissante
     }
     
     private func updateCurrentCard() {

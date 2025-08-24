@@ -25,10 +25,9 @@ struct PlayerTurnResultView: View {
               VStack(spacing: 0) {
                   headerSection
                   contentSection
-                  Spacer()
+                  bottomButton
               }
 
-              bottomButton
           }
       }
 
@@ -51,11 +50,11 @@ struct PlayerTurnResultView: View {
               Spacer()
               CancelButton(action: viewModel.cancelButton)
           }
-          .padding()
+          .padding(.top)
+          .padding(.horizontal)
       }
 
       private var contentSection: some View {
-          ScrollView {
               VStack(spacing: 30) {
                   GameTitle.endTurn()
                       .padding(.top, 20)
@@ -73,26 +72,25 @@ struct PlayerTurnResultView: View {
                       passedCard: viewModel.currentTurnPassedCard
                   )
 
-                  Spacer(minLength: 100)
               }
               .padding(.horizontal)
-          }
+          
       }
 
       private var bottomButton: some View {
           VStack {
-              Spacer()
-
-              ButtonMenu(
-                  action: viewModel.continueButton,
-                  title: viewModel.nextButtonTitle,
-                  subtitle: viewModel.nextButtonSubtitle,
-                  icon: viewModel.nextButtonIcon,
-                  colors: [.green, .mint]
-              )
-              .padding(.horizontal)
-              .padding(.bottom, 20)
-          }
+              VStack(spacing: 10) {
+                  Spacer()
+                  ButtonMenu(
+                      action: viewModel.continueButton,
+                      title: viewModel.nextButtonTitle,
+                      subtitle: viewModel.nextButtonSubtitle,
+                      icon: viewModel.nextButtonIcon,
+                      colors: [.green, .mint]
+                  )
+              }
+              
+          }.padding()
       }
   }
 

@@ -29,6 +29,7 @@ class SecondRoundLogic : BaseRoundLogic {
     }
     
     override func endPlayerTurn() {
+        gameManager.audioManager.playEndTimer()
         gameManager.currentPlayer().decreaseTurnScore(getNbCardExpectedResponses())
         gameManager.currentPlayer().decreaseRemainingTurn()
         gameManager.currentPlayer().isMainPlayer = false

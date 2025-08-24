@@ -48,6 +48,7 @@ class ThirdRoundLogic : BaseRoundLogic {
     }
     
     override func endPlayerTurn() {
+        gameManager.audioManager.playEndTimer()
         gameManager.setMainPayerIsCurrentPLayer()
         gameManager.currentPlayer().isMainPlayer = false
         gameManager.resetPlayerEliminated()

@@ -167,17 +167,9 @@ struct PlayerSetupView: View {
             )
         }
         .onAppear(){
-            
-            
-            viewModel.gameManager.addPlayer(name: "C")
-            viewModel.gameManager.addPlayer(name: "V")
-            let cardc = Card(theme: Theme(category: "alimentation", title: "c", colorName: "blue", excludedRounds: []))
-            let cardv = Card(theme: Theme(category: "alimentation", title: "v", colorName: "blue", excludedRounds: []))
-            viewModel.gameManager.players[0].personalCard = cardc
-            viewModel.gameManager.players[1].personalCard = cardv
-             
-             
+            viewModel.viewDidAppear()
         }
+
     }
     
 }
