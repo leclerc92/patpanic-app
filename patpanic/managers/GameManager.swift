@@ -27,7 +27,7 @@ class GameManager: ObservableObject {
     @Published var gameState: GameState = .playersSetup
     
     @Published private(set) var players: [Player] = []
-    @Published private(set) var currentRound:Round = .round1
+    @Published private(set) var currentRound:Round = .round2
     @Published private(set) var currentPlayerIndex:Int = 0
     @Published private(set) var logic: BaseRoundLogic!
     private var cancellables = Set<AnyCancellable>()
@@ -87,6 +87,7 @@ class GameManager: ObservableObject {
         currentPlayer().validateTurn()
         setToNextPlayerIndex()
         goToPlayerInstructionView()
+        displayGameState()
     }
     
     func continueWithNextRound() {
@@ -96,28 +97,34 @@ class GameManager: ObservableObject {
         nextRound()
         currentPlayerIndex = 0  // Retour au premier joueur pour le nouveau round
         goToRoundInstructionView(needSetupRound: true)
+        displayGameState()
     }
     
     func goToRoundInstructionView(needSetupRound:Bool) {
         gameState = .roundInstruction(needSetupRound: needSetupRound)
+        displayGameState()
     }
     
     func goToPlayerInstructionView() {
         gameState = .playerInstruction
+        displayGameState()
     }
     
     func goToPlayerResultView() {
         gameState = .playerTurnResult
+        displayGameState()
     }
     
     func goToRoundResult() {
         currentPlayer().validateTurn()
         gameState = .roundResult
+        displayGameState()
     }
     
     func goToGameResult() {
         currentPlayer().validateTurn()
         gameState = .gameResult
+        displayGameState()
     }
         
     func endPlayerTurn () {
@@ -412,6 +419,12 @@ class GameManager: ObservableObject {
         return cardManager.generatePlayerCard(for: category)
     }
     
+    func setCurrentPlayerCardToCards() {
+        if let card = currentPlayer().personalCard {
+            cardManager.setPlayerCard(card: card)
+        }
+    }
+    
     private func getRoundNumber() -> Int {
         switch currentRound {
         case .round1: return 1
@@ -431,6 +444,7 @@ class GameManager: ObservableObject {
         print("Nb cartes : \(cardManager.cards.count)")
         print("Nb cartes utilisées : \(cardManager.usedCards.count)")
         print("Joueur actuel : \(currentPlayerIndex) - \(players[currentPlayerIndex].name)")
+        print("themes des joueurs : \(players.map {$0.personalCard?.theme.category ?? "aucun"})")
         print("Joueur main : \(String(describing: mainPlayer()?.name))" )
         print("dernier joueur du round : \(isLastPlayer())")
         print("-----------------------------")

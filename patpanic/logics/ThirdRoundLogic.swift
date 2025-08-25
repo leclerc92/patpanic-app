@@ -15,15 +15,7 @@ class ThirdRoundLogic : BaseRoundLogic {
     }
     
     override func prepareCards() {
-        // Round 3 : Utiliser la carte personnelle du joueur principal
-        if let mainPlayerCard = gameManager.currentPlayer().personalCard {
-            gameManager.cardManager.currentCard = mainPlayerCard
-            print("Round 3 : Utilisation de la carte personnelle - \(mainPlayerCard.theme.title)")
-        } else {
-            print("Erreur : Pas de carte personnelle pour le joueur principal en round 3")
-            // Fallback vers la génération normale en cas d'erreur
-            super.prepareCards()
-        }
+        gameManager.setCurrentPlayerCardToCards()
     }
     
     override func validateCard() {

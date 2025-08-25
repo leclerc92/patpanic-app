@@ -97,17 +97,15 @@ class PlayerSetupViewModel: ObservableObject {
         showingAlert = false
     }
     
-    // MARK: - Debug Methods
     func viewDidAppear() {
         
-        gameManager.addPlayer(name: "C")
+        /*gameManager.addPlayer(name: "C")
         gameManager.addPlayer(name: "V")
         let cardc = Card(theme: Theme(category: "alimentation", title: "c", colorName: "blue", excludedRounds: []))
         let cardv = Card(theme: Theme(category: "alimentation", title: "v", colorName: "blue", excludedRounds: []))
         gameManager.players[0].personalCard = cardc
         gameManager.players[1].personalCard = cardv
-         
-        // La musique est maintenant gérée automatiquement par le GameManager
+        */
     }
     
     // MARK: - Computed Properties

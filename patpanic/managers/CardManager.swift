@@ -56,7 +56,7 @@ class CardManager: ObservableObject {
         guard !isInitialized else { return }
         
         let knownCategories = [
-            "alimentation", "animaux", "divertissement", "festivals", "geographie",
+            "alimentation", "animaux", "divertissement","geographie",
             "intime", "langues", "litterature", "marques", "metiers", "mode",
             "musique", "mythologie", "nature", "nombres", "objets", 
             "personnages", "politique", "sport"
@@ -74,6 +74,11 @@ class CardManager: ObservableObject {
     
     private func loadAllThemes() -> [Theme] {
         return cachedThemes
+    }
+    
+    func setPlayerCard(card:Card) {
+        cards.removeAll()
+        cards.append(card)
     }
         
     
