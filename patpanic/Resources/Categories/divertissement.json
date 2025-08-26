@@ -10,14 +10,14 @@
     },
     {
       "title": "Humoriste",
-      "category": "Divertissement", 
+      "category": "Divertissement",
       "color": "blue",
       "excludedRounds": []
     },
     {
       "title": "Film triste",
       "category": "Divertissement",
-      "color": "blue", 
+      "color": "blue",
       "excludedRounds": []
     },
     {
@@ -48,19 +48,58 @@
       "title": "Trilogies cinématographiques",
       "category": "Divertissement",
       "color": "blue",
-      "excludedRounds": [2, 3]
+      "excludedRounds": [
+        2,
+        3
+      ]
     },
     {
       "title": "Film de David Lynch",
       "category": "Divertissement",
       "color": "blue",
-      "excludedRounds": [2, 3]
+      "excludedRounds": [
+        2,
+        3
+      ]
     },
     {
       "title": "Film d'Agnes Varda",
       "category": "Divertissement",
       "color": "blue",
-      "excludedRounds": [2, 3]
+      "excludedRounds": [
+        2,
+        3
+      ]
+    },
+    {
+      "title": "Types d'énergie de Pokémon",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pokémon",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Journaux français",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Journaux internationaux",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Noms de radio",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": []
     }
   ]
 }

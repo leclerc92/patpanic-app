@@ -1,0 +1,28 @@
+{
+  "category": "Religion",
+  "color": "green",
+  "themes": [
+    {
+      "title": "Péchés capitaux",
+      "category": "Religion",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Noms d'Eglise (connues, ou pas)",
+      "category": "Religion",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Fêtes religieuses",
+      "category": "Religion",
+      "color": "green",
+      "excludedRounds": []
+    }
+  ]
+}

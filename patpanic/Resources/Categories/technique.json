@@ -1,0 +1,14 @@
+{
+  "category": "Technique",
+  "color": "blue",
+  "themes": [
+    {
+      "title": "Types de vis",
+      "category": "Technique",
+      "color": "blue",
+      "excludedRounds": [
+        3
+      ]
+    }
+  ]
+}

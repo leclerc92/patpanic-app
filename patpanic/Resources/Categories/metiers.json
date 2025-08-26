@@ -19,6 +19,18 @@
       "category": "Métiers",
       "color": "blue",
       "excludedRounds": []
+    },
+    {
+      "title": "Métiers artistiques",
+      "category": "Métiers",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Métiers artisanaux",
+      "category": "Métiers",
+      "color": "blue",
+      "excludedRounds": []
     }
   ]
 }

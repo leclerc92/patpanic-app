@@ -37,6 +37,36 @@
       "category": "Nature",
       "color": "green",
       "excludedRounds": []
+    },
+    {
+      "title": "Espèces de dinausore",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Espèces de pommes",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Espèces de poire",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Types de bois",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Plantes aquatiques",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
     }
   ]
 }

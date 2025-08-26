@@ -67,6 +67,22 @@
       "category": "Mode",
       "color": "purple",
       "excludedRounds": []
+    },
+    {
+      "title": "Couleurs pour du vernis à ongles",
+      "category": "Mode",
+      "color": "purple",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Couleurs pour une moquette kitsch",
+      "category": "Mode",
+      "color": "purple",
+      "excludedRounds": [
+        3
+      ]
     }
   ]
 }

@@ -59,7 +59,7 @@ class CardManager: ObservableObject {
             "alimentation", "animaux", "divertissement","geographie",
             "intime", "langues", "litterature", "marques", "metiers", "mode",
             "musique", "mythologie", "nature", "nombres", "objets", 
-            "personnages", "politique", "sport"
+            "personnages", "politique", "sport","religion","four-tout","petit et grand écran"
         ]
         
         for categoryName in knownCategories {
@@ -119,12 +119,13 @@ class CardManager: ObservableObject {
     // Génère une carte personnelle pour un joueur basée sur une catégorie
     func generatePlayerCard(for category: String) -> Card? {
         // Trouve les thèmes de cette catégorie
-        let categoryThemes = cachedThemes.filter { 
-            $0.category.lowercased() == category.lowercased() 
+        let categoryThemes = cachedThemes.filter {
+            $0.category.lowercased() == category.lowercased()
         }
         
-        // Filtre les thèmes qui ne sont pas déjà utilisés
-        let availableThemes = categoryThemes.filter { theme in
+        //theme pas exlus du round 3 et qui ne sont pas deja utilisés
+        let availableThemes = categoryThemes.filter { $0.isAvailableForRound(3) }
+            .filter { theme in
             !usedCards.contains { $0.theme.title == theme.title }
         }
         

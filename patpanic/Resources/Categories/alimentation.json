@@ -109,6 +109,111 @@
       "category": "Alimentation",
       "color": "red",
       "excludedRounds": []
+    },
+    {
+      "title": "Ingrédients pour faire du ketchup",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": [
+        2,
+        3
+      ]
+    },
+    {
+      "title": "Ingrédients pour une fondue savoyarde",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Fromages",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Types de bières",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Marques de bières",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "type de steack",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Ingrédients pour un burger",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Types de pain",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Plats à base de pommes de terre",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Façons de cuisiner le poulet",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Types d'alcool",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Légumes verts",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Fruits/Légumes rouges",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Types de vitamines",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Ingrédients pour une vinaigrette",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Plats japonais",
+      "category": "Alimentation",
+      "color": "red",
+      "excludedRounds": []
     }
   ]
 }

@@ -43,6 +43,30 @@
       "category": "Animaux",
       "color": "orange",
       "excludedRounds": []
+    },
+    {
+      "title": "Races de vache",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Races de chat",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Espèces de papillons",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Races de cheval",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
     }
   ]
 }

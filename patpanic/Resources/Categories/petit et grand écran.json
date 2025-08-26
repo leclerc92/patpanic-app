@@ -1,0 +1,50 @@
+{
+  "category": "Petit et grand écrans",
+  "color": "green",
+  "themes": [
+    {
+      "title": "Emissions de télé-réalité",
+      "category": "Petit et grand écrans",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Dessins animés de ton enfance",
+      "category": "Petit et grand écrans",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Personnages de l'univers Ghibli",
+      "category": "Petit et grand écrans",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnages de Tim Burton",
+      "category": "Petit et grand écrans",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnages de l'univers Disney",
+      "category": "Petit et grand écrans",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnages de Grey's Anatomy",
+      "category": "Petit et grand écrans",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnages de Desperate Housewife",
+      "category": "Petit et grand écrans",
+      "color": "green",
+      "excludedRounds": []
+    }
+  ]
+}

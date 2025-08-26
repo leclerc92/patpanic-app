@@ -67,6 +67,18 @@
       "category": "Littérature",
       "color": "green",
       "excludedRounds": []
+    },
+    {
+      "title": "Séries de Manga",
+      "category": "Littérature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Mangaka célèbres",
+      "category": "Littérature",
+      "color": "green",
+      "excludedRounds": []
     }
   ]
 }

@@ -1,0 +1,90 @@
+{
+  "category": "Four-tout",
+  "color": "green",
+  "themes": [
+    {
+      "title": "Nuances de la couleur verte",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Types de vices/défauts humains",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": [
+        2,
+        3
+      ]
+    },
+    {
+      "title": "Questions à laquelle on ne peut pas dire \"oui\"",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": [
+        2,
+        3
+      ]
+    },
+    {
+      "title": "Senteurs du savon \"Le Petit Marseillais\"",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Endroits où se faire percer",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Parties anatomiques de l'oreille",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Noms des doigts de la main",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Stands présents à la Fête de l'huma",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Prénoms commençants par D",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Prénoms épicène (pour fille et garçon)",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Prénoms vieillots",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Moyens de transport",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": []
+    }
+  ]
+}

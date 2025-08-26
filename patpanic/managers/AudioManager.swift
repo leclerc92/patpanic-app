@@ -15,7 +15,7 @@ class AudioManager: ObservableObject {
     private var fadeTimer: Timer?
     private var criticalTickTimer: Timer?
     
-    private let gameAudioSounds = ["validateCard", "passCard", "endTimer", "tick"]
+    private let gameAudioSounds = ["validateCard", "passCard", "endTimer", "tick", "roundResult"]
     private let maxPlayersPerSound = 3
     
     deinit {
@@ -93,6 +93,10 @@ class AudioManager: ObservableObject {
     
     func playEndTimer() {
         playSound("endTimer", volume: 1.0)
+    }
+    
+    func playRoundResultSound() {
+        playSound("roundResult", volume: 1.0)
     }
     
     // MARK: - Background Music

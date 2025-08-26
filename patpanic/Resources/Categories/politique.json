@@ -1,9 +1,33 @@
 {
-  "category": "Politique", 
+  "category": "Politique",
   "color": "red",
   "themes": [
     {
       "title": "Parti politique",
+      "category": "Politique",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Présidents de la République Française",
+      "category": "Politique",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Présidents des USA",
+      "category": "Politique",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Présidents africains",
+      "category": "Politique",
+      "color": "red",
+      "excludedRounds": []
+    },
+    {
+      "title": "Présient.e.s Asiatiques",
       "category": "Politique",
       "color": "red",
       "excludedRounds": []

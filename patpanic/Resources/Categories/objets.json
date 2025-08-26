@@ -55,6 +55,153 @@
       "category": "Objets",
       "color": "gray",
       "excludedRounds": []
+    },
+    {
+      "title": "Instruments de chirurgie",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Tailles de sac poubelle",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Ustensiles pour le barbecue",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Marques d'enceintes portatives",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Couleurs de tracteur",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Outils pour jardiner",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Outils pour faire un chateau de sable",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Choses qui font peur",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Modèles de moto",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Jeux de cartes",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Choses à prendre pour pique-niquer",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Choses dans un sac à main",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Choses qu'on trouve sur une façade de mairie",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Choses qui grattent",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Choses douces",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Sortes de verre à boire",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Choses qui brulent",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Choses indispensables pour une personne âgées",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Choses essentielles pour un bébé",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Produits ménagers",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": []
+    },
+    {
+      "title": "Types de balais",
+      "category": "Objets",
+      "color": "gray",
+      "excludedRounds": [
+        2,
+        3
+      ]
     }
   ]
 }

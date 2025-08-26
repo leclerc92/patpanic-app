@@ -116,12 +116,14 @@ class GameManager: ObservableObject {
     }
     
     func goToRoundResult() {
+        audioManager.playRoundResultSound()
         currentPlayer().validateTurn()
         gameState = .roundResult
         displayGameState()
     }
     
     func goToGameResult() {
+        audioManager.playRoundResultSound()
         currentPlayer().validateTurn()
         gameState = .gameResult
         displayGameState()

@@ -97,6 +97,74 @@
       "category": "Personnages",
       "color": "orange",
       "excludedRounds": []
+    },
+    {
+      "title": "Physiciens / scientifiques célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Philosophes célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Mathématiciens célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Membres d'une famille",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Têtes dans un jeu de Tarot",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Reines de France",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Rois de France",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Premières dames de France",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Blonds célèbres (fictifs ou non)",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Brunes célèbres (fictives ou non)",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Cowboy célèbres (fictifs ou non)",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
     }
   ]
 }

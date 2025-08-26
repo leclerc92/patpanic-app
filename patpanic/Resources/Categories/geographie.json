@@ -109,6 +109,100 @@
       "category": "Géographie",
       "color": "blue",
       "excludedRounds": []
+    },
+    {
+      "title": "Départements français commençant par L",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Capitales africaines",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Lignes de bus",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Régions fromagères",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Routes nationales",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Routes départementales",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Volcans",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Stations balnéaires",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Capitales états-uniennes",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Etats des Etats-Unis",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Villes des USA",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Grandes villes françaises",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Pays d'Amériques Latines",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
+    },
+    {
+      "title": "Pays d'Amérique centrale",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": []
     }
   ]
 }
