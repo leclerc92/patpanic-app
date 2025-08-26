@@ -130,7 +130,6 @@ class CardManager: ObservableObject {
         }
         
         guard let randomTheme = availableThemes.randomElement() else {
-            print("❌ Aucun thème disponible pour la catégorie \(category)")
             return nil
         }
         
@@ -156,7 +155,6 @@ class CardManager: ObservableObject {
         }
         
         guard let finalURL = url else {
-            print("❌ Impossible de trouver \(resourceName).json")
             return nil
         }
         
@@ -165,7 +163,6 @@ class CardManager: ObservableObject {
             let categoryData = try JSONDecoder().decode(CategoryData.self, from: data)
             return categoryData
         } catch {
-            print("❌ Erreur décodage \(filename): \(error)")
             return nil
         }
     }

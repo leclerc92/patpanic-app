@@ -219,8 +219,8 @@ struct GameActionButtons: View {
         
         GameActionButtons(
             buttonSize: 90,
-            onValidate: { print("Carte validée !") },
-            onSkip: { print("Carte passée !") }
+            onValidate: { },
+            onSkip: { }
         )
         
         Divider()
@@ -231,24 +231,20 @@ struct GameActionButtons: View {
         
         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 20) {
             RoundButton.cancelButton(size: 70) {
-                print("Annuler")
             }
             
             RoundButton.hintButton(size: 70) {
-                print("Indice")
             }
             
             RoundButton.pauseButton(size: 70) {
-                print("Pause")
             }
             
             RoundButton.replayButton(size: 70) {
-                print("Rejouer")
             }
             
             // Bouton personnalisé
             RoundButton(
-                action: { print("Action personnalisée") },
+                action: { },
                 icon: "star.fill",
                 colors: [Color.pink, Color.purple],
                 size: 70,
@@ -257,7 +253,7 @@ struct GameActionButtons: View {
             
             // Bouton avec couleurs personnalisées
             RoundButton(
-                action: { print("Custom") },
+                action: { },
                 icon: "heart.fill",
                 colors: [Color.red, Color.orange],
                 size: 70,

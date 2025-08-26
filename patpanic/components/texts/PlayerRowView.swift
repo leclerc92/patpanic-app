@@ -154,8 +154,8 @@ struct DeletePlayerButton: View {
             icon: "🕺",
             index: 1,
             theme: nil,
-            onConfig: { print("Config Jean-Baptiste") },
-            onDelete: { print("Delete Jean-Baptiste") }
+            onConfig: { },
+            onDelete: { }
 )
         
         PlayerRowView(
@@ -163,8 +163,8 @@ struct DeletePlayerButton: View {
             icon: "🕺",
             index: 2,
             theme: "Geographie ",
-            onConfig: { print("Config Jean-Baptiste") },
-            onDelete: { print("Delete Jean-Baptiste") }
+            onConfig: { },
+            onDelete: { }
         )
         
         PlayerRowView(
@@ -172,8 +172,8 @@ struct DeletePlayerButton: View {
             icon: "🕺",
             index: 3,
             theme: "Cuisine",
-            onConfig: { print("Config Jean-Baptiste") },
-            onDelete: { print("Delete Jean-Baptiste") }
+            onConfig: { },
+            onDelete: { }
         )
 
     

@@ -132,7 +132,6 @@ class GameViewModel: ObservableObject {
     func togglePause() {
         isPaused.toggle()
         showPauseOverlay = isPaused
-        print(isPaused ? "Jeu en pause" : "Jeu repris")
         
         // Gestion de la pause du timer
         if isPaused {
@@ -146,7 +145,6 @@ class GameViewModel: ObservableObject {
         isPaused = false
         showPauseOverlay = false
         timeManager.resumeTimer()
-        print("Jeu repris")
     }
     
     func showInstructions() {

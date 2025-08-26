@@ -97,7 +97,6 @@ class PlayerConfigViewModel: ObservableObject {
             onClose()
         } else {
             // Gestion d'erreur si aucune carte ne peut être générée
-            print("❌ Impossible de générer une carte pour \(selectedCategory)")
             showThemeEmptyError = true
         }
     }

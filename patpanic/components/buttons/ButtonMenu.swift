@@ -148,7 +148,6 @@ extension ButtonMenu {
                    subtitle: "Commencer une partie rapide",
                    icon: "play.fill"
                ) {
-                   print("Nouvelle partie")
         }
                
         ButtonMenu.secondaryButton(
@@ -156,7 +155,6 @@ extension ButtonMenu {
                    subtitle: "Jouer avec des amis",
                    icon: "person.2.fill"
                ) {
-                   print("Multijoueur")
         }
         
         ButtonMenu.warningButton(
@@ -164,11 +162,10 @@ extension ButtonMenu {
                    subtitle: "etes vous sur ?",
                    icon: "person.2.fill"
                ) {
-                   print("Multijoueur")
         }
         
         ButtonMenu(
-            action: { print("Personnalisé") },
+            action: { },
             title: "Paramètres",
             subtitle: "Configurer le jeu",
             icon: "gearshape.fill",
@@ -177,7 +174,7 @@ extension ButtonMenu {
         
         // Bouton sans sous-titre et sans icône
         ButtonMenu(
-            action: { print("Simple") },
+            action: { },
             title: "À propos",
             subtitle: nil,
             icon: nil,

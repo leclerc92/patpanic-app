@@ -35,14 +35,12 @@ class AudioManager: ObservableObject {
             try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            print("Failed to setup audio session: \(error)")
         }
     }
     
     private func preloadSounds() {
         for soundName in gameAudioSounds {
             guard let url = Bundle.main.url(forResource: soundName, withExtension: "mp3") else {
-                print("Sound file not found during preload: \(soundName).mp3")
                 continue
             }
             
@@ -53,7 +51,6 @@ class AudioManager: ObservableObject {
                     player.prepareToPlay()
                     players.append(player)
                 } catch {
-                    print("Failed to preload sound \(soundName): \(error)")
                     break
                 }
             }
@@ -63,7 +60,6 @@ class AudioManager: ObservableObject {
     
     func playSound(_ soundName: String, volume: Float = 1.0) {
         guard let players = audioPlayerPools[soundName] else {
-            print("Sound not preloaded: \(soundName)")
             return
         }
         
@@ -106,7 +102,6 @@ class AudioManager: ObservableObject {
         }
         
         guard let url = Bundle.main.url(forResource: musicName, withExtension: "mp3") else {
-            print("Music file not found: \(musicName).mp3")
             return
         }
         
@@ -118,7 +113,6 @@ class AudioManager: ObservableObject {
             backgroundMusicPlayer?.play()
             isMusicPlaying = true
         } catch {
-            print("Failed to play background music \(musicName): \(error)")
         }
     }
     

@@ -27,7 +27,6 @@ class SecondRoundLogic : BaseRoundLogic {
         gameManager.currentPlayer().currentTurnPassedCard += 1
         _ = gameManager.getNextCard()
         gameManager.currentPlayer().decreaseTurnScore(getNbCardExpectedResponses())
-        print(gameManager.cardManager.cards.count)
     }
     
     override func endPlayerTurn() {

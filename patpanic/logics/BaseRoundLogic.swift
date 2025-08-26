@@ -49,7 +49,6 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     }
     
     func setupRound () {
-        print("setup round")
         gameManager.setPlayersRemainingTurn(nb: roundConst.nbTurns)
         gameManager.resetPlayersForRound()
     }

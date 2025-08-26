@@ -194,7 +194,6 @@ extension GameInput {
             GameInput(
                 content: .constant(""),
                 action: {
-                    print("Action personnalisée")
                 },
                 labelIcon: "🎯",
                 label: "Custom Input",

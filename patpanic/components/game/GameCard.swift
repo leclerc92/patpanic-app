@@ -310,7 +310,6 @@ struct GameCardDemoView: View {
                         isEjecting: isEjecting,
                         onPause: {
                             isPaused.toggle()
-                            print(isPaused ? "Jeu en pause" : "Jeu repris")
                         }
                     )
                 }

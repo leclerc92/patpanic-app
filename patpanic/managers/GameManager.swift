@@ -141,14 +141,13 @@ class GameManager: ObservableObject {
     
     
     func addPlayer(name: String) {
-        guard players.count < 9 else {print("Le nombre de player est > 8"); return}
+        guard players.count < 9 else { return }
         let np = Player(name: name)
         players.append(np)
     }
     
     func removePlayer(at index: Int) {
         guard index < players.count else {
-            print("Index \(index) invalide pour supprimer un joueur")
             return
         }
         players.remove(at: index)
