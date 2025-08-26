@@ -216,24 +216,24 @@ extension LeaderboardView {
     let gameManager = GameManager()
     
     // Ajout de joueurs avec des scores
-    gameManager.addPlayer(name: "Alice")
+    _ = gameManager.addPlayer(name: "Alice")
     gameManager.players[0].icon = "👩‍🔬"
     // Simulation de scores (normalement fait via les méthodes du Player)
     gameManager.players[0].addTurnScore(45)
     gameManager.players[0].validateTurn()
 
     
-    gameManager.addPlayer(name: "Bob")
+    _ = gameManager.addPlayer(name: "Bob")
     gameManager.players[1].icon = "🧑‍🎨"
     gameManager.players[1].addTurnScore(38)
     gameManager.players[1].validateTurn()
 
-    gameManager.addPlayer(name: "Charlie")
+    _ = gameManager.addPlayer(name: "Charlie")
     gameManager.players[2].icon = "👨‍🚀"
     gameManager.players[2].addTurnScore(52)
     gameManager.players[2].validateTurn()
 
-    gameManager.addPlayer(name: "Diana")
+    _ = gameManager.addPlayer(name: "Diana")
     gameManager.players[3].icon = "👩‍🎤"
     gameManager.players[3].addTurnScore(23)
     gameManager.players[3].validateTurn()

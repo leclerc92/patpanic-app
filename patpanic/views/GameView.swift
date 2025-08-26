@@ -237,7 +237,7 @@ struct GameView: View {
 
 #Preview {
     let gameManager: GameManager = GameManager()
-    gameManager.addPlayer(name: "Jean-Michel welbeck")
+    _ = gameManager.addPlayer(name: "Jean-Michel welbeck")
     
     // Créer une carte de test pour le preview
     let testTheme = Theme(category: "Test", title: "Animaux de compagnie", colorName: "blue")

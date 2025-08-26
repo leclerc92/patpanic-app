@@ -5,17 +5,20 @@
 //  Created by Claude Code on 24/08/2025.
 //
 
-import AVFoundation
+@preconcurrency import AVFoundation
 import AudioToolbox
 
+@MainActor
 class AudioManager: ObservableObject {
+    
+    private let errorHandler = ErrorHandler.shared
     private var audioPlayerPools: [String: [AVAudioPlayer]] = [:]
     private var backgroundMusicPlayer: AVAudioPlayer?
     @Published var isMusicPlaying: Bool = false
     private var fadeTimer: Timer?
     private var criticalTickTimer: Timer?
     
-    private let gameAudioSounds = ["validateCard", "passCard", "endTimer", "tick", "roundResult"]
+    private let gameAudioSounds = ["validateCard", "passCard", "endTimer", "roundResult"]
     private let maxPlayersPerSound = 3
     
     deinit {
@@ -34,13 +37,20 @@ class AudioManager: ObservableObject {
         do {
             try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
+            errorHandler.logInfo("Session audio configurée avec succès", context: "AudioManager.setupAudioSession")
         } catch {
+            errorHandler.handle(.audioManager(.audioSessionSetupFailed(reason: error.localizedDescription)), context: "AudioManager.setupAudioSession")
         }
     }
     
     private func preloadSounds() {
+        var loadedSounds = 0
+        var failedSounds: [String] = []
+        
         for soundName in gameAudioSounds {
             guard let url = Bundle.main.url(forResource: soundName, withExtension: "mp3") else {
+                failedSounds.append(soundName)
+                errorHandler.handle(.audioManager(.soundFileNotFound(soundName: soundName)), context: "AudioManager.preloadSounds")
                 continue
             }
             
@@ -51,29 +61,45 @@ class AudioManager: ObservableObject {
                     player.prepareToPlay()
                     players.append(player)
                 } catch {
+                    errorHandler.handle(.audioManager(.audioPlayerCreationFailed(soundName: soundName, reason: error.localizedDescription)), context: "AudioManager.preloadSounds")
                     break
                 }
             }
-            audioPlayerPools[soundName] = players
+            
+            if !players.isEmpty {
+                audioPlayerPools[soundName] = players
+                loadedSounds += 1
+            } else {
+                failedSounds.append(soundName)
+            }
+        }
+        
+        errorHandler.logInfo("\(loadedSounds) sons préchargés avec succès", context: "AudioManager.preloadSounds")
+        
+        if !failedSounds.isEmpty {
+            errorHandler.logWarning("Échec de préchargement des sons: \(failedSounds.joined(separator: ", "))", context: "AudioManager.preloadSounds")
         }
     }
     
     func playSound(_ soundName: String, volume: Float = 1.0) {
         guard let players = audioPlayerPools[soundName] else {
+            errorHandler.logWarning("Tentative de lecture d'un son non chargé: \(soundName)", context: "AudioManager.playSound")
             return
         }
         
+        // Cherche un player disponible
         for player in players {
             if !player.isPlaying {
-                player.volume = volume
+                player.volume = max(0.0, min(1.0, volume))
                 player.currentTime = 0
                 player.play()
                 return
             }
         }
         
+        // Si aucun player disponible, utilise le premier (interrompt le son en cours)
         if let firstPlayer = players.first {
-            firstPlayer.volume = volume
+            firstPlayer.volume = max(0.0, min(1.0, volume))
             firstPlayer.currentTime = 0
             firstPlayer.play()
         }
@@ -102,6 +128,7 @@ class AudioManager: ObservableObject {
         }
         
         guard let url = Bundle.main.url(forResource: musicName, withExtension: "mp3") else {
+            errorHandler.handle(.audioManager(.soundFileNotFound(soundName: musicName)), context: "AudioManager.playBackgroundMusic")
             return
         }
         
@@ -112,7 +139,9 @@ class AudioManager: ObservableObject {
             backgroundMusicPlayer?.prepareToPlay()
             backgroundMusicPlayer?.play()
             isMusicPlaying = true
+            errorHandler.logInfo("Musique de fond démarrée: \(musicName)", context: "AudioManager.playBackgroundMusic")
         } catch {
+            errorHandler.handle(.audioManager(.backgroundMusicFailed(reason: error.localizedDescription)), context: "AudioManager.playBackgroundMusic")
         }
     }
     
@@ -141,11 +170,13 @@ class AudioManager: ObservableObject {
             
             if currentStep >= fadeSteps || newVolume <= 0 {
                 timer.invalidate()
-                self?.fadeTimer = nil
                 
-                player.stop()
-                self?.backgroundMusicPlayer = nil
-                self?.isMusicPlaying = false
+                Task { @MainActor [weak self] in
+                    self?.fadeTimer = nil
+                    self?.backgroundMusicPlayer?.stop()
+                    self?.backgroundMusicPlayer = nil
+                    self?.isMusicPlaying = false
+                }
             }
         }
     }
@@ -166,17 +197,18 @@ class AudioManager: ObservableObject {
     
     // MARK: - Timer Tick Sound
     func playTimerTick(intensity: Float = 1.0) {
-        // Jouer un son de tic-tac avec une intensité variable
-        playTickSound(named: "tick", volume: intensity)
+        // Jouer un son de tic-tac système avec une intensité variable
+        playSystemTick(volume: intensity)
     }
     
     func playDoubleTimerTick(intensity: Float = 1.0) {
-        // Jouer deux tic-tacs rapides pour la zone urgente (orange)
-        playTickSound(named: "tick", volume: intensity)
+        // Jouer deux tic-tacs système rapides pour la zone urgente (orange)
+        playSystemTick(volume: intensity)
         
         // Deuxième tic après 0.3 secondes
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.playTickSound(named: "tick", volume: intensity)
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+            self?.playSystemTick(volume: intensity)
         }
     }
     
@@ -184,9 +216,11 @@ class AudioManager: ObservableObject {
         // Arrêter toute boucle en cours
         stopCriticalTickLoop()
         
-        // Démarrer une boucle de tic-tacs rapides pour la zone critique (rouge)
+        // Démarrer une boucle de tic-tacs système rapides pour la zone critique (rouge)
         criticalTickTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
-            self?.playTickSound(named: "tick", volume: intensity)
+            Task { @MainActor [weak self] in
+                self?.playSystemTick(volume: intensity)
+            }
         }
     }
     
@@ -196,20 +230,7 @@ class AudioManager: ObservableObject {
     }
     
     private func playTickSound(named soundName: String, volume: Float) {
-        guard let players = audioPlayerPools[soundName] else {
-            playSystemTick(volume: volume)
-            return
-        }
-        
-        for player in players {
-            if !player.isPlaying {
-                player.volume = volume
-                player.currentTime = 0
-                player.play()
-                return
-            }
-        }
-        
+        // Utiliser directement le son système car nous n'avons pas de fichier tick.mp3
         playSystemTick(volume: volume)
     }
     

@@ -26,7 +26,9 @@ class FirstRoundLogic : BaseRoundLogic {
     /// Passer une carte : juste passer à la carte suivante (sans points)
     override func passCard() {
         gameManager.audioManager.playPassCardSound()
-        gameManager.currentPlayer().currentTurnPassedCard += 1
+        if let player = gameManager.safeCurrentPlayer() {
+            player.currentTurnPassedCard += 1
+        }
         _ = gameManager.getNextCard()
     }
 }

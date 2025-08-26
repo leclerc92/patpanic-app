@@ -13,7 +13,10 @@ struct CategoryData: Codable {
     let themes: [Theme]
 }
 
+@MainActor
 class CardManager: ObservableObject {
+    
+    private let errorHandler = ErrorHandler.shared
     
     @Published private(set) var cards: [Card] = []
     @Published private(set) var usedCards: [Card] = []
@@ -23,34 +26,53 @@ class CardManager: ObservableObject {
     private var isInitialized = false
     
     init() {
-        initializeCategories()
+        initializeCategories() 
     }
     
-    func generateGameCards(count: Int, category: String? = nil, round: Int) {
-            cards.removeAll()
-            
-            // 1. Charger tous les thèmes
-            let allThemes = loadAllThemes()
-            
-            // 2. Filtrer par round
-            let availableThemes = allThemes.filter { $0.isAvailableForRound(round) }
-            
-            // 3. Filtrer par catégorie si spécifiée
-            let filteredThemes: [Theme]
-            if let category = category {
-                filteredThemes = availableThemes.filter { $0.category == category }
-            } else {
-                filteredThemes = availableThemes
-            }
-            
-            // 4. Créer les cartes en excluant les usedCards
-            let allPossibleCards = filteredThemes.map { Card(theme: $0) }
-            let availableCards = allPossibleCards.filter { !usedCards.contains($0) }
-            
-            // 5. Mélanger et prendre le nombre demandé
-            let shuffled = availableCards.shuffled()
-            cards = Array(shuffled.prefix(count))
+    func generateGameCards(count: Int, category: String? = nil, round: Int) -> Result<Void, PatPanicError> {
+        guard count > 0 else {
+            return .failure(.cardManager(.noCardsAvailable))
         }
+        
+        cards.removeAll()
+        
+        // 1. Charger tous les thèmes
+        let allThemes = loadAllThemes()
+        guard !allThemes.isEmpty else {
+            return .failure(.cardManager(.noCardsAvailable))
+        }
+        
+        // 2. Filtrer par round
+        let availableThemes = allThemes.filter { $0.isAvailableForRound(round) }
+        
+        // 3. Filtrer par catégorie si spécifiée
+        let filteredThemes: [Theme]
+        if let category = category {
+            filteredThemes = availableThemes.filter { $0.category.lowercased() == category.lowercased() }
+            if filteredThemes.isEmpty {
+                return .failure(.cardManager(.categoryNotFound(category: category)))
+            }
+        } else {
+            filteredThemes = availableThemes
+        }
+        
+        // 4. Créer les cartes en excluant les usedCards
+        let allPossibleCards = filteredThemes.map { Card(theme: $0) }
+        let availableCards = allPossibleCards.filter { !usedCards.contains($0) }
+        
+        guard !availableCards.isEmpty else {
+            return .failure(.cardManager(.noCardsAvailable))
+        }
+        
+        // 5. Mélanger et prendre le nombre demandé
+        let shuffled = availableCards.shuffled()
+        cards = Array(shuffled.prefix(count))
+        
+        let actualCount = min(count, availableCards.count)
+        errorHandler.logInfo("\(actualCount) cartes générées pour le round \(round)", context: "CardManager.generateGameCards")
+        
+        return .success(())
+    }
     
     private func initializeCategories() {
         guard !isInitialized else { return }
@@ -62,13 +84,25 @@ class CardManager: ObservableObject {
             "personnages", "politique", "sport","religion","four-tout","petit et grand écran"
         ]
         
+        var loadedCategories = 0
+        var failedCategories: [String] = []
+        
         for categoryName in knownCategories {
-            if let categoryData = loadCategoryData(filename: "\(categoryName).json") {
+            switch loadCategoryData(filename: "\(categoryName).json") {
+            case .success(let categoryData):
                 cachedCategories.append(categoryData)
                 cachedThemes.append(contentsOf: categoryData.themes)
+                loadedCategories += 1
+            case .failure:
+                failedCategories.append(categoryName)
             }
         }
         
+        if !failedCategories.isEmpty {
+            errorHandler.logWarning("Échec de chargement des catégories: \(failedCategories.joined(separator: ", "))", context: "CardManager.initializeCategories")
+        }
+        
+        errorHandler.logInfo("\(loadedCategories) catégories chargées avec succès", context: "CardManager.initializeCategories")
         isInitialized = true
     }
     
@@ -82,13 +116,19 @@ class CardManager: ObservableObject {
     }
         
     
-    func nextCard() -> Card? {
-        guard !cards.isEmpty else { return nil }
+    func nextCard() -> Result<Card, PatPanicError> {
+        guard !cards.isEmpty else {
+            return .failure(.cardManager(.noCardsAvailable))
+        }
         
         let card = cards.removeFirst()
         currentCard = card
         usedCards.append(card)
-        return card
+        return .success(card)
+    }
+    
+    func safeNextCard() -> Card? {
+        return try? nextCard().get()
     }
     
     func resetUsedCards() {
@@ -117,20 +157,24 @@ class CardManager: ObservableObject {
     }
     
     // Génère une carte personnelle pour un joueur basée sur une catégorie
-    func generatePlayerCard(for category: String) -> Card? {
+    func generatePlayerCard(for category: String) -> Result<Card, PatPanicError> {
         // Trouve les thèmes de cette catégorie
         let categoryThemes = cachedThemes.filter {
             $0.category.lowercased() == category.lowercased()
         }
         
-        //theme pas exlus du round 3 et qui ne sont pas deja utilisés
-        let availableThemes = categoryThemes.filter { $0.isAvailableForRound(3) }
-            .filter { theme in
-            !usedCards.contains { $0.theme.title == theme.title }
+        guard !categoryThemes.isEmpty else {
+            return .failure(.cardManager(.categoryNotFound(category: category)))
         }
         
+        // Thèmes pas exclus du round 3 et qui ne sont pas déjà utilisés
+        let availableThemes = categoryThemes.filter { $0.isAvailableForRound(3) }
+            .filter { theme in
+                !usedCards.contains { $0.theme.title == theme.title }
+            }
+        
         guard let randomTheme = availableThemes.randomElement() else {
-            return nil
+            return .failure(.cardManager(.noCardsAvailable))
         }
         
         // Crée la carte personnelle
@@ -139,11 +183,16 @@ class CardManager: ObservableObject {
         // L'ajoute immédiatement aux cartes utilisées
         usedCards.append(personalCard)
         
-        return personalCard
+        errorHandler.logInfo("Carte personnelle générée pour \(category): \(randomTheme.title)", context: "CardManager.generatePlayerCard")
+        return .success(personalCard)
+    }
+    
+    func safeGeneratePlayerCard(for category: String) -> Card? {
+        return try? generatePlayerCard(for: category).get()
     }
     
     
-    private func loadCategoryData(filename: String) -> CategoryData? {
+    private func loadCategoryData(filename: String) -> Result<CategoryData, PatPanicError> {
         let resourceName = filename.replacingOccurrences(of: ".json", with: "")
         
         // Essayons d'abord avec le subdirectory
@@ -155,15 +204,17 @@ class CardManager: ObservableObject {
         }
         
         guard let finalURL = url else {
-            return nil
+            return .failure(.cardManager(.fileLoadingFailed(filename: filename)))
         }
         
         do {
             let data = try Data(contentsOf: finalURL)
             let categoryData = try JSONDecoder().decode(CategoryData.self, from: data)
-            return categoryData
+            return .success(categoryData)
+        } catch let decodingError as DecodingError {
+            return .failure(.cardManager(.jsonDecodingFailed(filename: filename, reason: decodingError.localizedDescription)))
         } catch {
-            return nil
+            return .failure(.fileSystem(.fileNotReadable(path: finalURL.path)))
         }
     }
     

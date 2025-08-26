@@ -171,7 +171,12 @@ class GameViewModel: ObservableObject {
     
     // MARK: - Private Methods
     private func updateCurrentPlayer() {
-        let player = gameManager.currentPlayer()
+        guard let player = gameManager.safeCurrentPlayer() else {
+            currentPlayerName = "Aucun"
+            currentPlayerIcon = "person.fill"
+            currentPlayerScore = 0
+            return
+        }
         currentPlayerName = player.name
         currentPlayerIcon = player.icon
         currentPlayerScore = player.currentTurnScore

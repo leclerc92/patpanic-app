@@ -55,7 +55,7 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     
     func prepareCards() {
         // Implémentation par défaut : générer des cartes normalement
-        gameManager.cardManager.generateGameCards(count: GameConst.CARDPERPLAYER, round: gameManager.currentRound.rawValue)
+        gameManager.generateCardsForCurrentRound()
     }
     
     func startTurn() {
@@ -72,7 +72,9 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     
     func passCard() {
         _ = gameManager.getNextCard()
-        gameManager.currentPlayer().currentTurnPassedCard += 1
+        if let player = gameManager.safeCurrentPlayer() {
+            player.currentTurnPassedCard += 1
+        }
         gameManager.audioManager.playPassCardSound()
     }
     
@@ -82,13 +84,15 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
         
     func endPlayerTurn() {
         gameManager.audioManager.playEndTimer()
-        gameManager.currentPlayer().decreaseRemainingTurn()
-        gameManager.currentPlayer().isMainPlayer = false
+        if let player = gameManager.safeCurrentPlayer() {
+            player.decreaseRemainingTurn()
+            player.isMainPlayer = false
+        }
         gameManager.setState(state: .playerTurnResult)
     }
     
     func validatePlayerTurn () {
-        gameManager.currentPlayer().validateTurn()
+        gameManager.safeCurrentPlayer()?.validateTurn()
     }
     
     func getNbCardExpectedResponses() -> Int {

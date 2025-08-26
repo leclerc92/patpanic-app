@@ -21,6 +21,8 @@ enum GameState: Equatable {
 @MainActor
 class GameManager: ObservableObject {
     
+    private let errorHandler = ErrorHandler.shared
+    
     @Published var cardManager: CardManager = CardManager()
     @Published var timeManager: TimeManager = TimeManager()
     @Published var audioManager: AudioManager = AudioManager()
@@ -84,49 +86,72 @@ class GameManager: ObservableObject {
     }
     
     func continueWithNextPlayer() {
-        currentPlayer().validateTurn()
+        guard let player = safeCurrentPlayer() else {
+            errorHandler.handle(.gameManager(.noPlayersFound), context: "GameManager.continueWithNextPlayer")
+            return
+        }
+        
+        player.validateTurn()
         setToNextPlayerIndex()
         goToPlayerInstructionView()
-        displayGameState()
+        logGameState()
     }
     
     func continueWithNextRound() {
         resetPlayersMainState()
         resetPlayerEliminated()
         resetPlayerCardPassed()
-        nextRound()
-        currentPlayerIndex = 0  // Retour au premier joueur pour le nouveau round
+        
+        let result = nextRound()
+        if case .failure(let error) = result {
+            errorHandler.handle(error, context: "GameManager.continueWithNextRound")
+            return
+        }
+        
+        currentPlayerIndex = 0
         goToRoundInstructionView(needSetupRound: true)
-        displayGameState()
+        logGameState()
     }
     
     func goToRoundInstructionView(needSetupRound:Bool) {
         gameState = .roundInstruction(needSetupRound: needSetupRound)
-        displayGameState()
+        logGameState()
     }
     
     func goToPlayerInstructionView() {
         gameState = .playerInstruction
-        displayGameState()
+        logGameState()
     }
     
     func goToPlayerResultView() {
         gameState = .playerTurnResult
-        displayGameState()
+        logGameState()
     }
     
     func goToRoundResult() {
         audioManager.playRoundResultSound()
-        currentPlayer().validateTurn()
+        
+        guard let player = safeCurrentPlayer() else {
+            errorHandler.handle(.gameManager(.noPlayersFound), context: "GameManager.goToRoundResult")
+            return
+        }
+        
+        player.validateTurn()
         gameState = .roundResult
-        displayGameState()
+        logGameState()
     }
     
     func goToGameResult() {
         audioManager.playRoundResultSound()
-        currentPlayer().validateTurn()
+        
+        guard let player = safeCurrentPlayer() else {
+            errorHandler.handle(.gameManager(.noPlayersFound), context: "GameManager.goToGameResult")
+            return
+        }
+        
+        player.validateTurn()
         gameState = .gameResult
-        displayGameState()
+        logGameState()
     }
         
     func endPlayerTurn () {
@@ -140,24 +165,63 @@ class GameManager: ObservableObject {
     // MARK: - PLAYER FUNCTIONS
     
     
-    func addPlayer(name: String) {
-        guard players.count < 9 else { return }
-        let np = Player(name: name)
-        players.append(np)
+    func addPlayer(name: String) -> Result<Void, PatPanicError> {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Validation du nom
+        if trimmedName.isEmpty {
+            return .failure(.playerValidation(.emptyName))
+        }
+        
+        if trimmedName.count > 20 {
+            return .failure(.playerValidation(.nameTooLong(maxLength: 20)))
+        }
+        
+        if players.contains(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
+            return .failure(.playerValidation(.duplicateName(name: trimmedName)))
+        }
+        
+        if players.count >= 9 {
+            return .failure(.playerValidation(.maxPlayersReached(maxPlayers: 9)))
+        }
+        
+        let newPlayer = Player(name: trimmedName)
+        players.append(newPlayer)
+        errorHandler.logInfo("Joueur ajouté: \(trimmedName)", context: "GameManager.addPlayer")
+        return .success(())
     }
     
-    func removePlayer(at index: Int) {
-        guard index < players.count else {
-            return
+    func removePlayer(at index: Int) -> Result<Void, PatPanicError> {
+        guard index >= 0 && index < players.count else {
+            return .failure(.gameManager(.invalidPlayerIndex(index: index, maxIndex: players.count - 1)))
         }
+        
+        let removedPlayer = players[index]
         players.remove(at: index)
+        
+        // Ajuster currentPlayerIndex si nécessaire
+        if currentPlayerIndex >= players.count {
+            currentPlayerIndex = max(0, players.count - 1)
+        }
+        
+        errorHandler.logInfo("Joueur supprimé: \(removedPlayer.name)", context: "GameManager.removePlayer")
+        return .success(())
     }
     
-    func currentPlayer() -> Player {
-        guard currentPlayerIndex < players.count else {
-            fatalError("Index de joueur invalide: \(currentPlayerIndex)")
+    func currentPlayer() -> Result<Player, PatPanicError> {
+        guard !players.isEmpty else {
+            return .failure(.gameManager(.noPlayersFound))
         }
-        return players[currentPlayerIndex]
+        
+        guard currentPlayerIndex >= 0 && currentPlayerIndex < players.count else {
+            return .failure(.gameManager(.invalidPlayerIndex(index: currentPlayerIndex, maxIndex: players.count - 1)))
+        }
+        
+        return .success(players[currentPlayerIndex])
+    }
+    
+    func safeCurrentPlayer() -> Player? {
+        return try? currentPlayer().get()
     }
     
     func mainPlayer() -> Player? {
@@ -192,7 +256,11 @@ class GameManager: ObservableObject {
     }
     
     func addPointToCurrentPlayer(nb: Int) {
-        currentPlayer().addTurnScore(nb)
+        guard let player = safeCurrentPlayer() else {
+            errorHandler.handle(.gameManager(.noPlayersFound), context: "GameManager.addPointToCurrentPlayer")
+            return
+        }
+        player.addTurnScore(nb)
     }
     
     func addPointToMainPlayer(nb: Int) {
@@ -290,13 +358,21 @@ class GameManager: ObservableObject {
     }
     
     func setCurrentPlayerMain() {
-        currentPlayer().isMainPlayer = true
-        currentPlayer().hasBeenMainPlayer = true
+        guard let player = safeCurrentPlayer() else {
+            errorHandler.handle(.gameManager(.noPlayersFound), context: "GameManager.setCurrentPlayerMain")
+            return
+        }
+        player.isMainPlayer = true
+        player.hasBeenMainPlayer = true
     }
     
-    func setMainPayerIsCurrentPLayer() {
-        let playerIndex = getPlayerIndex(player: mainPlayer()!)
-        currentPlayerIndex = playerIndex!
+    func setMainPlayerIsCurrentPlayer() {
+        guard let mainPlayer = mainPlayer(),
+              let playerIndex = getPlayerIndex(player: mainPlayer) else {
+            errorHandler.handle(.gameManager(.noPlayersFound), context: "GameManager.setMainPlayerIsCurrentPlayer")
+            return
+        }
+        currentPlayerIndex = playerIndex
     }
     
     
@@ -308,15 +384,28 @@ class GameManager: ObservableObject {
         currentRound.config
     }
         
-    func nextRound() {
-        if let next = currentRound.next {
-            currentRound = next
-            updateLogicForCurrentRound()
+    func nextRound() -> Result<Void, PatPanicError> {
+        guard let next = currentRound.next else {
+            return .failure(.gameManager(.roundInitializationFailed(round: "Aucun round suivant disponible")))
         }
+        
+        currentRound = next
+        let updateResult = updateLogicForCurrentRound()
+        if case .failure(let error) = updateResult {
+            return .failure(error)
+        }
+        
+        errorHandler.logInfo("Passage au round \(currentRound.rawValue)", context: "GameManager.nextRound")
+        return .success(())
     }
     
-    private func updateLogicForCurrentRound() {
-        logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
+    private func updateLogicForCurrentRound() -> Result<Void, PatPanicError> {
+        do {
+            logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
+            return .success(())
+        } catch {
+            return .failure(.gameManager(.roundInitializationFailed(round: String(currentRound.rawValue))))
+        }
     }
     
     func isLastRound() -> Bool {
@@ -381,27 +470,30 @@ class GameManager: ObservableObject {
         let roundNumber = getRoundNumber()
         let cardsNeeded = GameConst.CARDPERPLAYER * players.count
 
-        cardManager.generateGameCards(
+        let result = cardManager.generateGameCards(
             count: cardsNeeded,
             category: nil, // Toutes les catégories
             round: roundNumber
         )
         
+        result.handle(context: "GameManager.generateCardsForCurrentRound")
     }
     
     func generateCardsForCategory(_ category: String) {
         let roundNumber = getRoundNumber()
         let cardsNeeded = GameConst.CARDPERPLAYER * players.count
     
-        cardManager.generateGameCards(
+        let result = cardManager.generateGameCards(
             count: cardsNeeded,
             category: category,
             round: roundNumber
         )
+        
+        result.handle(context: "GameManager.generateCardsForCategory")
     }
     
     func getNextCard() -> Card? {
-        return cardManager.nextCard()
+        return cardManager.safeNextCard()
     }
     
     func getCurrentCard() -> Card? {
@@ -417,11 +509,11 @@ class GameManager: ObservableObject {
     }
     
     func generatePlayerCard(for category: String) -> Card? {
-        return cardManager.generatePlayerCard(for: category)
+        return cardManager.safeGeneratePlayerCard(for: category)
     }
     
     func setCurrentPlayerCardToCards() {
-        if let card = currentPlayer().personalCard {
+        if let card = safeCurrentPlayer()?.personalCard {
             cardManager.setPlayerCard(card: card)
         }
     }
@@ -436,20 +528,24 @@ class GameManager: ObservableObject {
 
     // MARK: -  UTILS FUNCTIONS
 
-    func displayGameState(){
-        print("-----------------------------")
-        print("state du jeu : \(gameState)")
-        print("Nb joueurs : \(players.count)")
-        print("joueurs theme : \(allPlayersHaveCategory())")
-        print("round actuel : \(currentRound)")
-        print("Nb cartes : \(cardManager.cards.count)")
-        print("Nb cartes utilisées : \(cardManager.usedCards.count)")
-        print("Joueur actuel : \(currentPlayerIndex) - \(players[currentPlayerIndex].name)")
-        print("themes des joueurs : \(players.map {$0.personalCard?.theme.category ?? "aucun"})")
-        print("Joueur main : \(String(describing: mainPlayer()?.name))" )
-        print("dernier joueur du round : \(isLastPlayer())")
-        print("-----------------------------")
-
+    private func logGameState() {
+        let currentPlayerName = safeCurrentPlayer()?.name ?? "Aucun"
+        let mainPlayerName = mainPlayer()?.name ?? "Aucun"
+        
+        let gameStateInfo = """
+        État du jeu: \(gameState)
+        Nombre de joueurs: \(players.count)
+        Joueurs ont thème: \(allPlayersHaveCategory())
+        Round actuel: \(currentRound)
+        Cartes disponibles: \(cardManager.cards.count)
+        Cartes utilisées: \(cardManager.usedCards.count)
+        Joueur actuel: \(currentPlayerIndex) - \(currentPlayerName)
+        Thèmes des joueurs: \(players.map {$0.personalCard?.theme.category ?? "aucun"})
+        Joueur main: \(mainPlayerName)
+        Dernier joueur du round: \(isLastPlayer())
+        """
+        
+        errorHandler.logInfo(gameStateInfo, context: "GameManager.gameState")
     }
     
     

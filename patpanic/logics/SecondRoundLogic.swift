@@ -24,29 +24,37 @@ class SecondRoundLogic : BaseRoundLogic {
     /// Passer une carte : juste passer à la carte suivante (sans points)
     override func passCard() {
         gameManager.audioManager.playPassCardSound()
-        gameManager.currentPlayer().currentTurnPassedCard += 1
+        if let player = gameManager.safeCurrentPlayer() {
+            player.currentTurnPassedCard += 1
+            player.decreaseTurnScore(getNbCardExpectedResponses())
+        }
         _ = gameManager.getNextCard()
-        gameManager.currentPlayer().decreaseTurnScore(getNbCardExpectedResponses())
     }
     
     override func endPlayerTurn() {
         gameManager.audioManager.playEndTimer()
-        gameManager.currentPlayer().decreaseTurnScore(getNbCardExpectedResponses())
-        gameManager.currentPlayer().decreaseRemainingTurn()
-        gameManager.currentPlayer().isMainPlayer = false
+        if let player = gameManager.safeCurrentPlayer() {
+            player.decreaseTurnScore(getNbCardExpectedResponses())
+            player.decreaseRemainingTurn()
+            player.isMainPlayer = false
+        }
         gameManager.setState(state: .playerTurnResult)
     }
     
     
     override func getNbCardExpectedResponses() -> Int {
-        switch (gameManager.currentPlayer().remainingTurn) {
-        case 3 :
+        guard let player = gameManager.safeCurrentPlayer() else {
+            return 3 // Valeur par défaut
+        }
+        
+        switch player.remainingTurn {
+        case 3:
             return 3
         case 2:
             return 4
-        case 1 :
+        case 1:
             return 5
-        default :
+        default:
             return 3
         }
     }

@@ -149,11 +149,7 @@ struct PlayerSetupView: View {
         .onTapGesture {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
-        .alert("Attention", isPresented: $viewModel.showingAlert) {
-            Button("OK") { viewModel.dismissAlert() }
-        } message: {
-            Text(viewModel.alertMessage)
-        }
+        .errorAlert() // Utilise le nouveau système d'erreurs
         .sheet(item: $viewModel.selectedPlayer) { player in
             PlayerConfigView(
                 player: player,

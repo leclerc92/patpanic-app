@@ -35,7 +35,7 @@ import SwiftUI
 
       // MARK: - Setup
       private func setupData() {
-          let player = gameManager.currentPlayer()
+          let player = gameManager.safeCurrentPlayer()!
           let roundConfig = gameManager.getCurrentRoundConfig()
 
           // Mise à jour des propriétés du player

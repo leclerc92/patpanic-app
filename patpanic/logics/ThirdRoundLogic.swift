@@ -26,31 +26,39 @@ class ThirdRoundLogic : BaseRoundLogic {
     
     override func passCard() {
         gameManager.audioManager.playPassCardSound()
-        if gameManager.currentPlayer().isMainPlayer {
-            endPlayerTurn()
-        } else {
-            eliminatePlayer ()
+        if let player = gameManager.safeCurrentPlayer() {
+            if player.isMainPlayer {
+                endPlayerTurn()
+            } else {
+                eliminatePlayer()
+            }
         }
     }
     
     override func timerFinished() {
-        if gameManager.currentPlayer().isMainPlayer {
-            endPlayerTurn()
-        } else {
-            eliminatePlayer()
+        if let player = gameManager.safeCurrentPlayer() {
+            if player.isMainPlayer {
+                endPlayerTurn()
+            } else {
+                eliminatePlayer()
+            }
         }
     }
     
     override func endPlayerTurn() {
         gameManager.audioManager.playEndTimer()
-        gameManager.setMainPayerIsCurrentPLayer()
-        gameManager.currentPlayer().isMainPlayer = false
+        gameManager.setMainPlayerIsCurrentPlayer()
+        if let player = gameManager.safeCurrentPlayer() {
+            player.isMainPlayer = false
+        }
         gameManager.resetPlayerEliminated()
         gameManager.setState(state: .playerTurnResult)
     }
     
     func eliminatePlayer() {
-        gameManager.currentPlayer().isEliminated = true
+        if let player = gameManager.safeCurrentPlayer() {
+            player.isEliminated = true
+        }
         gameManager.addPointToMainPlayer(nb: 1)
         checkVictory()
     }

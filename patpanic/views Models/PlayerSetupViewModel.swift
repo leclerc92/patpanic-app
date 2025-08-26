@@ -50,19 +50,26 @@ class PlayerSetupViewModel: ObservableObject {
     func addPlayer() {
         let trimmedName = newPlayerName.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        guard validatePlayerName(trimmedName) else { return }
+        let result = gameManager.addPlayer(name: trimmedName)
         
-        // Animation d'ajout
-        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
-            gameManager.addPlayer(name: trimmedName)
+        switch result {
+        case .success:
+            // Animation d'ajout
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                // Le joueur a déjà été ajouté par gameManager.addPlayer
+            }
+            
+            // Réinitialiser le champ
+            newPlayerName = ""
+            
+            // Ouvrir la configuration pour le dernier joueur ajouté
+            let lastIndex = players.count - 1
+            configurePlayer(at: lastIndex)
+            
+        case .failure(_):
+            // L'erreur sera automatiquement gérée par l'ErrorHandler
+            break
         }
-        
-        // Réinitialiser le champ
-        newPlayerName = ""
-        
-        // Ouvrir la configuration pour le dernier joueur ajouté
-        let lastIndex = players.count - 1
-        configurePlayer(at: lastIndex)
     }
     
     func configurePlayer(at index: Int) {
@@ -71,7 +78,8 @@ class PlayerSetupViewModel: ObservableObject {
     }
     
     func removePlayer(at index: Int) {
-        gameManager.removePlayer(at: index)
+        let result = gameManager.removePlayer(at: index)
+        result.handle(context: "PlayerSetupViewModel.removePlayer")
     }
     
     func updatePlayer(_ updatedPlayer: Player, originalPlayer: Player) {
@@ -138,43 +146,23 @@ class PlayerSetupViewModel: ObservableObject {
     }
     
     // MARK: - Private Methods
-    private func validatePlayerName(_ name: String) -> Bool {
-        guard !name.isEmpty else {
-            showError("Le nom du joueur ne peut pas être vide")
-            return false
-        }
-        
-        guard players.count < 8 else {
-            showError("Maximum 8 joueurs autorisés")
-            return false
-        }
-        
-        guard !players.contains(where: { $0.name.lowercased() == name.lowercased() }) else {
-            showError("Ce nom de joueur existe déjà")
-            return false
-        }
-        
-        return true
-    }
+    // Supprimé car la validation est maintenant dans GameManager
     
     private func validateGameStart() -> Bool {
         guard players.count >= GameConst.MINPLAYERS else {
-            showError("Il faut au moins 2 joueurs pour commencer")
+            ErrorHandler.shared.handle(.playerValidation(.invalidPlayerConfiguration), context: "PlayerSetupViewModel.validateGameStart")
             return false
         }
         
         guard gameManager.allPlayersHaveCategory() else {
             let playersWithoutCategory = gameManager.getPlayersWithoutCategory()
             let names = playersWithoutCategory.joined(separator: ", ")
-            showError("Des joueurs n'ont pas de catégorie : " + names)
+            ErrorHandler.shared.handle(.configuration(.missingConfiguration(key: "Catégories joueurs: \(names)")), context: "PlayerSetupViewModel.validateGameStart")
             return false
         }
         
         return true
     }
     
-    private func showError(_ message: String) {
-        alertMessage = message
-        showingAlert = true
-    }
+    // Supprimé car les erreurs sont maintenant gérées par ErrorHandler
 }
