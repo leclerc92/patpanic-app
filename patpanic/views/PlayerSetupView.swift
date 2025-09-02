@@ -31,14 +31,30 @@ struct PlayerSetupView: View {
             VStack(spacing: 0) {
                 // Section fixe du haut
                 VStack(spacing: 20) {
-                    // Titre fixe en haut
-                    GameTitle(
-                        icon: viewModel.gameIcon,
-                        title: viewModel.gameTitle,
-                        subtitle: "Configuration des joueurs"
-                    )
+                    // Header avec titre et bouton config
+                    HStack {
+                        VStack(alignment: .leading) {
+                            GameTitle(
+                                icon: viewModel.gameIcon,
+                                title: viewModel.gameTitle,
+                                subtitle: "Configuration des joueurs"
+                            )
+                            .fixedSize(horizontal: false, vertical: true)
+                        }
+                        
+                        Spacer()
+                        
+                        // Bouton paramètres de jeu
+                        RoundButton(
+                            action: viewModel.openGameConfig,
+                            icon: "gearshape.fill",
+                            colors: [.orange, .red],
+                            size: 44,
+                            iconColor: .white
+                        )
+                    }
                     .padding(.top)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal)
 
                     // Section ajout de joueur fixe
                     GameInput.addPlayer(
@@ -161,6 +177,9 @@ struct PlayerSetupView: View {
                     viewModel.closePlayerConfig()
                 }
             )
+        }
+        .sheet(isPresented: $viewModel.showingGameConfig) {
+            ConfigView(gameManager: viewModel.gameManager)
         }
         .onAppear(){
             viewModel.viewDidAppear()

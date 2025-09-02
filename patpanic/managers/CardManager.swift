@@ -53,7 +53,20 @@ class CardManager: ObservableObject {
                 return .failure(.cardManager(.categoryNotFound(category: category)))
             }
         } else {
-            filteredThemes = availableThemes
+            // Utiliser les catégories sélectionnées dans les paramètres
+            let selectedCategories = GameSettingsHelper.getSelectedCategories()
+            
+            if selectedCategories.isEmpty {
+                // Si aucune catégorie sélectionnée, utiliser toutes
+                filteredThemes = availableThemes
+            } else {
+                // Filtrer par catégories sélectionnées
+                filteredThemes = availableThemes.filter { theme in
+                    selectedCategories.contains { selectedCategory in
+                        theme.category.lowercased() == selectedCategory.lowercased()
+                    }
+                }
+            }
         }
         
         // 4. Créer les cartes en excluant les usedCards

@@ -10,6 +10,7 @@ import SwiftUI
 struct ConfigView: View {
     
     @StateObject private var viewModel: ConfigViewModel
+    @Environment(\.dismiss) private var dismiss
     
     init(gameManager:GameManager) {
         self._viewModel = StateObject(
@@ -61,7 +62,7 @@ struct ConfigView: View {
         VStack {
             HStack {
                 Spacer()
-                CancelButton(action: viewModel.cancelButton)
+                CancelButton(action: { dismiss() })
             }
             .padding(.top)
             .padding(.horizontal)
@@ -226,10 +227,12 @@ struct ConfigView: View {
         
         HStack {
             RoundButton.validateButton(size: 70) {
-                
+                viewModel.validateButton()
+                dismiss()
             }.padding(.horizontal)
             
             RoundButton.replayButton(size: 70) {
+                viewModel.discardButton()
             }.padding(.horizontal)
             
             

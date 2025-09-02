@@ -46,6 +46,8 @@ enum Round: Int, CaseIterable {
     case round3 = 3
     
     var config: RoundConfig {
+        let customTimer = GameSettingsHelper.getTimerForRound(self)
+        
         switch self {
         case .round1:
             return RoundConfig(
@@ -53,7 +55,7 @@ enum Round: Int, CaseIterable {
                 icon: "🐍",
                 nbTurns: 1,
                 rules: rules1,
-                timer: 45,
+                timer: customTimer,
                 seuil1: 0...2,   // Très faible
                 seuil2: 3...5,   // Faible  
                 seuil3: 6...8,   // Moyen
@@ -66,7 +68,7 @@ enum Round: Int, CaseIterable {
                 icon: "🦉",
                 nbTurns: 3,
                 rules: rules2,
-                timer: 30,
+                timer: customTimer,
                 seuil1: -30...1,   // Très faible
                 seuil2: 2...3,   // Faible
                 seuil3: 4...5,   // Moyen
@@ -79,7 +81,7 @@ enum Round: Int, CaseIterable {
                 icon: "🐝",
                 nbTurns: 1,
                 rules: rules3,
-                timer: 20,
+                timer: customTimer,
                 seuil1: 0...0,   // Très faible
                 seuil2: 1...2,   // Faible
                 seuil3: 3...6,   // Moyen

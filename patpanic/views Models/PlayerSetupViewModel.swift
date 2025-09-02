@@ -19,6 +19,7 @@ class PlayerSetupViewModel: ObservableObject {
     @Published var alertMessage: String = ""
     @Published var players: [Player] = []
     @Published var canStartGame: Bool = false
+    @Published var showingGameConfig: Bool = false
     
     // MARK: - Dependencies
     let gameManager: GameManager  // Expose pour PlayerConfigView
@@ -99,6 +100,14 @@ class PlayerSetupViewModel: ObservableObject {
     
     func closePlayerConfig() {
         selectedPlayer = nil
+    }
+    
+    func openGameConfig() {
+        showingGameConfig = true
+    }
+    
+    func closeGameConfig() {
+        showingGameConfig = false
     }
     
     func dismissAlert() {
