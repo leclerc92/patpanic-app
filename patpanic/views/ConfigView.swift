@@ -29,17 +29,7 @@ struct ConfigView: View {
                 
                 Spacer()
                 
-                Stepper(value: $viewModel.timerRound1, in: 0...60, step: 1) {
-                    Text("Timer manche 1 : \(viewModel.timerRound1)")
-                }
-                
-                Stepper(value: $viewModel.timerRound2, in: 0...60, step: 1) {
-                    Text("Timer manche 2 : \(viewModel.timerRound2)")
-                }
-                
-                Stepper(value: $viewModel.timerRound3, in: 0...60, step: 1) {
-                    Text("Timer manche 3 : \(viewModel.timerRound3)")
-                }
+                timerSection
                 
                 Spacer()
             }
@@ -68,6 +58,22 @@ struct ConfigView: View {
         }
         .padding(.top)
         .padding(.horizontal)
+    }
+    
+    private var timerSection: some View {
+        VStack{
+            Stepper(value: $viewModel.timerRound1, in: 0...60, step: 1) {
+                Text("Timer manche 1 : \(viewModel.timerRound1)")
+            }
+            
+            Stepper(value: $viewModel.timerRound2, in: 0...60, step: 1) {
+                Text("Timer manche 2 : \(viewModel.timerRound2)")
+            }
+            
+            Stepper(value: $viewModel.timerRound3, in: 0...60, step: 1) {
+                Text("Timer manche 3 : \(viewModel.timerRound3)")
+            }
+        }
     }
 }
 
