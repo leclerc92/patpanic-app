@@ -52,12 +52,20 @@ struct ConfigView: View {
     
     
     private var headerSection: some View {
-        HStack {
-            Spacer()
-            CancelButton(action: viewModel.cancelButton)
+        VStack {
+            HStack {
+                Spacer()
+                CancelButton(action: viewModel.cancelButton)
+            }
+            .padding(.top)
+            .padding(.horizontal)
+            
+            GameTitle(icon: "⚒️", title: "Configuration", subtitle: "Changer les variables de jeu")
         }
-        .padding(.top)
-        .padding(.horizontal)
+        .padding()
+        
+        
+        
     }
     
     private var timerSection: some View {
@@ -73,7 +81,7 @@ struct ConfigView: View {
             Stepper(value: $viewModel.timerRound3, in: 0...60, step: 1) {
                 Text("Timer manche 3 : \(viewModel.timerRound3)")
             }
-        }
+        }.padding()
     }
 }
 
