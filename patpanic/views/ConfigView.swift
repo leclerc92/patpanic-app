@@ -32,6 +32,8 @@ struct ConfigView: View {
                 timerSection
                 
                 Spacer()
+                
+                buttonSections
             }
         }
         
@@ -72,15 +74,30 @@ struct ConfigView: View {
         VStack{
             Stepper(value: $viewModel.timerRound1, in: 0...60, step: 1) {
                 Text("Timer manche 1 : \(viewModel.timerRound1)")
-            }
+            }.padding(.bottom)
             
             Stepper(value: $viewModel.timerRound2, in: 0...60, step: 1) {
                 Text("Timer manche 2 : \(viewModel.timerRound2)")
-            }
+            }.padding(.bottom)
             
             Stepper(value: $viewModel.timerRound3, in: 0...60, step: 1) {
                 Text("Timer manche 3 : \(viewModel.timerRound3)")
-            }
+            }.padding(.bottom)
+            
+        }.padding()
+    }
+    
+    private var buttonSections: some View {
+        
+        HStack {
+            RoundButton.validateButton(size: 70) {
+                
+            }.padding(.horizontal)
+            
+            RoundButton.cancelButton(size: 70) {
+            }.padding(.horizontal)
+            
+            
         }.padding()
     }
 }
