@@ -14,13 +14,30 @@ struct RoundConfig {
 }
 
 var rules1: [String] = [
-    "Temps impartis de 45 secondes ",
+    "Temps imparti de 45 secondes ",
     "Tu dois donner deux réponses par carte",
     "Chaque carte te rapport 1 point",
     "Valide en autant que possible !! ",
     "Tu peux passer la carte sans pénalité",
     "Tu peux mettre pause en appuyant sur la carte pour debattre de la réponse !"
 ]
+
+var rules2: [String] = [
+    "Temps impartis de 30 secondes",
+    "Tu dois donner le nombre de réponse indiqué à chaque tour",
+    "Chaque carte te rapport le nombre de point restant sur le chrono",
+    "Si tu passes une carte, tu perd autant de points que de réponses que tu dois donner",
+    "Tu peux mettre pause en appuyant sur la carte pour debattre de la réponse !"
+]
+
+var rules3: [String] = [
+    "Temps impartis de 20 secondes",
+    "Cette manche se joue avec ta catégorie personnelle",
+    "Tu ne peux peux passer sinon tu gagne 0 points",
+    "chaque adversaire qui passe ou répete  est éliminé et tu gagne 1 point",
+    "soit le dernier en liste pour gagner, et gagner 2x le nb de joueurs en points"
+]
+
 
 
 enum Round: Int, CaseIterable {
@@ -48,7 +65,7 @@ enum Round: Int, CaseIterable {
                 title: "Erudit comme un hiboux",
                 icon: "🦉",
                 nbTurns: 3,
-                rules: rules1,
+                rules: rules2,
                 timer: 30,
                 seuil1: -30...1,   // Très faible
                 seuil2: 2...3,   // Faible
@@ -61,11 +78,11 @@ enum Round: Int, CaseIterable {
                 title: "Endurant comme une abeille",
                 icon: "🐝",
                 nbTurns: 1,
-                rules: rules1,
+                rules: rules3,
                 timer: 20,
-                seuil1: 0...2,   // Très faible
-                seuil2: 3...4,   // Faible  
-                seuil3: 5...6,   // Moyen
+                seuil1: 0...0,   // Très faible
+                seuil2: 1...2,   // Faible
+                seuil3: 3...6,   // Moyen
                 seuil4: 7...9,   // Bien
                 seuil5: 10...15  // Excellent
             )
