@@ -67,6 +67,43 @@
       "category": "Nature",
       "color": "green",
       "excludedRounds": []
+    },
+    {
+      "title": "Matières naturelles",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Nombres de feuilles sur un trèfles",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": [
+        2,
+        3
+      ]
+    },
+    {
+      "title": "Herbes médicinales",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Arbres fruitiers",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Qu'on trouve dans le désert",
+      "category": "Nature",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
     }
   ]
 }

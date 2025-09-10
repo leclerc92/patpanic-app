@@ -1,5 +1,5 @@
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 class Theme: Equatable, Codable {
     let category: String

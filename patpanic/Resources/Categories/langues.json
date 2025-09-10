@@ -61,6 +61,64 @@
       "excludedRounds": [
         3
       ]
+    },
+    {
+      "title": "Différentes façons de dire \"Bonjour!\"",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Mots commençants par B",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Prénoms comprenant un A",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Mots commençant par -ri",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Accents français",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Mots en -ik",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": []
+    },
+    {
+      "title": "Lettres dans \"LILLIPUTIENS\"",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Lettres absentes dans \"TOBOGGAN\"",
+      "category": "Langues",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
     }
   ]
 }

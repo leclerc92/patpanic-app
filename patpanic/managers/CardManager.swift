@@ -94,7 +94,7 @@ class CardManager: ObservableObject {
             "alimentation", "animaux", "divertissement","geographie",
             "intime", "langues", "litterature", "marques", "metiers", "mode",
             "musique", "mythologie", "nature", "nombres", "objets", 
-            "personnages", "politique", "sport","religion","four-tout","petit et grand écran"
+            "personnages", "politique", "sport","religion","four-tout","petit et grand écran","art"
         ]
         
         var loadedCategories = 0

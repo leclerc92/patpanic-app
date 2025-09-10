@@ -165,6 +165,79 @@
       "category": "Personnages",
       "color": "orange",
       "excludedRounds": []
+    },
+    {
+      "title": "Couples célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnages dans Pirates des Caraïbes",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Membres des Black Panters",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Artistes handicapés célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Jean célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Brigitte célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Explorateurs célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Astronautes",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Joueurs/joueuses d'échec célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": []
+    },
+    {
+      "title": "Personnes/personnages qui portent des salopettes",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Mousquetaires",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": [
+        2,
+        3
+      ]
     }
   ]
 }
