@@ -97,7 +97,7 @@ final class GameManager {
     }
     
     func goToPlayingView() {
-        logic.prepareCards()
+        // Les cartes sont déjà préparées dans setupRound()
         logic.startTurn()
         gameState = .playing
     }

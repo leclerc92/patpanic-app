@@ -51,8 +51,10 @@ class BaseRoundLogic: ObservableObject, RoundLogicProtocol {
     func setupRound () {
         gameManager.setPlayersRemainingTurn(nb: roundConst.nbTurns)
         gameManager.resetPlayersForRound()
+        // Préparer les cartes UNE SEULE FOIS au début du round
+        prepareCards()
     }
-    
+
     func prepareCards() {
         // Implémentation par défaut : générer des cartes normalement
         gameManager.generateCardsForCurrentRound()
