@@ -55,8 +55,10 @@ class GameManager: ObservableObject {
     private func handleBackgroundMusicForState(_ state: GameState) {
         switch state {
         case .playing:
-            // Arrêter la musique avec fade out quand on joue
-            audioManager.fadeOutBackgroundMusic(duration: 1.0)
+            // Arrêter la musique avec fade out quand on joue (async)
+            Task {
+                await audioManager.fadeOutBackgroundMusic(duration: 1.0)
+            }
         case .playersSetup, .roundInstruction, .playerInstruction, .playerTurnResult, .roundResult, .gameResult:
             // Jouer la musique de fond pour tous les autres états
             if !audioManager.isMusicPlaying {
@@ -453,7 +455,9 @@ class GameManager: ObservableObject {
         case .critical:
             // Démarrer la boucle continue pour zone rouge (seulement au début)
             if timeRemaining == 5 {
-                audioManager.startCriticalTickLoop(intensity: intensity)
+                Task {
+                    await audioManager.startCriticalTickLoop(intensity: intensity)
+                }
             }
         }
     }
