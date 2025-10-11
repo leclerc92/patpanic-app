@@ -101,5 +101,5 @@ struct RoundInstructionView: View {
 
 #Preview {
     RoundInstructionView(
-        gameManager: GameManager(),needSetupRound: false)
+        gameManager: GameManager.shared,needSetupRound: false)
 }

@@ -244,6 +244,6 @@ struct ConfigView: View {
 
 
 #Preview {
-    let gameManager:GameManager = GameManager()
+    let gameManager:GameManager = GameManager.shared
     ConfigView(gameManager: gameManager)
 }

@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct AppView: View {
-    
-    @StateObject private var gameManager:GameManager = GameManager()
-     
+
+    private var gameManager: GameManager = GameManager.shared
+
     var body: some View {
-    
+
         switch gameManager.gameState {
         case .playersSetup:
             PlayerSetupView(

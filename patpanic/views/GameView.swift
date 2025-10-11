@@ -236,7 +236,7 @@ struct GameView: View {
 }
 
 #Preview {
-    let gameManager: GameManager = GameManager()
+    let gameManager: GameManager = GameManager.shared
     _ = gameManager.addPlayer(name: "Jean-Michel welbeck")
     
     // Créer une carte de test pour le preview

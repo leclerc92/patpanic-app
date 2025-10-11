@@ -125,7 +125,7 @@ struct PlayerInstructionView: View {
 
 #Preview {
     
-    let gameManager:GameManager = GameManager()
+    let gameManager:GameManager = GameManager.shared
     _ = gameManager.addPlayer(name: "Michel")
 
     

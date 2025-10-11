@@ -3,16 +3,18 @@
 //  patpanic
 //
 //  Created by clement leclerc on 28/08/2025.
+//  Modernized for iOS 26 with @Observable
 //
 
 import Foundation
+import Observation
 
 struct GameSettings {
     var timerRound1: Int
     var timerRound2: Int
     var timerRound3: Int
     var selectedCategories: Set<String>
-    
+
     static var `default`: GameSettings {
         GameSettings(
             timerRound1: 45,
@@ -23,35 +25,56 @@ struct GameSettings {
     }
 }
 
+/// Modern game settings manager using @Observable (iOS 26)
 @MainActor
-class GameSettingsManager: ObservableObject {
+@Observable
+final class GameSettingsManager {
     static let shared = GameSettingsManager()
-    
-    @Published private(set) var currentSettings: GameSettings
-    
+
+    // MARK: - Observable State
+
+    private(set) var currentSettings: GameSettings
+
+    // MARK: - Private Properties
+
     private let userDefaults = UserDefaults.standard
-    
-    // Keys pour UserDefaults
-    private enum Keys {
-        static let timerRound1 = "game_timer_round1"
-        static let timerRound2 = "game_timer_round2"
-        static let timerRound3 = "game_timer_round3"
-        static let selectedCategories = "game_selected_categories"
+
+    // MARK: - Constants
+
+    /// Keys pour UserDefaults (partagées via nonisolated pour GameSettingsHelper)
+    nonisolated(unsafe) static let keys = Keys()
+
+    struct Keys {
+        let timerRound1 = "game_timer_round1"
+        let timerRound2 = "game_timer_round2"
+        let timerRound3 = "game_timer_round3"
+        let selectedCategories = "game_selected_categories"
+
+        // Valeurs par défaut
+        let defaultTimerRound1 = 45
+        let defaultTimerRound2 = 30
+        let defaultTimerRound3 = 20
     }
-    
+
+    private var keys: Keys { Self.keys }
+
+    // MARK: - Initialization
+
     private init() {
         self.currentSettings = GameSettings.default
         loadSettings()
     }
+
+    // MARK: - Settings Management
     
     func loadSettings() {
-        let timerRound1 = userDefaults.object(forKey: Keys.timerRound1) as? Int ?? 45
-        let timerRound2 = userDefaults.object(forKey: Keys.timerRound2) as? Int ?? 30
-        let timerRound3 = userDefaults.object(forKey: Keys.timerRound3) as? Int ?? 20
-        
-        let categoriesArray = userDefaults.array(forKey: Keys.selectedCategories) as? [String] ?? []
+        let timerRound1 = loadTimer(forKey: keys.timerRound1, default: keys.defaultTimerRound1)
+        let timerRound2 = loadTimer(forKey: keys.timerRound2, default: keys.defaultTimerRound2)
+        let timerRound3 = loadTimer(forKey: keys.timerRound3, default: keys.defaultTimerRound3)
+
+        let categoriesArray = userDefaults.array(forKey: keys.selectedCategories) as? [String] ?? []
         let selectedCategories = Set(categoriesArray)
-        
+
         currentSettings = GameSettings(
             timerRound1: timerRound1,
             timerRound2: timerRound2,
@@ -59,18 +82,16 @@ class GameSettingsManager: ObservableObject {
             selectedCategories: selectedCategories
         )
     }
-    
+
     func saveSettings(_ settings: GameSettings) {
         currentSettings = settings
-        
-        userDefaults.set(settings.timerRound1, forKey: Keys.timerRound1)
-        userDefaults.set(settings.timerRound2, forKey: Keys.timerRound2)
-        userDefaults.set(settings.timerRound3, forKey: Keys.timerRound3)
-        userDefaults.set(Array(settings.selectedCategories), forKey: Keys.selectedCategories)
-        
-        userDefaults.synchronize()
+
+        userDefaults.set(settings.timerRound1, forKey: keys.timerRound1)
+        userDefaults.set(settings.timerRound2, forKey: keys.timerRound2)
+        userDefaults.set(settings.timerRound3, forKey: keys.timerRound3)
+        userDefaults.set(Array(settings.selectedCategories), forKey: keys.selectedCategories)
     }
-    
+
     func updateTimers(round1: Int, round2: Int, round3: Int) {
         var newSettings = currentSettings
         newSettings.timerRound1 = round1
@@ -78,13 +99,13 @@ class GameSettingsManager: ObservableObject {
         newSettings.timerRound3 = round3
         saveSettings(newSettings)
     }
-    
+
     func updateSelectedCategories(_ categories: Set<String>) {
         var newSettings = currentSettings
         newSettings.selectedCategories = categories
         saveSettings(newSettings)
     }
-    
+
     func getTimerForRound(_ round: Round) -> Int {
         switch round {
         case .round1:
@@ -95,30 +116,42 @@ class GameSettingsManager: ObservableObject {
             return currentSettings.timerRound3
         }
     }
-    
+
     func resetToDefaults() {
         saveSettings(GameSettings.default)
     }
+
+    // MARK: - Private Helpers
+
+    private func loadTimer(forKey key: String, default defaultValue: Int) -> Int {
+        return userDefaults.object(forKey: key) as? Int ?? defaultValue
+    }
 }
 
-// Fonctions utilitaires non-actor pour accès synchrone depuis des contextes non-UI
+// MARK: - Non-Actor Helper
+
+/// Fonctions utilitaires non-actor pour accès synchrone depuis des contextes non-UI
 struct GameSettingsHelper {
+    private static let keys = GameSettingsManager.keys
+    private static let userDefaults = UserDefaults.standard
+
     static func getTimerForRound(_ round: Round) -> Int {
-        let userDefaults = UserDefaults.standard
-        
         switch round {
         case .round1:
-            return userDefaults.object(forKey: "game_timer_round1") as? Int ?? 45
+            return loadTimer(forKey: keys.timerRound1, default: keys.defaultTimerRound1)
         case .round2:
-            return userDefaults.object(forKey: "game_timer_round2") as? Int ?? 30
+            return loadTimer(forKey: keys.timerRound2, default: keys.defaultTimerRound2)
         case .round3:
-            return userDefaults.object(forKey: "game_timer_round3") as? Int ?? 20
+            return loadTimer(forKey: keys.timerRound3, default: keys.defaultTimerRound3)
         }
     }
-    
+
     static func getSelectedCategories() -> Set<String> {
-        let userDefaults = UserDefaults.standard
-        let categoriesArray = userDefaults.array(forKey: "game_selected_categories") as? [String] ?? []
+        let categoriesArray = userDefaults.array(forKey: keys.selectedCategories) as? [String] ?? []
         return Set(categoriesArray)
+    }
+
+    private static func loadTimer(forKey key: String, default defaultValue: Int) -> Int {
+        return userDefaults.object(forKey: key) as? Int ?? defaultValue
     }
 }

@@ -7,7 +7,6 @@
 
 import SwiftUI
 import UIKit
-import Combine
 
 @MainActor
 class PlayerSetupViewModel: ObservableObject {
@@ -17,34 +16,23 @@ class PlayerSetupViewModel: ObservableObject {
     @Published var showingConfigPlayer: Bool = false
     @Published var selectedPlayer: Player?
     @Published var alertMessage: String = ""
-    @Published var players: [Player] = []
-    @Published var canStartGame: Bool = false
     @Published var showingGameConfig: Bool = false
-    
+
     // MARK: - Dependencies
     let gameManager: GameManager  // Expose pour PlayerConfigView
-    private var cancellables = Set<AnyCancellable>()
-    
+
+    // MARK: - Computed Properties (from GameManager @Observable)
+    var players: [Player] {
+        gameManager.players
+    }
+
+    var canStartGame: Bool {
+        players.count >= GameConst.MINPLAYERS
+    }
+
     // MARK: - Initialization
     init(gameManager: GameManager) {
         self.gameManager = gameManager
-        setupBindings()
-        updateGameState()
-    }
-    
-    // MARK: - Setup
-    private func setupBindings() {
-        // Observer les changements de joueurs
-        gameManager.$players
-            .sink { [weak self] players in
-                self?.players = players
-                self?.updateGameState()
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func updateGameState() {
-        canStartGame = players.count >= GameConst.MINPLAYERS
     }
     
     // MARK: - Public Methods

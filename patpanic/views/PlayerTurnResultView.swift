@@ -96,7 +96,7 @@ struct PlayerTurnResultView: View {
 
 
 #Preview {
-    let gameManager = GameManager()
+    let gameManager = GameManager.shared
     _ = gameManager.addPlayer(name: "Jean_MICHEL DELE")
     gameManager.safeCurrentPlayer()?.addTurnScore(-15)
     

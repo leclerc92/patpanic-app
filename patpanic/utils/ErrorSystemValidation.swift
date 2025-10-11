@@ -32,7 +32,7 @@ class ErrorSystemValidation {
     private func testGameManagerErrors() {
         errorHandler.logInfo("Test des erreurs GameManager", context: "ErrorSystemValidation")
         
-        let gameManager = GameManager()
+        let gameManager = GameManager.shared
         
         // Test ajout de joueur avec nom vide
         let result1 = gameManager.addPlayer(name: "")
@@ -75,9 +75,9 @@ class ErrorSystemValidation {
     
     private func testAudioManagerErrors() {
         errorHandler.logInfo("Test des erreurs AudioManager", context: "ErrorSystemValidation")
-        
-        let audioManager = AudioManager()
-        
+
+        let audioManager = AudioManager.shared
+
         // Teste la lecture d'un son inexistant
         audioManager.playSound("SonInexistant")
         // L'erreur devrait être loggée automatiquement
@@ -101,7 +101,7 @@ class ErrorSystemValidation {
     private func testPlayerValidationErrors() {
         errorHandler.logInfo("Test des erreurs PlayerValidation", context: "ErrorSystemValidation")
         
-        let gameManager = GameManager()
+        let gameManager = GameManager.shared
         
         // Test nom trop long
         let longName = String(repeating: "a", count: 25)
@@ -132,7 +132,7 @@ class ErrorSystemValidation {
         errorHandler.logInfo("Test des erreurs Configuration", context: "ErrorSystemValidation")
         
         // Test via le PlayerSetupViewModel
-        let gameManager = GameManager()
+        let gameManager = GameManager.shared
         _ = PlayerSetupViewModel(gameManager: gameManager)
         
         // Test démarrage de partie sans joueurs
@@ -166,7 +166,7 @@ class ErrorSystemValidation {
         // Crée et détruit plusieurs managers pour tester les fuites
         for _ in 0..<10 {
             autoreleasepool {
-                let gameManager = GameManager()
+                let gameManager = GameManager.shared
                 _ = gameManager.addPlayer(name: "Test")
                 // Le manager devrait se libérer automatiquement
             }

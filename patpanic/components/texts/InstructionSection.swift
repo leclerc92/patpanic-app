@@ -101,5 +101,5 @@ struct InstructionRow: View {
 
 
 #Preview {
-    InstructionsSection(rules: GameManager().getCurrentRoundConfig().rules)
+    InstructionsSection(rules: GameManager.shared.getCurrentRoundConfig().rules)
 }

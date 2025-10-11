@@ -300,7 +300,7 @@ struct ActionButtonsSection: View {
 #Preview {
     PlayerConfigView(
         player: Player(name: "Alice"),
-        gameManager: GameManager(),
+        gameManager: GameManager.shared,
         onSave: { _ in },
         onClose: {}
     )

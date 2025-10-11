@@ -213,7 +213,7 @@ extension LeaderboardView {
 
 #Preview {
     // Création d'un GameManager de test
-    let gameManager = GameManager()
+    let gameManager = GameManager.shared
     
     // Ajout de joueurs avec des scores
     _ = gameManager.addPlayer(name: "Alice")

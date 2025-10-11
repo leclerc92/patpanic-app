@@ -11,9 +11,14 @@ import Observation
 import SwiftUI
 
 /// Modern audio manager using Swift Concurrency and AVAudioEngine
+/// Singleton to ensure only one audio engine runs at a time
 @MainActor
 @Observable
 final class AudioManager {
+
+    // MARK: - Singleton
+
+    static let shared = AudioManager()
 
     // MARK: - Published State
 
@@ -70,7 +75,7 @@ final class AudioManager {
 
     // MARK: - Initialization & Cleanup
 
-    init() {
+    private init() {
         setupAudioSession()
         preloadSounds()  // Charge les sons et attache les nodes AVANT de start l'engine
         setupAudioEngine()  // Démarre l'engine APRÈS avoir attaché les nodes
@@ -402,7 +407,12 @@ final class AudioManager {
     }
 
     func fadeOutBackgroundMusic(duration: TimeInterval = FadeConstants.defaultDuration) async {
-        guard let playerNode = musicPlayerNode, isMusicPlaying else { return }
+        guard let playerNode = musicPlayerNode, isMusicPlaying else {
+            return
+        }
+
+        // Mettre isMusicPlaying à false IMMÉDIATEMENT pour empêcher le rescheduling
+        isMusicPlaying = false
 
         fadeTask?.cancel()
 

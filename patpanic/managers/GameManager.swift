@@ -3,10 +3,11 @@
 //  patpanic
 //
 //  Created by clement leclerc on 20/08/2025.
+//  Modernized for iOS 26 with @Observable
 //
 
 import Foundation
-import Combine
+import Observation
 
 enum GameState: Equatable {
     case playersSetup
@@ -18,39 +19,48 @@ enum GameState: Equatable {
     case gameResult
 }
 
+/// Modern game manager using @Observable (iOS 26)
+/// Singleton to ensure consistent game state across the app
 @MainActor
-class GameManager: ObservableObject {
-    
+@Observable
+final class GameManager {
+
+    // MARK: - Singleton
+
+    static let shared = GameManager()
+
+    // MARK: - Observable State
+
+    var cardManager: CardManager = CardManager()
+    var timeManager: TimeManager = TimeManager()
+    var audioManager: AudioManager = AudioManager.shared
+    var gameState: GameState = .playersSetup {
+        didSet {
+            handleBackgroundMusicForState(gameState)
+        }
+    }
+
+    private(set) var players: [Player] = []
+    private(set) var currentRound: Round = .round1
+    private(set) var currentPlayerIndex: Int = 0
+    private(set) var logic: BaseRoundLogic!
+
+    // MARK: - Private Properties
+
     private let errorHandler = ErrorHandler.shared
-    
-    @Published var cardManager: CardManager = CardManager()
-    @Published var timeManager: TimeManager = TimeManager()
-    @Published var audioManager: AudioManager = AudioManager()
-    @Published var gameState: GameState = .playersSetup
-    
-    @Published private(set) var players: [Player] = []
-    @Published private(set) var currentRound:Round = .round1
-    @Published private(set) var currentPlayerIndex:Int = 0
-    @Published private(set) var logic: BaseRoundLogic!
-    private var cancellables = Set<AnyCancellable>()
-    
-    init() {
+
+    // MARK: - Initialization
+
+    private init() {
+        errorHandler.logInfo("🎮 GameManager SINGLETON créé (une seule fois)", context: "GameManager.init")
+
         self.logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
-        setupBackgroundMusic()
-        
-        // Démarrer la musique immédiatement puisqu'on commence en playersSetup
-        audioManager.playBackgroundMusic()
+
+        // Démarrer la musique pour l'état initial (singleton = une seule instance)
+        handleBackgroundMusicForState(gameState)
     }
-    
-    // MARK: - BACKGROUND MUSIC MANAGEMENT
-    private func setupBackgroundMusic() {
-        // Observer les changements d'état pour gérer la musique
-        $gameState
-            .sink { [weak self] newState in
-                self?.handleBackgroundMusicForState(newState)
-            }
-            .store(in: &cancellables)
-    }
+
+    // MARK: - Background Music Management
     
     private func handleBackgroundMusicForState(_ state: GameState) {
         switch state {
@@ -67,13 +77,18 @@ class GameManager: ObservableObject {
         }
     }
     
-    //MARK: - GAME STATE MANAGEMENT
-    
+    // MARK: - Game State Management
+
     func setState(state: GameState) {
         gameState = state
     }
         
     func resetGame() {
+        // Arrêter proprement tous les sons et la musique avant de reset
+        audioManager.stopBackgroundMusic()
+        audioManager.stopCriticalTickLoop()
+        timeManager.stopTimer()
+
         for player in players {
             player.resetScore()
             player.personalCard = nil
@@ -131,29 +146,11 @@ class GameManager: ObservableObject {
     }
     
     func goToRoundResult() {
-        audioManager.playRoundResultSound()
-        
-        guard let player = safeCurrentPlayer() else {
-            errorHandler.handle(.gameManager(.noPlayersFound), context: "GameManager.goToRoundResult")
-            return
-        }
-        
-        player.validateTurn()
-        gameState = .roundResult
-        logGameState()
+        transitionToResultState(.roundResult, context: "GameManager.goToRoundResult")
     }
-    
+
     func goToGameResult() {
-        audioManager.playRoundResultSound()
-        
-        guard let player = safeCurrentPlayer() else {
-            errorHandler.handle(.gameManager(.noPlayersFound), context: "GameManager.goToGameResult")
-            return
-        }
-        
-        player.validateTurn()
-        gameState = .gameResult
-        logGameState()
+        transitionToResultState(.gameResult, context: "GameManager.goToGameResult")
     }
         
     func endPlayerTurn () {
@@ -164,9 +161,8 @@ class GameManager: ObservableObject {
         logic.setupRound()
     }
     
-    // MARK: - PLAYER FUNCTIONS
-    
-    
+    // MARK: - Player Management
+
     func addPlayer(name: String) -> Result<Void, PatPanicError> {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -379,9 +375,8 @@ class GameManager: ObservableObject {
     
     
     
-    // MARK: - ROUNDS FUNCTIONS
-    
- 
+    // MARK: - Round Management
+
     func getCurrentRoundConfig() -> RoundConfig {
         currentRound.config
     }
@@ -414,8 +409,8 @@ class GameManager: ObservableObject {
         return currentRound.isLastRound
     }
     
-    //MARK: - TIME FUNCTION
-    
+    // MARK: - Time Management
+
     func getTimeRemaining() -> Int {
         return timeManager.timeRemaining
     }
@@ -468,8 +463,8 @@ class GameManager: ObservableObject {
     }
     
     
-    // MARK: - CARD FUNCTIONS
-    
+    // MARK: - Card Management
+
     func generateCardsForCurrentRound() {
         let roundNumber = getRoundNumber()
         let cardsNeeded = GameConst.CARDPERPLAYER * players.count
@@ -521,7 +516,22 @@ class GameManager: ObservableObject {
             cardManager.setPlayerCard(card: card)
         }
     }
-    
+
+    // MARK: - Private Utilities
+
+    private func transitionToResultState(_ targetState: GameState, context: String) {
+        audioManager.playRoundResultSound()
+
+        guard let player = safeCurrentPlayer() else {
+            errorHandler.handle(.gameManager(.noPlayersFound), context: context)
+            return
+        }
+
+        player.validateTurn()
+        gameState = targetState
+        logGameState()
+    }
+
     private func getRoundNumber() -> Int {
         switch currentRound {
         case .round1: return 1
@@ -529,8 +539,6 @@ class GameManager: ObservableObject {
         case .round3: return 3
         }
     }
-
-    // MARK: -  UTILS FUNCTIONS
 
     private func logGameState() {
         let currentPlayerName = safeCurrentPlayer()?.name ?? "Aucun"
@@ -551,10 +559,4 @@ class GameManager: ObservableObject {
         
         errorHandler.logInfo(gameStateInfo, context: "GameManager.gameState")
     }
-    
-    
-    
-    
-    
-    
 }

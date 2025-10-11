@@ -190,6 +190,6 @@ struct PlayerSetupView: View {
 }
 
 #Preview {
-    let config = GameManager()
+    let config = GameManager.shared
     return PlayerSetupView(gameManager: config)
 }
