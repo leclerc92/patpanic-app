@@ -130,18 +130,36 @@ class CardManager: ObservableObject {
         
     
     func nextCard() -> Result<Card, PatPanicError> {
+        // Si plus de cartes, recycle les cartes utilisées
+        if cards.isEmpty {
+            recycleUsedCards()
+        }
+
         guard !cards.isEmpty else {
             return .failure(.cardManager(.noCardsAvailable))
         }
-        
+
         let card = cards.removeFirst()
         currentCard = card
         usedCards.append(card)
         return .success(card)
     }
-    
+
     func safeNextCard() -> Card? {
         return try? nextCard().get()
+    }
+
+    private func recycleUsedCards() {
+        guard usedCards.count > 1 else { return }
+
+        // Garde la dernière carte jouée pour éviter de retomber dessus immédiatement
+        let lastPlayedCard = usedCards.last!
+
+        // Remet toutes les cartes sauf la dernière, mélangées
+        cards = usedCards.dropLast().shuffled()
+        usedCards = [lastPlayedCard]
+
+        errorHandler.logInfo("Cartes recyclées: \(cards.count) cartes remises en jeu (dernière carte exclue)", context: "CardManager.recycleUsedCards")
     }
     
     func resetUsedCards() {
