@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct GameView: View {
-    @StateObject private var viewModel: GameViewModel
+    @State private var viewModel: GameViewModel
     @State private var cardIntroScale: CGFloat = 1.0
-    
+
     init(gameManager: GameManager) {
-        self._viewModel = StateObject(
+        self._viewModel = State(
             wrappedValue: GameViewModel(gameManager: gameManager)
         )
     }

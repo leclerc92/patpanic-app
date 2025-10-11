@@ -3,125 +3,74 @@
 //  patpanic
 //
 //  Created by clement leclerc on 22/08/2025.
+//  Modernized for iOS 26 with @Observable
 //
 
 import SwiftUI
-import Combine
+import Observation
 
 @MainActor
-class GameViewModel: ObservableObject {
-    // MARK: - Published Properties
-    @Published var isCardEjecting: Bool = false
-    @Published var isPaused: Bool = false
-    @Published var currentPlayerName: String = ""
-    @Published var currentPlayerIcon: String = ""
-    @Published var currentPlayerScore: Int = 0
-    @Published var roundTitle: String = ""
-    @Published var timeRemaining: Int = 0
-    @Published var totalTime: Int = 0
-    @Published var currentCard: Card?
-    @Published var showNoCardsMessage: Bool = false
-    @Published var showPauseOverlay: Bool = false
-    @Published var showInstructionsSheet: Bool = false
-    @Published var isPlayerNameEjecting: Bool = false
-    
+@Observable
+final class GameViewModel {
+    // MARK: - State Properties
+
+    var isCardEjecting: Bool = false
+    var isPaused: Bool = false
+    var currentPlayerName: String = ""
+    var currentPlayerIcon: String = ""
+    var currentPlayerScore: Int = 0
+    var roundTitle: String = ""
+    var showPauseOverlay: Bool = false
+    var showInstructionsSheet: Bool = false
+    var isPlayerNameEjecting: Bool = false
+
     // MARK: - Computed Properties
+
     var isRound3: Bool {
-        return gameManager.currentRound == .round3
+        gameManager.currentRound == .round3
     }
-    
+
+    var timeRemaining: Int {
+        timeManager.timeRemaining
+    }
+
+    var totalTime: Int {
+        gameManager.logic.roundConst.timer
+    }
+
+    var currentCard: Card? {
+        gameManager.cardManager.currentCard
+    }
+
+    var showNoCardsMessage: Bool {
+        currentCard == nil
+    }
+
     // MARK: - Dependencies
+
     let gameManager: GameManager
     private let timeManager: TimeManager
-    private var cancellables = Set<AnyCancellable>()
-    
+
     // MARK: - Initialization
+
     init(gameManager: GameManager) {
         self.gameManager = gameManager
         self.timeManager = gameManager.timeManager
-        setupBindings()
         updateCurrentPlayer()
         updateRoundInfo()
-        updateTimer()
-        updateCurrentCard()
     }
-    
-    // MARK: - Cleanup
-    deinit {
-        // Nettoie le timer pour éviter les fuites mémoire
-        let timer = timeManager
-        Task { @MainActor in
-            timer.cleanup()
-        }
-        cancellables.removeAll()
-    }
-    
-    // MARK: - Setup
-    private func setupBindings() {
-        // Observer les changements du player courant
-        gameManager.$currentPlayerIndex
-            .sink { [weak self] _ in
-                self?.updateCurrentPlayer()
-            }
-            .store(in: &cancellables)
-        
-        // Observer le round courant
-        gameManager.$currentRound
-            .sink { [weak self] _ in
-                self?.updateRoundInfo()
-            }
-            .store(in: &cancellables)
-        
-        // Observer le timer
-        timeManager.$timeRemaining
-            .assign(to: \.timeRemaining, on: self)
-            .store(in: &cancellables)
-        
-        // Observer la carte courante
-        gameManager.cardManager.$currentCard
-            .sink { [weak self] card in
-                self?.currentCard = card
-                self?.showNoCardsMessage = card == nil
-            }
-            .store(in: &cancellables)
-    }
-    
+
     // MARK: - Actions
+
     func validateCard() {
-        // Empêcher les clics pendant l'animation
-        guard !isCardEjecting && !isPlayerNameEjecting else { return }
-                
-        if isRound3 {
-            // Round 3 : animer le nom du joueur
-            animatePlayerNameEjection {
-                self.gameManager.logic.validateCard()
-                self.updateCurrentPlayer()
-            }
-        } else {
-            // Autres rounds : animer la carte
-            animateCardEjection {
-                self.gameManager.logic.validateCard()
-                self.updateCurrentPlayer()
-            }
+        performCardAction {
+            self.gameManager.logic.validateCard()
         }
     }
-    
+
     func passCard() {
-        // Empêcher les clics pendant l'animation
-        guard !isCardEjecting && !isPlayerNameEjecting else { return }
-        
-        if isRound3 {
-            // Round 3 : animer le nom du joueur
-            animatePlayerNameEjection {
-                self.gameManager.logic.passCard()
-                self.updateCurrentPlayer()
-            }
-        } else {
-            // Autres rounds : animer la carte
-            animateCardEjection {
-                self.gameManager.logic.passCard()
-                self.updateCurrentPlayer()
-            }
+        performCardAction {
+            self.gameManager.logic.passCard()
         }
     }
     
@@ -131,28 +80,19 @@ class GameViewModel: ObservableObject {
     
     func togglePause() {
         isPaused.toggle()
-        showPauseOverlay = isPaused
-        
-        // Gestion de la pause du timer
-        if isPaused {
-            timeManager.pauseTimer()
-        } else {
-            timeManager.resumeTimer()
-        }
+        updatePauseState()
     }
-    
+
     func resumeGame() {
         isPaused = false
-        showPauseOverlay = false
-        timeManager.resumeTimer()
+        updatePauseState()
     }
     
     func showInstructions() {
         showInstructionsSheet = true
     }
-    
-    func exitGame() {
 
+    func exitGame() {
         gameManager.resetGame()
     }
     
@@ -163,13 +103,39 @@ class GameViewModel: ObservableObject {
     
     func viewDidAppear() {
         // La musique est maintenant gérée automatiquement par le GameManager
-        self.gameManager.logic.startTurn()
-        updateTimer()
-        setupTimerTicks()
+        gameManager.logic.startTurn()
     }
-    
-    
+
     // MARK: - Private Methods
+
+    private func performCardAction(action: @escaping () -> Void) {
+        // Empêcher les clics pendant l'animation
+        guard !isCardEjecting && !isPlayerNameEjecting else { return }
+
+        let animationCompletion = {
+            action()
+            self.updateCurrentPlayer()
+        }
+
+        if isRound3 {
+            // Round 3 : animer le nom du joueur
+            animatePlayerNameEjection(completion: animationCompletion)
+        } else {
+            // Autres rounds : animer la carte
+            animateCardEjection(completion: animationCompletion)
+        }
+    }
+
+    private func updatePauseState() {
+        showPauseOverlay = isPaused
+
+        if isPaused {
+            timeManager.pauseTimer()
+        } else {
+            timeManager.resumeTimer()
+        }
+    }
+
     private func updateCurrentPlayer() {
         guard let player = gameManager.safeCurrentPlayer() else {
             currentPlayerName = "Aucun"
@@ -184,27 +150,8 @@ class GameViewModel: ObservableObject {
     
     private func updateRoundInfo() {
         roundTitle = "MANCHE \(gameManager.currentRound.rawValue)"
-        
-        // Mettre à jour le timer total si nécessaire
-        let roundConfig = gameManager.logic.roundConst
-        totalTime = roundConfig.timer
     }
-    
-    private func updateTimer() {
-        let roundConfig = gameManager.logic.roundConst
-        totalTime = roundConfig.timer
-    }
-    
-    private func setupTimerTicks() {
-        // Le callback onTick sera appelé à chaque seconde par le TimeManager
-        // On l'utilisera pour jouer le tic-tac avec intensité croissante
-    }
-    
-    private func updateCurrentCard() {
-        currentCard = gameManager.getCurrentCard()
-        showNoCardsMessage = currentCard == nil
-    }
-    
+
     private func animateCardEjection(completion: @escaping () -> Void) {
         withAnimation {
             isCardEjecting = true
