@@ -38,23 +38,30 @@ class PlayerSetupViewModel: ObservableObject {
     // MARK: - Public Methods
     func addPlayer() {
         let trimmedName = newPlayerName.trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         let result = gameManager.addPlayer(name: trimmedName)
-        
+
         switch result {
         case .success:
             // Animation d'ajout
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
                 // Le joueur a déjà été ajouté par gameManager.addPlayer
             }
-            
+
             // Réinitialiser le champ
             newPlayerName = ""
-            
-            // Ouvrir la configuration pour le dernier joueur ajouté
+
+            // Fermer le clavier d'abord
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+
+            // Attendre que le clavier se ferme avant d'ouvrir la sheet
+            // Délai de 300ms pour éviter le conflit keyboard/sheet qui freeze l'UI
             let lastIndex = players.count - 1
-            configurePlayer(at: lastIndex)
-            
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(300))
+                configurePlayer(at: lastIndex)
+            }
+
         case .failure(_):
             // L'erreur sera automatiquement gérée par l'ErrorHandler
             break

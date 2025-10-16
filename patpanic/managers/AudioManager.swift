@@ -96,15 +96,25 @@ final class AudioManager {
     // MARK: - Audio Session Setup
 
     private func setupAudioSession() {
-        do {
-            let session = AVAudioSession.sharedInstance()
+        let session = AVAudioSession.sharedInstance()
 
-            // Use .playback for games (not .ambient) to allow full audio control
-            // .mixWithOthers allows playing with other apps if desired
-            try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+        do {
+            // Set category FIRST before setting buffer duration
+            // Use .ambient for games that should mix with other audio (music apps)
+            try session.setCategory(.ambient, options: [.mixWithOthers])
+
+            // Try to set preferred buffer duration - this may fail on some devices
+            // iOS will use the closest supported value if the exact value isn't available
+            do {
+                try session.setPreferredIOBufferDuration(0.02)
+            } catch {
+                // Fallback: let iOS use default buffer size
+                errorHandler.logWarning("Could not set custom buffer duration, using default (\(String(format: "%.1f", session.ioBufferDuration * 1000))ms)", context: "AudioManager.setupAudioSession")
+            }
+
             try session.setActive(true)
 
-            errorHandler.logInfo("Audio session configured (iOS 26)", context: "AudioManager.setupAudioSession")
+            errorHandler.logInfo("Audio session configured - Buffer: \(String(format: "%.1f", session.ioBufferDuration * 1000))ms", context: "AudioManager.setupAudioSession")
         } catch {
             errorHandler.handle(
                 .audioManager(.audioSessionSetupFailed(reason: error.localizedDescription)),
@@ -171,8 +181,20 @@ final class AudioManager {
             let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
 
             if options.contains(.shouldResume) {
-                musicPlayerNode?.play()
-                isMusicPlaying = true
+                // Reactivate audio session after interruption
+                do {
+                    try AVAudioSession.sharedInstance().setActive(true)
+
+                    // Restart engine if it stopped
+                    if !audioEngine.isRunning {
+                        try audioEngine.start()
+                    }
+
+                    musicPlayerNode?.play()
+                    isMusicPlaying = true
+                } catch {
+                    errorHandler.logWarning("Failed to resume after interruption: \(error.localizedDescription)", context: "AudioManager.handleInterruption")
+                }
             }
 
         @unknown default:
@@ -509,16 +531,14 @@ final class AudioManager {
 
         ensureEngineStarted()
 
-        if tickPlayer.isPlaying {
-            tickPlayer.stop()
+        // Don't stop/restart if already playing - just schedule next buffer
+        // This prevents audio glitches
+        if !tickPlayer.isPlaying {
+            tickPlayer.play()
         }
 
         tickPlayer.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
         tickPlayer.volume = clampVolume(volume)
-
-        if !tickPlayer.isPlaying {
-            tickPlayer.play()
-        }
     }
 
     // MARK: - Timer Tick Utilities
@@ -561,13 +581,25 @@ final class AudioManager {
 /// Modern sound player pool using AVAudioPlayerNode
 private final class SoundPlayerPool {
     private let players: [AVAudioPlayerNode]
-    private let audioFile: AVAudioFile
+    private let audioBuffer: AVAudioPCMBuffer
     private let audioEngine: AVAudioEngine
     private var currentPlayerIndex = 0
 
     init(url: URL, poolSize: Int, audioEngine: AVAudioEngine) throws {
-        self.audioFile = try AVAudioFile(forReading: url)
+        let audioFile = try AVAudioFile(forReading: url)
         self.audioEngine = audioEngine
+
+        // Pre-load entire file into buffer for zero-latency playback
+        guard let buffer = AVAudioPCMBuffer(
+            pcmFormat: audioFile.processingFormat,
+            frameCapacity: AVAudioFrameCount(audioFile.length)
+        ) else {
+            throw NSError(domain: "AudioManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to create buffer"])
+        }
+
+        try audioFile.read(into: buffer)
+        buffer.frameLength = AVAudioFrameCount(audioFile.length)
+        self.audioBuffer = buffer
 
         var players: [AVAudioPlayerNode] = []
 
@@ -590,7 +622,8 @@ private final class SoundPlayerPool {
             player.stop()
         }
 
-        player.scheduleFile(audioFile, at: nil)
+        // Schedule pre-loaded buffer (much faster than scheduling file)
+        player.scheduleBuffer(audioBuffer, at: nil, options: [], completionHandler: nil)
         player.volume = max(0.0, min(1.0, volume))
         player.play()
     }

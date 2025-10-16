@@ -12,6 +12,7 @@ struct patpanicApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
+                .preferredColorScheme(.light)
         }
     }
 }
