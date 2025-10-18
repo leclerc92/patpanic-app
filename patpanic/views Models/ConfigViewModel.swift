@@ -62,17 +62,14 @@ class ConfigViewModel: ObservableObject {
     }
     
     func discardButton() {
-        // Restaurer les paramètres sauvegardés
-        let settings = settingsManager.currentSettings
-        timerRound1 = settings.timerRound1
-        timerRound2 = settings.timerRound2
-        timerRound3 = settings.timerRound3
-        
-        if settings.selectedCategories.isEmpty {
-            selectedCategories = Set(availableCategories)
-        } else {
-            selectedCategories = settings.selectedCategories
-        }
+        // Restaurer les paramètres par défaut (45, 30, 20)
+        let defaultSettings = GameSettings.default
+        timerRound1 = defaultSettings.timerRound1
+        timerRound2 = defaultSettings.timerRound2
+        timerRound3 = defaultSettings.timerRound3
+
+        // Sélectionner toutes les catégories par défaut
+        selectedCategories = Set(availableCategories)
     }
     
     func toggleCategory(_ category: String) {
