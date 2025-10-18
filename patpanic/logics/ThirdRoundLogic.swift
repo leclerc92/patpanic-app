@@ -31,8 +31,8 @@ class ThirdRoundLogic : BaseRoundLogic {
 
     override func validateCard() {
         gameManager.audioManager.playValidateCardSound()
-        gameManager.startRoundTimer()
         gameManager.setToNextPlayerIndex()
+        gameManager.startRoundTimer()
     }
     
     override func passCard() {
@@ -75,12 +75,18 @@ class ThirdRoundLogic : BaseRoundLogic {
     }
     
     func checkVictory() {
-        // Vérifier s'il ne reste qu'un joueur (victoire)
-        if gameManager.players.filter({ !$0.isEliminated}).count == 1 {
+        // Vérifier si tous les autres joueurs (non-main) sont éliminés
+        let nonMainPlayers = gameManager.players.filter({ !$0.isMainPlayer })
+        let allOthersEliminated = nonMainPlayers.allSatisfy({ $0.isEliminated })
+
+        if allOthersEliminated {
+            // Victoire : tous les adversaires sont éliminés
             gameManager.addPointToMainPlayer(nb: gameManager.players.count * 2)
             endPlayerTurn()
         } else {
+            // Continuer : passer au joueur suivant et redémarrer le timer
             gameManager.setToNextPlayerIndex()
+            gameManager.startRoundTimer()
         }
     }
     
