@@ -41,7 +41,7 @@ final class GameManager {
     }
 
     private(set) var players: [Player] = []
-    private(set) var currentRound: Round = .round3
+    private(set) var currentRound: Round = .round1
     private(set) var currentPlayerIndex: Int = 0
     private(set) var logic: BaseRoundLogic!
 
