@@ -41,7 +41,7 @@ final class GameManager {
     }
 
     private(set) var players: [Player] = []
-    private(set) var currentRound: Round = .round1
+    private(set) var currentRound: Round = .round3
     private(set) var currentPlayerIndex: Int = 0
     private(set) var logic: BaseRoundLogic!
 
@@ -89,11 +89,27 @@ final class GameManager {
         audioManager.stopCriticalTickLoop()
         timeManager.stopTimer()
 
+        // Réinitialiser les scores et cartes personnalisées
+        resetPlayersScore()
         for player in players {
-            player.resetScore()
             player.personalCard = nil
         }
+
+        // Réinitialiser tous les états des joueurs
+        resetPlayersMainState()
+        resetPlayerEliminated()
+        resetPlayerCardPassed()
+        setPlayersRemainingTurn(nb: 0)
+
+        // Réinitialiser le round à la manche 1
+        currentRound = .round1
+        currentPlayerIndex = 0
+        logic = RoundLogicFactory.createLogic(for: currentRound, gameManager: self)
+
+        // Retour au menu de configuration des joueurs
         gameState = .playersSetup
+
+        errorHandler.logInfo("Jeu complètement réinitialisé", context: "GameManager.resetGame")
     }
     
     func goToPlayingView() {
