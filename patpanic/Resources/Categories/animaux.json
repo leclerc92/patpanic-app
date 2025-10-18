@@ -162,6 +162,20 @@
       "excludedRounds": [
         3
       ]
+    },
+    {
+      "title": "Chiens célèbres",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Chats célèbres",
+      "category": "Animaux",
+      "color": "orange",
+      "excludedRounds": []
     }
   ]
 }

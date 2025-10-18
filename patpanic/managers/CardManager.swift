@@ -188,7 +188,7 @@ final class CardManager {
             "alimentation", "animaux", "divertissement", "geographie",
             "intime", "langues", "litterature", "marques", "metiers", "mode",
             "musique", "mythologie", "nature", "nombres", "objets",
-            "personnages", "politique", "sport", "religion", "four-tout", "petit et grand écran", "art"
+            "personnages", "politique", "sport", "religion", "four-tout", "petit et grand écran", "art", "automne"
         ]
 
         var loadedCategories = 0

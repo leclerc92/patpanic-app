@@ -238,6 +238,14 @@
         2,
         3
       ]
+    },
+    {
+      "title": "Nains célèbres",
+      "category": "Personnages",
+      "color": "orange",
+      "excludedRounds": [
+        3
+      ]
     }
   ]
 }

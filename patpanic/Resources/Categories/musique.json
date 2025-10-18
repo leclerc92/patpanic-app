@@ -241,6 +241,22 @@
       "category": "Musique",
       "color": "purple",
       "excludedRounds": []
+    },
+    {
+      "title": "Groupes de Kpop",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Membres des Stray Kids",
+      "category": "Musique",
+      "color": "purple",
+      "excludedRounds": [
+        3
+      ]
     }
   ]
 }

@@ -9,15 +9,26 @@ import SwiftUI
 
 
 class ThirdRoundLogic : BaseRoundLogic {
-    
+
     override init(gameManager: GameManager, round: Round) {
         super.init(gameManager: gameManager, round: round)
     }
-    
+
     override func prepareCards() {
-        gameManager.setCurrentPlayerCardToCards()
+        // Ne rien faire ici - les cartes seront préparées dans startTurn()
+        // car on a besoin que le mainPlayer soit défini d'abord
     }
-    
+
+    override func startTurn() {
+        // Pour le round 3, ordre spécifique : définir le mainPlayer d'abord
+        gameManager.setCurrentPlayerMain()
+        // Charger la carte personnelle du mainPlayer dans le deck
+        gameManager.setCurrentPlayerCardToCards()
+        // Récupérer la carte et démarrer le timer
+        _ = gameManager.getNextCard()
+        gameManager.startRoundTimer()
+    }
+
     override func validateCard() {
         gameManager.audioManager.playValidateCardSound()
         gameManager.startRoundTimer()

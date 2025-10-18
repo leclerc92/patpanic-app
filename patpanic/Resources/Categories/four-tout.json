@@ -294,6 +294,29 @@
         2,
         3
       ]
+    },
+    {
+      "title": "Noms de paquebot",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": [
+        2,
+        3
+      ]
+    },
+    {
+      "title": "Pas de danse",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Parties du cerveau humain",
+      "category": "Four-tout",
+      "color": "green",
+      "excludedRounds": []
     }
   ]
 }

@@ -176,6 +176,32 @@
       "category": "Divertissement",
       "color": "blue",
       "excludedRounds": []
+    },
+    {
+      "title": "Magazines people",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Epées célèbres",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": [
+        2,
+        3
+      ]
+    },
+    {
+      "title": "Prises de catch",
+      "category": "Divertissement",
+      "color": "blue",
+      "excludedRounds": [
+        2,
+        3
+      ]
     }
   ]
 }

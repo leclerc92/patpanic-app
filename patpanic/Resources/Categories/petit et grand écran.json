@@ -189,6 +189,14 @@
       "category": "Petit et grand écrans",
       "color": "green",
       "excludedRounds": []
+    },
+    {
+      "title": "Acteu.rices coréennes",
+      "category": "Petit et grand écrans",
+      "color": "green",
+      "excludedRounds": [
+        3
+      ]
     }
   ]
 }

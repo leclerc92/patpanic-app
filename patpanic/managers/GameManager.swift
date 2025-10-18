@@ -512,7 +512,9 @@ final class GameManager {
     }
     
     func setCurrentPlayerCardToCards() {
-        if let card = safeCurrentPlayer()?.personalCard {
+        // Pour le round 3, utiliser la carte du mainPlayer, pas du currentPlayer
+        let player = (currentRound == .round3) ? mainPlayer() : safeCurrentPlayer()
+        if let card = player?.personalCard {
             cardManager.setPlayerCard(card: card)
         }
     }

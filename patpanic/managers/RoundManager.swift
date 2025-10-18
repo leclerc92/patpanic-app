@@ -14,28 +14,28 @@ struct RoundConfig {
 }
 
 var rules1: [String] = [
-    "Temps imparti de 45 secondes ",
+    "Temps imparti de 45 secondes",
     "Tu dois donner deux réponses par carte",
-    "Chaque carte te rapport 1 point",
-    "Valide en autant que possible !! ",
+    "Chaque carte te rapporte 1 point",
+    "Valide-en autant que possible !!",
     "Tu peux passer la carte sans pénalité",
-    "Tu peux mettre pause en appuyant sur la carte pour debattre de la réponse !"
+    "Tu peux mettre pause en appuyant sur la carte pour débattre de la réponse !"
 ]
 
 var rules2: [String] = [
-    "Temps impartis de 30 secondes",
-    "Tu dois donner le nombre de réponse indiqué à chaque tour",
-    "Chaque carte te rapport le nombre de point restant sur le chrono",
-    "Si tu passes une carte, tu perd autant de points que de réponses que tu dois donner",
-    "Tu peux mettre pause en appuyant sur la carte pour debattre de la réponse !"
+    "Temps imparti de 30 secondes",
+    "Tu dois donner le nombre de réponses indiqué à chaque tour",
+    "Chaque carte te rapporte le nombre de points restant sur le chrono",
+    "Si tu passes une carte, tu perds autant de points que de réponses que tu dois donner",
+    "Tu peux mettre pause en appuyant sur la carte pour débattre de la réponse !"
 ]
 
 var rules3: [String] = [
-    "Temps impartis de 20 secondes",
+    "Temps imparti de 20 secondes",
     "Cette manche se joue avec ta catégorie personnelle",
-    "Tu ne peux peux passer sinon tu gagne 0 points",
-    "chaque adversaire qui passe ou répete  est éliminé et tu gagne 1 point",
-    "soit le dernier en liste pour gagner, et gagner 2x le nb de joueurs en points"
+    "Tu ne peux pas passer sinon tu gagnes 0 points",
+    "Chaque adversaire qui passe ou répète est éliminé et tu gagnes 1 point",
+    "Sois le dernier en liste pour gagner 2× le nombre de joueurs en points"
 ]
 
 

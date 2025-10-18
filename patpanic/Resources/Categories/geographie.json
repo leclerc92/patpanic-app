@@ -439,6 +439,22 @@
       "category": "Géographie",
       "color": "blue",
       "excludedRounds": []
+    },
+    {
+      "title": "Fleuves africains",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": [
+        3
+      ]
+    },
+    {
+      "title": "Châteaux de la Loire",
+      "category": "Géographie",
+      "color": "blue",
+      "excludedRounds": [
+        3
+      ]
     }
   ]
 }
